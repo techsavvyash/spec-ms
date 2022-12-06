@@ -1,0 +1,67 @@
+{
+	"info": {
+		"_postman_id": "758e1a8c-2769-419f-9e4b-b08f5a79df2e",
+		"name": "Cqube Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10902215"
+	},
+	"item": [
+		{
+			"name": "C1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"eventName\": \"Student Attendance Event\",\r\n        \"cubeName\": \"Student Attendance Cube\",\r\n        \"dimensionName\": \"State\",\r\n        \"TransformerName\": \"Avergae Marks\",\r\n        \"fileName\": \"demo_pg1\",\r\n        \"phytonFile\": \"KPIs.py\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://15.207.95.246:5005/pipe-spec",
+					"protocol": "http",
+					"host": [
+						"15",
+						"207",
+						"95",
+						"246"
+					],
+					"port": "5005",
+					"path": [
+						"pipe-spec"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "events",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://15.207.95.246:5005/events",
+					"protocol": "http",
+					"host": [
+						"15",
+						"207",
+						"95",
+						"246"
+					],
+					"port": "5005",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
