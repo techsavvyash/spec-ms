@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "default": {},
+  "title": "Transformer Specifications",
+  "required": [
+    "pipeline"
+  ],
+  "properties": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "eventName": {
+          "type": "string"
+        },
+        "cubeName": {
+          "type": "string"
+        },
+        "dimensionName": {
+          "type": "string"
+        },
+        "TransformerName": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "pipeline": {
+        "eventName": "Periodic Assessment Event",
+        "cubeName": "Periodic Assessment Cube",
+        "dimensionName": "District",
+        "TransformerName": "Avergae Marks"
+      }
+    }
+  ]
+}
