@@ -1,0 +1,43 @@
+from flask import Flask,request
+import configparser
+import os
+import psycopg2
+import pandas as pd
+
+app = Flask(__name__)
+
+
+configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/config.ini"
+print(configuartion_path)
+config = configparser.ConfigParser()
+config.read(configuartion_path);
+
+
+port = config['CREDs']['port']
+host = config['CREDs']['host']
+user = config['CREDs']['user']
+password = config['CREDs']['password']
+database = config['CREDs']['database']
+
+con = psycopg2.connect(database=database, user=user, password=password, host=host, port=port)
+cur = con.cursor()
+
+def stud_atte(valueCols=[{valueCols}]):
+    df_events = pd.read_csv('{path}')
+    df_calc = df_events.groupby([{groupBy}], as_index=False).agg({columns})
+    df_calc = df_calc[valueCols]
+    try:
+         for index,row in df_calc.iterrows():
+            values = []
+            for i in valueCols:
+              values.append(row[i])
+            query = ''' INSERT INTO {table}({inputCols}) VALUES ({}) ON CONFLICT ({conflictCols}) DO UPDATE SET {updateCols};'''\
+            .format(','.join(map(str,values)))
+            cur.execute(query)
+            con.commit()
+    except Exception as error:
+        print(error)
+
+
+stud_atte()
+

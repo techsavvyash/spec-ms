@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "366d3b7d-29f7-4d2d-b43b-82b8f7c26fb4",
+		"name": "CQube POC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10902215"
+	},
+	"item": [
+		{
+			"name": "Add Item",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"school_id\": 12,\r\n        \"grade\": 2,\r\n        \"students_count\": 10\r\n    }\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/items",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add PipeSpec",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"eventName\": \"Periodic Assessment Event\",\r\n        \"cubeName\": \"Periodic Assessment Cube\",\r\n        \"dimensionName\": \"District\",\r\n        \"TransformerName\": \"Avergae Marks\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pipe-spec",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pipe-spec"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload XML File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "template",
+							"type": "file",
+							"src": "/C:/Appzui/Theja/helloworld/fastifyPoc/routes/processor_group_1.xml"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8096/nifi-api/process-groups/1d7f581b-0184-1000-a18c-1c9ba65b3b11/templates/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8096",
+					"path": [
+						"nifi-api",
+						"process-groups",
+						"1d7f581b-0184-1000-a18c-1c9ba65b3b11",
+						"templates",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generator",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n    {\r\n        \"event\": \"student_count\",\r\n        \"dataset\": \"student_attendance_by_school\",\r\n        \"template\":\"sum_template.txt\",\r\n        \"function\": \"SUM\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/generator",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"generator"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
