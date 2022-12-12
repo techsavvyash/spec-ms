@@ -33,11 +33,6 @@ paths:
               event_name:
                 type: "string"
                 example: "student_count"
-              adapterConfigs:
-                description: "The adapterConfigs Schema"
-                type: "object"
-                properties:
-                 {}
               dimensions:
                 description: "The dimensions Schema"
                 type: "array"
