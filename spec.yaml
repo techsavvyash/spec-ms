@@ -147,16 +147,16 @@ paths:
                   type: "object"
                   properties:
                     dimensions:
-                      type: "array"
-                      items:
-                        type: "object"
-                        properties:
-                         id:
-                          type: "string"
-                          example: "D1"
-                         key:
-                          type: "string"
-                          example: "schoolId"
+                      type: "object"
+                      properties:
+                       table:
+                        type: "string"
+                        example: "ingestion.Dimentions"
+                       column:
+                        example: ["school_id","school_name"]
+                       merge_on_col:
+                        type: "string"
+                        example: "school_id"
                     items:
                       description: "The items Schema"
                       type: "object"
@@ -176,9 +176,8 @@ paths:
                       type: "object"
                       properties:
                         function:
-                          type: "string"
-                          example: "sum"
-                        table:
+                          example: ["sum"]
+                        target_table:
                           type: "string"
                           example: "ingestion.student_count_by_school_and_grade"
                         columns:
