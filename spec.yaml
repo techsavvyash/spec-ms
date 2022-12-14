@@ -366,15 +366,18 @@ paths:
               event_name:
                 type: "string"
                 example: "student_count"
-              school_id:
-                type: "string"
-                example: "101"
-              grade:
-                type: "string"
-                example: "1"
-              count:
-                type: "string"
-                example: "10"
+              event:
+                type: "object"
+                properties:
+                  school_id:
+                    type: "string"
+                    example: "101"
+                  grade:
+                    type: "string"
+                    example: "1"
+                  count:
+                    type: "string"
+                    example: "10"
       responses:
         200:
           description: "Event Added Successfully"
