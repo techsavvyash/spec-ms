@@ -1,0 +1,18 @@
+Below Pseudo code is for /spec/pipeline api
+
+INPUT: event name,dataset name,dimension name, transformer name
+OUTPUT: Processor group created and mapped with transformer
+
+STEP 1: const flowEngine = require(`../service/${process.env.FLOW_ENGINE_PROVIDER}-service`);
+
+STEP 2: Validate the request body using AJV
+STEP 3: IF Not Valid
+            Send Error Response
+        IF Duplicate
+          Send Error Response
+STEP 4: ELSE Store the spec data to spec.pipeline table
+STEP 5: IF(!process.env.FLOW_ENGINE_PROVIDER)
+STEP 6: return 'Flow Engine Provider Missing'
+STEP 6: ELSE let processorGroup = await flowEngine.compilePipeline(req);
+STEP 7: IF(processorGroup === 'SUCCESS') return 'Success'
+STEP 8: ELSE return 'Error'
