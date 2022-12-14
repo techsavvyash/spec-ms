@@ -448,12 +448,18 @@ paths:
               dataset_name:
                 type: "string"
                 example: "student_count_by_school_and_grade"
-              event_name:
-                type: "string"
-                example: "student_count"
-              dimension_name:
-                type: "string"
-                example: "District"
+              dataset:
+                type: "object"
+                properties:
+                  school_id:
+                        type: "string"
+                        example: "101"
+                  grade:
+                        type: "string"
+                        example: "1"
+                  student_count:
+                        type: "string"
+                        example: "10"
       responses:
         200:
           description: "Dataset Added Successfully"
