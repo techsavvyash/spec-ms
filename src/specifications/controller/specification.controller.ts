@@ -1,9 +1,11 @@
 import { DatabaseService } from 'src/database/database.service';
 import { Body, Controller, Post } from '@nestjs/common';
-import { specDTO } from '../dto/specData.dto';
+import { specDTO,specEventDTO } from '../dto/specData.dto';
 import { SpecificationImplService } from '../service/specification-impl.service';
 import {specSchema} from '../../spec-data';
 import {queryTxt} from '../queries/queries'
+import { eventSchemaData } from 'src/utils/specSchemaData';
+
 @Controller('spec')
 export class SpecificationController {
     constructor( private specService:SpecificationImplService, private dbService:DatabaseService){
@@ -26,6 +28,28 @@ export class SpecificationController {
 
           }
         }
+    }
+
+    @Post('/event')
+    async getEvent(@Body() inputData:specEventDTO){
+      try {
+        const validatorResult: any = await this.specService.ajvValidator(eventSchemaData.input,inputData);
+
+        if(!validatorResult.errors){
+          const dbResult = await this.dbService.executeQuery(queryTxt.getEventsData());
+          if(dbResult.length === 0){
+            await this.dbService.executeQuery(queryTxt.insertEventSchema(),[inputData.event_name,eventSchemaData])
+            return {
+              message:"record inserted successfully."
+            }
+          }
+
+
+        }
+
+      } catch (error) {
+        console.log('errror');
+      }
     }
 
 }
