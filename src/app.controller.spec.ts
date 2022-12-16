@@ -19,4 +19,10 @@ describe('AppController', () => {
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
+
+  describe('sum module', () => {
+    test('adds 1 + 2 to equal 3', () => {
+      expect(appController.sum(1, 2)).toBe(3);
+    });
+  });
 });
