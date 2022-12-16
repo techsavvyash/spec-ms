@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SpecificationsModule } from './specifications/specifications.module';
-import Ajv, {JSONSchemaType} from "ajv";
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-// import { DatabaseModule } from './database/database.module';
-import entities from './typeorm';
-
-
+// import {TypeOrmModule} from '@nestjs/typeorm';
+import {TypeOrmModule } from '@nestjs/typeorm'
+import { DatabaseModule } from './database/database.module';
 @Module({
-  imports: [SpecificationsModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+  
+  controllers: [AppController],
+  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }), 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -21,16 +20,11 @@ import entities from './typeorm';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: entities,
+        entities: [],
         synchronize: true,
-        schema:'spec'
       }),
       inject: [ConfigService],
-    }),
-  
-  
+    }), DatabaseModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
