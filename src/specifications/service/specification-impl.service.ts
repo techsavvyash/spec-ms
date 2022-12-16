@@ -15,6 +15,7 @@ export class SpecificationImplService {
     }
     async ajvValidator(schema, inputData) {
         const isValid = ajv.validate(schema, inputData);
+        console.log("Valid",isValid);
         if (isValid) {
             return inputData;
         } else {
@@ -31,5 +32,10 @@ export class SpecificationImplService {
    async GetData()
    {
     return this.dataSource.query('SELECT * from spec.dimension');
+   }
+
+   checkForDuplicate()
+   {
+
    }
 }

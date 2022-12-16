@@ -1,6 +1,8 @@
 
   export const specSchema = 
    {
+    "ingestion_type": "dimension",
+    "input":{
     "type": "object",
     "properties": {
       "dimension_name": {
@@ -26,5 +28,6 @@
       "dimension_name",
       "dimension"
     ]
+  }
   }
   

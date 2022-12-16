@@ -1,3 +1,4 @@
+import { SpecificationsModule } from './specifications/specifications.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,6 +11,7 @@ import { DatabaseModule } from './database/database.module';
   controllers: [AppController],
   providers: [AppService],
   imports: [
+    SpecificationsModule,
     ConfigModule.forRoot({ isGlobal: true }), 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
