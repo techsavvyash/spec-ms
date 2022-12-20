@@ -28,36 +28,42 @@ paths:
           name: "body"
           required: true
           schema:
-            type: "object"
-            properties:
-              event_name:
-                type: "string"
-                example: "student_count"
-              dimensions:
-                description: "The dimensions Schema"
-                type: "array"
-                items:
-                  type: "object"
-                  properties:
-                    id:
-                      type: "string"
-                      example: "D1"
-                    key:
-                      type: "string"
-                      example: "schoolId"
-              items:
-                description: "The items Schema"
-                type: "object"
-                properties:
-                 schoolId:
-                   type: "string"
-                   example: "number"
-                 grade:
-                   type: "string"
-                   example: "number"
-                 count:
-                  type: "string"
-                  example: "number"
+            example:
+              {ingestion_type: event,
+                    input:{
+                      type: object,
+                      properties:{
+                        event_name:{
+                          type: string
+                        },
+                        event:{
+                          type: object,
+                          properties:{
+                            school_id:{
+                              type: string
+                            },
+                            grade:{
+                              type: string
+                            },
+                            count:{
+                              type: string
+                            }
+                        },
+                        required:[
+                          school_id,
+                          grade,
+                          count
+                        ]
+                      }
+                    },
+                      required:[
+                        event_name,
+                        event
+                        ]
+              }
+              }
+
+
       responses:
         200:
           description: "Event Spec Created Successfully"
@@ -91,20 +97,38 @@ paths:
           name: "body"
           required: true
           schema:
-            type: "object"
-            properties:
-              dimension_name:
-                type: "string"
-                example: "district"
-              dimension:
-                  type: "object"
-                  properties:
-                    schoolId:
-                      type: "string"
-                    district:
-                      type: "string"
-                    block:
-                      type: "string"
+            example: {
+              ingestion_type: dimension,
+              input:{
+              type: object,
+              properties: {
+                dimension_name: {
+                  type: string
+                },
+                dimension: {
+                  type: object,
+                  properties: {
+                    name: {
+                      type: string
+                    },
+                    district_id: {
+                      type: string
+
+                    }
+                  },
+                  required: [
+                    name,
+                    district_id
+                    ]
+                }
+              },
+              required: [
+                dimension_name,
+                dimension
+                ]
+            }
+          }
+
       responses:
         200:
           description: "Dimension Spec Created Successfully"
@@ -138,51 +162,41 @@ paths:
           name: "body"
           required: true
           schema:
-            type: "object"
-            properties:
-              dataset_name:
-                type: "string"
-                example: "student_count_by_school_and_grade"
-              dataset:
-                  type: "object"
-                  properties:
-                    dimensions:
-                      type: "object"
-                      properties:
-                       table:
-                        type: "string"
-                        example: "ingestion.Dimentions"
-                       column:
-                        example: ["school_id","school_name"]
-                       merge_on_col:
-                        type: "string"
-                        example: "school_id"
-                    items:
-                      description: "The items Schema"
-                      type: "object"
-                      properties:
-                       schoolId:
-                         type: "string"
-                         example: "number"
-                       grade:
-                         type: "string"
-                         example: "number"
-                       count:
-                        type: "string"
-                        example: "number"
-                    group_by:
-                      example: ["school_id","grade"]
-                    aggregates:
-                      type: "object"
-                      properties:
-                        function:
-                          example: ["sum"]
-                        target_table:
-                          type: "string"
-                          example: "ingestion.student_count_by_school_and_grade"
-                        columns:
-                          example: ["count"]
-
+           example: {
+            ingestion_type: dataset,
+            input:{
+             type: object,
+             properties:{
+               dataset_name:{
+                 type: string
+               },
+               dataset:{
+                 type: object,
+                 properties:{
+                   school_id:
+                   {
+                     type: string
+                   },
+                   grade:{
+                     type: string
+                   },
+                   student_count: {
+                     type: string
+                   }
+                 },
+                 required:[
+                   school_id,
+                   grade,
+                   student_count
+                   ]
+               }
+             },
+             required:[
+               dataset_name,
+               dataset
+           ]
+          }
+         }
       responses:
         200:
           description: "Dataset Spec Created Successfully"
