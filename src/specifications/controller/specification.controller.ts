@@ -11,32 +11,31 @@ export class SpecificationController {
   }
   @Post('/dimension')
   async getDimensions(@Body() dimensionDTO: any) {
+    //converting all the keys into lowercase to avoid duplication
+    let obj = dimensionDTO?.input?.properties?.dimension?.properties;
+    var json = JSON.stringify(dimensionDTO);
+     obj = json.replace(/"([\w]+)":/g, function($0, $1) {
+      return ('"' + $1.toLowerCase() + '":');
+    });
+    var newObj = JSON.parse(obj);
+    console.debug("New Object is:",newObj?.input?.properties?.dimension?.properties);
     console.log("Dimension DTO:", dimensionDTO.input);
     console.log("Spec schema:", specSchema.input);
     const response: any = await this.specService.ajvValidator(specSchema.input, dimensionDTO?.input)
-    console.log("The response is:", response);
-
+    console.log("The dimension DTO is:",dimensionDTO.input.properties.dimension);
     // if(!response.errors)
     // {
-
-    // console.log(dimensionDTO?.input?.properties?.dimension);
-    // console.log(dimensionDTO?.dimension_name.toLowerCase());
-    const resultDname = await this.dbService.executeQuery(queryTxt.checkName(), [dimensionDTO?.dimension_name.toLowerCase()]);
+    const resultDname = await this.dbService.executeQuery(queryTxt.checkName('dimension_name',"dimension"), [dimensionDTO?.dimension_name.toLowerCase()]);
     if (resultDname.length > 0) {
-      return { "message": "Dimension Name already exists" }
+      return { "message": "Dimension Name already exists"}
     }
     else {
-      let values: JSON = dimensionDTO?.input?.properties?.dimension;
-      // console.log('values====>', JSON.stringify(values));
-      const result = await this.dbService.executeQuery(queryTxt.checkDuplicacy(), [JSON.stringify(values)])
-      // console.log("The result is:", result.length);
+      let values: JSON = newObj?.input?.properties?.dimension;
+      const result = await this.dbService.executeQuery(queryTxt.checkDuplicacy(['dimension_name','dimension_data'],'dimension',['dimension_data','input','properties','dimension']), [JSON.stringify(values)])
       if (result.length == 0) //If there is no record in the DB then insert the first schema
       {
         console.log("No result rows");
-        // return { "Message": "No duplicate" };
-        //just to check if insert query works or not,  actual implementation is different
-        const insertResult = await this.dbService.executeQuery(queryTxt.insertSchema(), [2,dimensionDTO.dimension_name.toLowerCase(), dimensionDTO]);
-        // console.log("The insert result is:", insertResult);
+        const insertResult = await this.dbService.executeQuery(queryTxt.insertSchema(['dimension_name','dimension_data'],'dimension'), [2,dimensionDTO.dimension_name.toLowerCase(), newObj]);
         return {"message":"Dimension Spec Created Successfully","dimension_name": dimensionDTO.dimension_name,"pid":insertResult[0].pid}
 
       }

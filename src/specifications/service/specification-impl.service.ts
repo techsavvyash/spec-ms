@@ -22,20 +22,18 @@ export class SpecificationImplService {
             return {errors: ajv.errors};
         }
     }
+    
+//
+//    async InsertIntoDb(specDto:specDTO)
+//    {
+//     const newDimension = this.dimensionRepo.create(specDto);
+//     return this.dimensionRepo.save(newDimension);
+//    }
 
-   async InsertIntoDb(specDto:specDTO)
-   {
-    const newDimension = this.dimensionRepo.create(specDto);
-    return this.dimensionRepo.save(newDimension);
-   }
+//    async GetData()
+//    {
+//     return this.dataSource.query('SELECT * from spec.dimension');
+//    }
 
-   async GetData()
-   {
-    return this.dataSource.query('SELECT * from spec.dimension');
-   }
-
-   checkForDuplicate()
-   {
-
-   }
+ 
 }
