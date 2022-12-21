@@ -46,26 +46,56 @@ export class SpecificationController {
     }
   }
 
+  
+
     @Post('/event')
-    async getEvent(@Body() inputData:specEventDTO){
-      try {
-        const validatorResult: any = await this.specService.ajvValidator(eventSchema.input,inputData);
-
-        if(!validatorResult.errors){
-          const dbResult = await this.dbService.executeQuery(queryTxt.getEventsData());
-          if(dbResult.length === 0){
-            await this.dbService.executeQuery(queryTxt.insertEventSchema(),[2,inputData.event_name.toLowerCase(),inputData])
-            return {
-              message:"record inserted successfully."
-            }
-          }
-
-
-        }
-
-      } catch (error) {
-        console.log('errror');
+    async getEvent(@Body() specEventDTO: any){
+      console.log("Event DTO:", specEventDTO.input);
+    console.log("Spec schema:", specSchema.input);
+    const response: any = await this.specService.ajvValidator(specSchema.input, specEventDTO?.input)
+    console.log("The response is:", response);
+    const resultEname = await this.dbService.executeQuery(queryTxt.checkName(), [specEventDTO?.event_name.toLowerCase()]);
+    if (resultEname.length > 0) {
+      return { "message": "Event Name already exists" }
+    }
+    else {
+      let values: JSON = specEventDTO?.input?.properties?.event;
+      const result = await this.dbService.executeQuery(queryTxt.checkDuplicacy(), [JSON.stringify(values)])
+      if (result.length == 0)
+      {
+        console.log("No result rows");
+        const insertResult = await this.dbService.executeQuery(queryTxt.insertSchema(), [2,specEventDTO.event_name.toLowerCase(), specEventDTO]);
+        return {"message":"Event Spec Created Successfully","event_name": specEventDTO.event_name,"pid":insertResult[0].pid}
+      
+      }
+      else {
+        return { "message": "Duplicate events not allowed" }
       }
     }
-
+  }
 }
+      
+      
+      
+      
+//       try {
+//         const validatorResult: any = await this.specService.ajvValidator(eventSchema.input,inputData);
+
+//         if(!validatorResult.errors){
+//           const dbResult = await this.dbService.executeQuery(queryTxt.getEventsData());
+//           if(dbResult.length === 0){
+//             await this.dbService.executeQuery(queryTxt.insertEventSchema(),[2,inputData.event_name.toLowerCase(),inputData])
+//             return {
+//               message:"record inserted successfully."
+//             }
+//           }
+
+
+//         }
+
+//       } catch (error) {
+//         console.log('errror');
+//       }
+//     }
+
+
