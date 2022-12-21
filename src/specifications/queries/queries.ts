@@ -1,21 +1,22 @@
 export const queryTxt = {
-    checkName()
+    checkName(coulmnName: string, tableName: string)
     {
-        const querStr = `SELECT dimension_name FROM spec.dimension WHERE dimension_name = $1`;
+        const querStr = `SELECT ${coulmnName} FROM spec.${tableName} WHERE ${coulmnName} = $1`;
         return querStr
 
     },
 
-    checkDuplicacy()
+    checkDuplicacy(columnNames: string[],tableName: string, JsonProperties: string[])
     {
-        const querStr = `SELECT dimension_name, dimension_data FROM spec.dimension WHERE (dimension_data->'input'->'properties'->'dimension')::jsonb = ($1) ::jsonb `;
-        // console.log("querystring is:",querStr);
+        // const querStr = `SELECT dimension_name, dimension_data FROM spec.dimension WHERE (dimension_data->'input'->'properties'->'dimension')::jsonb = ($1) ::jsonb `;
+        const querStr = `SELECT ${columnNames[0]},${columnNames[1]} FROM spec.${tableName} WHERE (${JsonProperties[0]}->'${JsonProperties[1]}'->'${JsonProperties[2]}'->'${JsonProperties[3]}')::jsonb = ($1) ::jsonb `;
         return querStr;
     },
 
-    insertSchema()
+    insertSchema(columnNames: string[], tableName: string)
     {
-        const queryStr = `INSERT INTO spec.dimension(event_by,dimension_name, dimension_data) VALUES ($1,$2,$3) RETURNING pid`;
+        // const queryStr = `INSERT INTO spec.dimension(event_by,dimension_name, dimension_data) VALUES ($1,$2,$3) RETURNING pid`;
+        const queryStr = `INSERT INTO spec.${tableName}(event_by,${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2,$3) RETURNING pid`;
         return queryStr;
     },
 
