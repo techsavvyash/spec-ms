@@ -49,21 +49,28 @@ export class SpecificationController {
 
     @Post('/event')
     async getEvent(@Body() specEventDTO: any){
+      let obj = specEventDTO?.input?.properties?.dimension?.properties;
+    var json = JSON.stringify(specEventDTO);
+     obj = json.replace(/"([\w]+)":/g, function($0, $1) {
+      return ('"' + $1.toLowerCase() + '":');
+    });
+    var newObj = JSON.parse(obj);
+    console.debug("New Object is:",newObj?.input?.properties?.event?.properties);
       console.log("Event DTO:", specEventDTO.input);
     console.log("Spec schema:", specSchema.input);
     const response: any = await this.specService.ajvValidator(specSchema.input, specEventDTO?.input)
-    console.log("The response is:", response);
-    const resultEname = await this.dbService.executeQuery(queryTxt.checkName(), [specEventDTO?.event_name.toLowerCase()]);
+    console.log("The event DTO is:",specEventDTO.input.properties.dimension);
+    const resultEname = await this.dbService.executeQuery(queryTxt.checkName('event_name','event'), [specEventDTO?.event_name.toLowerCase()]);
     if (resultEname.length > 0) {
       return { "message": "Event Name already exists" }
     }
     else {
       let values: JSON = specEventDTO?.input?.properties?.event;
-      const result = await this.dbService.executeQuery(queryTxt.checkDuplicacy(), [JSON.stringify(values)])
+      const result = await this.dbService.executeQuery(queryTxt.checkDuplicacy(['event_name','event_data'],'event',['event_data','input','properties','event']), [JSON.stringify(values)])
       if (result.length == 0)
       {
         console.log("No result rows");
-        const insertResult = await this.dbService.executeQuery(queryTxt.insertSchema(), [2,specEventDTO.event_name.toLowerCase(), specEventDTO]);
+        const insertResult = await this.dbService.executeQuery(queryTxt.insertSchema(['event_name','event_data'],'event'), [2,specEventDTO.event_name.toLowerCase(), newObj]);
         return {"message":"Event Spec Created Successfully","event_name": specEventDTO.event_name,"pid":insertResult[0].pid}
       
       }
