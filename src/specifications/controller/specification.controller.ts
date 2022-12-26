@@ -1,70 +1,27 @@
+import { DimensionService } from './../service/dimension/dimension.service';
 import { DatabaseService } from 'src/database/database.service';
-import { Body, Controller, Post } from '@nestjs/common';
-import { specDTO,specEventDTO } from '../dto/specData.dto';
-import { SpecificationImplService } from '../service/specification-impl.service';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { specSchema, eventSchema } from '../../spec-data';
-import { queryTxt } from '../queries/queries'
+import { checkDuplicacy, checkName, createTable, insertSchema } from '../queries/queries'
+import { Response } from 'express';
 @Controller('spec')
 export class SpecificationController {
-  constructor(private specService: SpecificationImplService, private dbService: DatabaseService) {
-
+  constructor(private dimensionService:DimensionService) {
   }
   @Post('/dimension')
-  async getDimensions(@Body() dimensionDTO: any) {
-    //converting all the keys into lowercase to avoid duplication
-    let obj = dimensionDTO?.input?.properties?.dimension?.properties;
-    var json = JSON.stringify(dimensionDTO);
-     obj = json.replace(/"([\w]+)":/g, function($0, $1) {
-      return ('"' + $1.toLowerCase() + '":');
-    });
-    var newObj = JSON.parse(obj);
-    console.debug("New Object is:",newObj?.input?.properties?.dimension?.properties);
-    console.log("Dimension DTO:", dimensionDTO.input);
-    console.log("Spec schema:", specSchema.input);
-    const response: any = await this.specService.ajvValidator(specSchema.input, dimensionDTO?.input)
-    console.log("The dimension DTO is:",dimensionDTO.input.properties.dimension);
-    // if(!response.errors)
-    // {
-    const resultDname = await this.dbService.executeQuery(queryTxt.checkName('dimension_name',"dimension"), [dimensionDTO?.dimension_name.toLowerCase()]);
-    if (resultDname.length > 0) {
-      return { "message": "Dimension Name already exists"}
-    }
-    else {
-      let values: JSON = newObj?.input?.properties?.dimension;
-      const result = await this.dbService.executeQuery(queryTxt.checkDuplicacy(['dimension_name','dimension_data'],'dimension',['dimension_data','input','properties','dimension']), [JSON.stringify(values)])
-      if (result.length == 0) //If there is no record in the DB then insert the first schema
+  async getDimensions(@Body() dimensionDTO: any, @Res()response: Response) {
+    try {
+      let result = await this.dimensionService.createDimension(dimensionDTO);
+      if(result.code == 400)
       {
-        console.log("No result rows");
-        const insertResult = await this.dbService.executeQuery(queryTxt.insertSchema(['dimension_name','dimension_data'],'dimension'), [2,dimensionDTO.dimension_name.toLowerCase(), newObj]);
-        return {"message":"Dimension Spec Created Successfully","dimension_name": dimensionDTO.dimension_name,"pid":insertResult[0].pid}
-
+        response.status(400).send({"message":result.message});
       }
-      else {
-        return { "message": "Duplicate dimension not allowed" }
+      else
+      {
+        response.status(200).send({"message":result.message,"dimension_name":result.dimension_name,"pid":result.pid});
       }
+    } catch (error) {
+      throw new Error(error);
     }
   }
-
-    @Post('/event')
-    async getEvent(@Body() inputData:specEventDTO){
-      try {
-        const validatorResult: any = await this.specService.ajvValidator(eventSchema.input,inputData);
-
-        if(!validatorResult.errors){
-          const dbResult = await this.dbService.executeQuery(queryTxt.getEventsData());
-          if(dbResult.length === 0){
-            await this.dbService.executeQuery(queryTxt.insertEventSchema(),[2,inputData.event_name.toLowerCase(),inputData])
-            return {
-              message:"record inserted successfully."
-            }
-          }
-
-
-        }
-
-      } catch (error) {
-        console.log('errror');
-      }
-    }
-
 }
