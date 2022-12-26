@@ -1,8 +1,5 @@
 import { DimensionService } from './../service/dimension/dimension.service';
-import { DatabaseService } from 'src/database/database.service';
 import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
-import { specSchema, eventSchema } from '../../spec-data';
-import { checkDuplicacy, checkName, createTable, insertSchema } from '../queries/queries'
 import { Response } from 'express';
 @Controller('spec')
 export class SpecificationController {
