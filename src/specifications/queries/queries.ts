@@ -1,16 +1,22 @@
-    export function checkName(coulmnName: string, tableName: string)
+    export function checkName(coulmnName: string,  tableName: string)
     {
-        const querStr = `SELECT ${coulmnName} FROM spec.${tableName} WHERE ${coulmnName} = $1`;
+        const querStr = `SELECT ${coulmnName} FROM spec.${tableName} WHERE ${coulmnName} = '$1'`;
         return querStr
     }
-    export function checkDuplicacy(columnNames: string[],tableName: string, JsonProperties: string[])
+    export function checkDuplicacy(columnNames: string[],tableName: string, JsonProperties: string[], conditionData)
     {
-        const querStr = `SELECT ${columnNames[0]},${columnNames[1]} FROM spec.${tableName} WHERE (${JsonProperties[0]}->'${JsonProperties[1]}'->'${JsonProperties[2]}'->'${JsonProperties[3]}')::jsonb = ($1) ::jsonb `;
+        const querStr = `SELECT ${columnNames[0]},${columnNames[1]} FROM spec.${tableName} WHERE (${JsonProperties[0]}->'${JsonProperties[1]}'->'${JsonProperties[2]}'->'${JsonProperties[3]}')::jsonb = ('${conditionData}') ::jsonb `;
         return querStr;
     }
     export function insertSchema(columnNames: string[], tableName: string)
     {
-        const queryStr = `INSERT INTO spec.${tableName}(event_by,${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2,$3) RETURNING pid`;
+        // const queryStr = `INSERT INTO spec.${tableName}(event_by,${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2,$3) RETURNING pid`;
+        const queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2) RETURNING pid`;
+        return queryStr;
+    }
+    export function insertPipeline(columnNames: string[], tableName: string,columnValues:any[])
+    {
+        const queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}, ${columnNames[1]}) VALUES ('${columnValues[0]}',${columnValues[1]}) RETURNING pid`;
         return queryStr;
     }
     export function createSchema()

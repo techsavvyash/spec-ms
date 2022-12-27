@@ -1,66 +1,80 @@
 import { ConfigService } from '@nestjs/config';
-import { Pool } from 'pg';
 import { GenericFunction } from './../genericFunction';
-import { Inject, Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
-import { checkDuplicacy, checkName, createTable, insertSchema } from 'src/specifications/queries/queries';
+import { checkDuplicacy, checkName, createTable, insertPipeline, insertSchema } from 'src/specifications/queries/queries';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 export class DimensionService {
-    constructor(private dbService: DatabaseService, private specService:GenericFunction, private configService: ConfigService) {   
+    constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private configService: ConfigService) {
     }
     async createDimension(dimensionDTO) {
+        const queryRunner = this.dataSource.createQueryRunner()
         let dbColumns = []
         let newObj = this.specService.convertKeysToLowerCase(dimensionDTO);
         if (dimensionDTO?.dimension_name.toLowerCase() == "") {
-            return {"code":400, "message": "Dimension Name cannot be empty" };
+            return { "code": 400, "message": "Dimension Name cannot be empty" };
         }
-        const resultDname = await this.dbService.executeQuery(checkName('dimension_name', "dimension"), [dimensionDTO?.dimension_name.toLowerCase()]);
+        if (newObj?.ingestion_type == "") {
+            return { "code": 400, "message": "Ingestion Type cannot be empty" };
+        }
+
+        let queryResult = checkName('dimension_name', "dimension");
+        queryResult = queryResult.replace('$1', `${dimensionDTO?.dimension_name.toLowerCase()}`)
+        const resultDname = await this.dataSource.query(queryResult);
         if (resultDname.length > 0) {
-            return {"code":400, "message": "Dimension Name already exists" };
+            return { "code": 400, "message": "Dimension Name already exists" };
         }
         else {
+            await queryRunner.connect();
             let values = newObj?.input?.properties?.dimension;
-            const result = await this.dbService.executeQuery(checkDuplicacy(['dimension_name', 'dimension_data'], 'dimension', ['dimension_data', 'input', 'properties', 'dimension']), [JSON.stringify(values)]);
+            let duplicacyQuery = checkDuplicacy(['dimension_name', 'dimension_data'], 'dimension', ['dimension_data', 'input', 'properties', 'dimension'], JSON.stringify(values));
+            const result = await queryRunner.query(duplicacyQuery);
+            console.log("The result is:", result);
             if (result.length == 0) //If there is no record in the DB then insert the first schema
             {
-                try{
-                    const insertResult = await this.dbService.executeQuery(insertSchema(['dimension_name', 'dimension_data'], 'dimension'), [2, dimensionDTO.dimension_name.toLowerCase(), newObj]);
+                await queryRunner.startTransaction();
+                try {
+                    let insertQuery = insertSchema(['dimension_name', 'dimension_data'], 'dimension');
+                    insertQuery = insertQuery.replace('$1', `'${dimensionDTO.dimension_name.toLowerCase()}'`);
+                    insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
+                    const insertResult = await queryRunner.query(insertQuery);
                     if (insertResult[0].pid) {
-                        const dimension_pid = insertResult[0].pid;
+                        let dimension_pid = (insertResult[0].pid).toString();
                         const pipeline_name = dimensionDTO.dimension_name.toLowerCase() + 'pipeline';
-                        const insertPipelineResult = await this.dbService.executeQuery(insertSchema(['pipeline_name','dimension_pid'], 'pipeline'), [2, pipeline_name, dimension_pid]);
-                        if(insertPipelineResult[0].pid)
-                        {
-                        let columnProperties = []
-                        let columnNames = [];
-                        columnNames.push(Object.keys(values?.properties));
-                        columnProperties.push(Object.values(values?.properties))
-                        let dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
-                        let tbName: string = newObj?.ingestion_type;
-                        let query = createTable(tbName, columnNames[0], dbColumns);
-                        console.log("query is:", query);
-                        const createResult = await this.dbService.executeQuery(query, []);
-                        return {"code":200, "message": "Dimension Spec Created Successfully", "dimension_name": dimensionDTO.dimension_name, "pid": insertResult[0].pid };
+                        let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dimension_pid'], 'pipeline', [pipeline_name, dimension_pid]);
+                        // const insertPipelineResult = await this.dataSource.query(insertPipeLineQuery);
+                        const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
+                        if (insertPipelineResult[0].pid) {
+                            let columnProperties = []
+                            let columnNames = [];
+                            columnNames.push(Object.keys(values?.properties));
+                            columnProperties.push(Object.values(values?.properties))
+                            dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
+                            let tbName: string = newObj?.ingestion_type;
+                            let createQuery = createTable(tbName, columnNames[0], dbColumns);
+                            // const createResult = await this.dataSource.query(createQuery);
+                            const createResult = await queryRunner.query(createQuery);
+                            await queryRunner.commitTransaction();
+                            return { "code": 200, "message": "Dimension Spec Created Successfully", "dimension_name": dimensionDTO.dimension_name, "pid": insertResult[0].pid };
                         }
                     }
-                    else{
-                        return {"code":400, "message":"Something went wrong"};
+                    else {
+                        return { "code": 400, "message": "Something went wrong" };
 
                     }
 
                 }
-                catch(error)
-                {
-                    return{"code":400, "message":"something went wrong"}
+                catch (error) {
+                    await queryRunner.rollbackTransaction()
+                    return { "code": 400, "message": "something went wrong" }
                 }
-                finally
-                {
-                    
+                finally {
+                    await queryRunner.release();
                 }
-                
-                
+
+
             }
             else {
-                return {"code":400, "message": "Duplicate dimension not allowed" }
+                return { "code": 400, "message": "Duplicate dimension not allowed" }
             }
         }
     }

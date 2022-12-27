@@ -3,9 +3,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-// import {TypeOrmModule} from '@nestjs/typeorm';
 import {TypeOrmModule } from '@nestjs/typeorm'
-import { DatabaseModule } from './database/database.module';
+// import { DatabaseModule } from './database/database.module';
 @Module({
   
   controllers: [AppController],
@@ -24,9 +23,12 @@ import { DatabaseModule } from './database/database.module';
         database: configService.get('DB_NAME'),
         entities: [],
         synchronize: true,
+        schema:"spec"
+        
       }),
       inject: [ConfigService],
-    }), DatabaseModule,
+    }), 
+    
   ],
 })
 export class AppModule {}

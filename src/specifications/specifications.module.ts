@@ -1,6 +1,4 @@
 import { EventService } from './service/event/event.service';
-import { DatabaseModule } from './../database/database.module';
-import { DatabaseService } from 'src/database/database.service';
 import { Dimension } from './../typeorm/dimension.entity';
 import { Module } from '@nestjs/common';
 import { SpecificationController } from './controller/specification.controller';
@@ -10,7 +8,7 @@ import { GenericFunction } from './service/genericFunction';
 
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [],
   controllers: [SpecificationController],
   providers:[DimensionService,EventService,GenericFunction],
 

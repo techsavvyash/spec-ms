@@ -4,7 +4,6 @@ import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 @Controller('spec')
 export class SpecificationController {
- 
   constructor(private dimensionService:DimensionService,private EventService:EventService) {
   }
   @Post('/dimension')
@@ -23,7 +22,6 @@ export class SpecificationController {
       throw new Error(error);
     }
   }
-
   @Post('/event')
   async getEvents(@Body() eventDTO: any, @Res()response: Response) {
     try {
@@ -35,7 +33,7 @@ export class SpecificationController {
       }
       else
       {
-        response.status(200).send({"message":result.message,"event_name":result.event_name,"pid":result.pid});
+        response.status(200).send({"message":result.message,"event_name":result?.event_name,"pid":result.pid});
       }
     } catch (error) {
       throw new Error(error);
