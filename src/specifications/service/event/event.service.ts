@@ -17,14 +17,14 @@ export class EventService {
             return { "code": 400, "message": "Ingestion Type cannot be empty" };
         }
         let queryResult = checkName('event_name', "event");
-        queryResult = queryResult.replace('$1', `${speceventDTO?.dimension_name.toLowerCase()}`)
+        queryResult = queryResult.replace('$1', `${speceventDTO?.event_name.toLowerCase()}`)
         const resultDname = await this.dataSource.query(queryResult);
         if (resultDname.length > 0) {
             return { "code": 400, "message": "Event Name already exists" };
         }
         else {
             await queryRunner.connect();
-            let values = newObj?.input?.properties?.dimension;
+            let values = newObj?.input?.properties?.event;
             let duplicacyQuery = checkDuplicacy(['event_name', 'event_data'], 'event', ['event_data', 'input', 'properties', 'event'], JSON.stringify(values));
             console.log("The query is:", duplicacyQuery);
             const result = await queryRunner.query(duplicacyQuery);
@@ -63,7 +63,7 @@ export class EventService {
                 }
             }
             else {
-                return { "code": 400, "message": "Duplicate dimension not allowed" }
+                return { "code": 400, "message": "Duplicate event not allowed" }
             }
         }
     }
