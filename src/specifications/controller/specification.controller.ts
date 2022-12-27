@@ -2,9 +2,11 @@ import { EventService } from './../service/event/event.service';
 import { DimensionService } from './../service/dimension/dimension.service';
 import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { specTrasformer } from '../dto/specData.dto';
+import { TransformerService } from '../service/transformer/transformer.service';
 @Controller('spec')
 export class SpecificationController {
-  constructor(private dimensionService:DimensionService,private EventService:EventService) {
+  constructor(private dimensionService:DimensionService,private EventService:EventService,private transformerservice:TransformerService) {
   }
   @Post('/dimension')
   async getDimensions(@Body() dimensionDTO: any, @Res()response: Response) {
@@ -37,6 +39,15 @@ export class SpecificationController {
       }
     } catch (error) {
       throw new Error(error);
+    }
+  }
+
+  @Post('/transformer')
+  async createTransformer(@Body() transformerDTO: specTrasformer) {
+    try {
+      return await this.transformerservice.createTransformer(transformerDTO)
+          } catch (error) {
+      console.error("create.Transformer impl :", error)
     }
   }
 }
