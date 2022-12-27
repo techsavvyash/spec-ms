@@ -1,3 +1,4 @@
+import { EventService } from './service/event/event.service';
 import { DatabaseModule } from './../database/database.module';
 import { DatabaseService } from 'src/database/database.service';
 import { Dimension } from './../typeorm/dimension.entity';
@@ -11,7 +12,7 @@ import { GenericFunction } from './service/genericFunction';
 @Module({
   imports: [DatabaseModule],
   controllers: [SpecificationController],
-  providers:[DimensionService, GenericFunction],
+  providers:[DimensionService,EventService,GenericFunction],
 
 })
 export class SpecificationsModule {}
