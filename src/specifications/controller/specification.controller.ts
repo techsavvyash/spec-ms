@@ -1,9 +1,11 @@
+import { EventService } from './../service/event/event.service';
 import { DimensionService } from './../service/dimension/dimension.service';
 import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 @Controller('spec')
 export class SpecificationController {
-  constructor(private dimensionService:DimensionService) {
+ 
+  constructor(private dimensionService:DimensionService,private EventService:EventService) {
   }
   @Post('/dimension')
   async getDimensions(@Body() dimensionDTO: any, @Res()response: Response) {
@@ -16,6 +18,24 @@ export class SpecificationController {
       else
       {
         response.status(200).send({"message":result.message,"dimension_name":result.dimension_name,"pid":result.pid});
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @Post('/event')
+  async getEvents(@Body() eventDTO: any, @Res()response: Response) {
+    try {
+      let result = await this.EventService.createEvent(eventDTO);
+      console.log(result)
+      if(result.code == 400)
+      {
+        response.status(400).send({"message":result.message});
+      }
+      else
+      {
+        response.status(200).send({"message":result.message,"event_name":result.event_name,"pid":result.pid});
       }
     } catch (error) {
       throw new Error(error);
