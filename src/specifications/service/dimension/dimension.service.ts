@@ -16,7 +16,6 @@ export class DimensionService {
         if (newObj?.ingestion_type == "") {
             return { "code": 400, "message": "Ingestion Type cannot be empty" };
         }
-
         let queryResult = checkName('dimension_name', "dimension");
         queryResult = queryResult.replace('$1', `${dimensionDTO?.dimension_name.toLowerCase()}`)
         const resultDname = await this.dataSource.query(queryResult);
@@ -28,7 +27,6 @@ export class DimensionService {
             let values = newObj?.input?.properties?.dimension;
             let duplicacyQuery = checkDuplicacy(['dimension_name', 'dimension_data'], 'dimension', ['dimension_data', 'input', 'properties', 'dimension'], JSON.stringify(values));
             const result = await queryRunner.query(duplicacyQuery);
-            console.log("The result is:", result);
             if (result.length == 0) //If there is no record in the DB then insert the first schema
             {
                 await queryRunner.startTransaction();
@@ -41,7 +39,6 @@ export class DimensionService {
                         let dimension_pid = (insertResult[0].pid).toString();
                         const pipeline_name = dimensionDTO.dimension_name.toLowerCase() + 'pipeline';
                         let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dimension_pid'], 'pipeline', [pipeline_name, dimension_pid]);
-                        // const insertPipelineResult = await this.dataSource.query(insertPipeLineQuery);
                         const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                         if (insertPipelineResult[0].pid) {
                             let columnProperties = []
@@ -51,27 +48,22 @@ export class DimensionService {
                             dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
                             let tbName: string = newObj?.ingestion_type;
                             let createQuery = createTable(tbName, columnNames[0], dbColumns);
-                            // const createResult = await this.dataSource.query(createQuery);
                             const createResult = await queryRunner.query(createQuery);
                             await queryRunner.commitTransaction();
                             return { "code": 200, "message": "Dimension Spec Created Successfully", "dimension_name": dimensionDTO.dimension_name, "pid": insertResult[0].pid };
                         }
                     }
                     else {
+                        await queryRunner.rollbackTransaction()
                         return { "code": 400, "message": "Something went wrong" };
-
                     }
-
-                }
-                catch (error) {
+                }catch (error) {
                     await queryRunner.rollbackTransaction()
                     return { "code": 400, "message": "something went wrong" }
                 }
                 finally {
                     await queryRunner.release();
                 }
-
-
             }
             else {
                 return { "code": 400, "message": "Duplicate dimension not allowed" }

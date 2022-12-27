@@ -10,7 +10,6 @@
     }
     export function insertSchema(columnNames: string[], tableName: string)
     {
-        // const queryStr = `INSERT INTO spec.${tableName}(event_by,${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2,$3) RETURNING pid`;
         const queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2) RETURNING pid`;
         return queryStr;
     }
