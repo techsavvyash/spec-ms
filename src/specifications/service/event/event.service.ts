@@ -51,6 +51,7 @@ export class EventService {
                         }
                     }
                     else {
+                        await queryRunner.rollbackTransaction()
                         return { "code": 400, "message": "Something went wrong" };
                     }
                 }
