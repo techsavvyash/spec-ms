@@ -1,2 +1,2 @@
-export const TransformerType: string[] = ['event_to_cqube_with_filter', 'arr'];
-export const TemplateType: string[] = ['sum_template', 'arr'];
+export const TransformerType: string[] = ["EventToCube-agg","CubeToCube-agg","CubeToCube-filter"];
+export const TemplateType: string[] = ["EventToCube-AggTemplate.py","CubeToCube-AggTemplate.py","CubeToCube-filterTemplate.py"];

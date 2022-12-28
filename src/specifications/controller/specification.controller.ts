@@ -62,11 +62,17 @@ export class SpecificationController {
   }
 
   @Post('/transformer')
-  async createTransformer(@Body() transformerDTO: specTrasformer) {
+  async createTransformer(@Body() transformerDTO: specTrasformer,@Res()response: Response) {
     try {
-      return await this.transformerservice.createTransformer(transformerDTO)
-          } catch (error) {
-      console.error("create.Transformer impl :", error)
+      const result:any= await this.transformerservice.createTransformer(transformerDTO)
+      if(result.code == 400){
+        response.status(400).send({"message":result.message});
+      }
+      else{
+        response.status(200).send({"message":result.message,"pid":result.pid,"transformer_name":result.transformer_name});
+      }
+    } catch (error) {
+      console.error("create.Transformer impl :", error) 
     }
   }
 }
