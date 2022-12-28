@@ -28,63 +28,44 @@ paths:
           name: "body"
           required: true
           schema:
-            type: "object"
-            properties:
-              event_name:
-                type: "string"
-                example: "student_count"
-              adapterConfigs:
-                description: "The adapterConfigs Schema"
-                type: "object"
-                properties:
-                 {}
-              dimensions:
-                description: "The dimensions Schema"
-                type: "array"
-                items:
-                  type: "object"
-                  properties:
-                    id:
-                      type: "string"
-                      example: "D1"
-                    key:
-                      type: "string"
-                      example: "schoolId"
-              items:
-                description: "The items Schema"
-                type: "object"
-                properties:
-                  metadata:
-                    description: "The metadata Schema"
-                    type: "object"
-                    properties:
-                      schoolId:
-                        type: "string"
-                        example: "number"
-                      gradeId:
-                        type: "string"
-                        example: "number"
-                      count:
-                        type: "string"
-                        example: "number"
-                  rows:
-                    type: "array"
-                    items:
-                      type: "object"
-                      properties:
-                        schoolId:
-                          type: "string"
-                        gradeId:
-                          type: "string"
-                        count:
-                          type: "string"
-                    example:
-                      - schoolId: '101'
-                        gradeId: '1'
-                        count: '20'
-                      - schoolId: '102'
-                        gradeId: '2'
-                        count: '20'
+            example:
+              {
+              ingestion_type: event,
+              event_name: student_attendance,
+                    input:{
+                      type: object,
+                      properties:{
+                        event_name:{
+                          type: string
+                        },
+                        event:{
+                          type: object,
+                          properties:{
+                            school_id:{
+                              type: string
+                            },
+                            grade:{
+                              type: string
+                            },
+                            count:{
+                              type: string
+                            }
+                        },
+                        required:[
+                          school_id,
+                          grade,
+                          count
+                        ]
+                      }
+                    },
+                      required:[
+                        event_name,
+                        event
+                        ]
+              }
+              }
+
+
       responses:
         200:
           description: "Event Spec Created Successfully"
@@ -118,25 +99,39 @@ paths:
           name: "body"
           required: true
           schema:
-            type: "object"
-            properties:
-              dimension_name:
-                type: "string"
-                example: "district"
-              dimension:
-                type: "array"
-                items:
-                  type: "object"
-                  properties:
-                    schoolId:
-                      type: "string"
-                      example: 1
-                    district:
-                      type: "string"
-                      example: "Shimla"
-                    block:
-                      type: "string"
-                      example: "Tikkar"
+            example: {
+              ingestion_type: dimension,
+              dimension_name: state_970,
+              input:{
+              type: object,
+              properties: {
+                dimension_name: {
+                  type: string
+                },
+                dimension: {
+                  type: object,
+                  properties: {
+                    name: {
+                      type: string
+                    },
+                    district_id: {
+                      type: string
+
+                    }
+                  },
+                  required: [
+                    name,
+                    district_id
+                    ]
+                }
+              },
+              required: [
+                dimension_name,
+                dimension
+                ]
+            }
+          }
+
       responses:
         200:
           description: "Dimension Spec Created Successfully"
@@ -170,49 +165,42 @@ paths:
           name: "body"
           required: true
           schema:
-            type: "object"
-            properties:
-              dataset_name:
-                type: "string"
-                example: "student_count"
-              event_name:
-                type: "string"
-                example: "student_count"
-              dataset:
-                type: "array"
-                items:
-                  type: "object"
-                  properties:
-                    events:
-                      description: "The events schema"
-                      type: "object"
-                      properties:
-                        examType:
-                          type: "string"
-                          example: "Periodic Assessment"
-                    dimensions:
-                      type: "array"
-                      items:
-                        type: "object"
-                        properties:
-                         id:
-                          type: "string"
-                          example: "D1"
-                         key:
-                          type: "string"
-                          example: "schoolId"
-                    aggregates:
-                      type: "array"
-                      items:
-                        type: "object"
-                        properties:
-                          id:
-                            type: "string"
-                            example: "AVERAGE"
-                          key:
-                            type: "string"
-                            example: "studentAttendance"
-
+           example: {
+            ingestion_type: dataset,
+            dataset_name: sample,
+            input:{
+             type: object,
+             properties:{
+               dataset_name:{
+                 type: string
+               },
+               dataset:{
+                 type: object,
+                 properties:{
+                   school_id:
+                   {
+                     type: string
+                   },
+                   grade:{
+                     type: string
+                   },
+                   student_count: {
+                     type: string
+                   }
+                 },
+                 required:[
+                   school_id,
+                   grade,
+                   student_count
+                   ]
+               }
+             },
+             required:[
+               dataset_name,
+               dataset
+           ]
+          }
+         }
       responses:
         200:
           description: "Dataset Spec Created Successfully"
@@ -250,42 +238,19 @@ paths:
             properties:
               transformer_name:
                 type: "string"
-                example: "COUNT"
+                example: "student_count_sum_transformer"
+              event_name:
+                type: "string"
+                example: "student_count"
               dataset_name:
                 type: "string"
                 example: "student_count"
-              transformer_function:
+              template:
                 type: "string"
-                example: "SUM/COUNT/MIN/MAX/AVG"
-
-              transformer:
-                type: "array"
-                items:
-                  type: "object"
-                  properties:
-                    events:
-                      type: "object"
-                      properties:
-                        examType:
-                          type: "string"
-                          example: "Periodic Assessment"
-                    dimensions:
-                      type: "array"
-                      items:
-                        type: "object"
-                        properties:
-                          id:
-                            type: "string"
-                            example: "D1"
-                          key:
-                            type: "string"
-                            example: "schoolId"
-                    datasetId:
-                      type: "string"
-                      example: "C1"
-                    operation:
-                      type: "string"
-                      example: ""
+                example: "sum_template"
+              function:
+                type: "string"
+                example: "sum"
       responses:
         200:
           description: "Transformer Spec Created Successfully"
@@ -298,9 +263,9 @@ paths:
               pid:
                 type: "integer"
                 example: 5
-              transformer_name:
+              file:
                 type: "string"
-                example: "COUNT"
+                example: "student_count.py"
         400:
           description: "Something went wrong"
           schema:
@@ -323,7 +288,7 @@ paths:
             properties:
               pipeline_name:
                 type: "string"
-                example: "student_count"
+                example: "student_count_pipe"
               pipeline:
                 type: "array"
                 items:
@@ -331,17 +296,16 @@ paths:
                   properties:
                     event_name:
                       type: "string"
+                      example: "student_count"
                     dataset_name:
                       type: "string"
+                      example: "student_count_by_school_and_grade"
                     dimension_name:
                       type: "string"
+                      example: "district"
                     transformer_name:
                       type: "string"
-                example:
-                  - event_name: Periodic Assessment Event
-                    dataset_name: Periodic Assessment Dataset
-                    dimension_name: District
-                    Transformer_name: Avergae Marks
+                      example: "student_count_sum_transformer"
 
       responses:
         200:
@@ -360,6 +324,46 @@ paths:
           description: "Something went wrong"
           schema:
             $ref: "#/definitions/generic_error"
+  /spec/schedule:
+    post:
+      tags:
+        - "spec"
+      summary: "create a Schedule"
+      description: "Create a schedule"
+      operationId: "createSchedule"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              pipeline_name:
+                type: "string"
+                example: "student_count_pipe"
+              schedule_type:
+                type: "string"
+                example: "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
+              scheduled_at:
+                type: "string"
+                example: "12/12/2022 14:00:00"
+
+      responses:
+        200:
+          description: "Schedule created Successfully"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "Schedule created Successfully"
+        400:
+          description: "Something went wrong"
+          schema:
+            $ref: "#/definitions/generic_error"
+
 
   /ingestion/event:
     post:
@@ -380,15 +384,18 @@ paths:
               event_name:
                 type: "string"
                 example: "student_count"
-              school_id:
-                type: "string"
-                example: "101"
-              grade_id:
-                type: "string"
-                example: "1"
-              count:
-                type: "string"
-                example: "10"
+              event:
+                type: "object"
+                properties:
+                  school_id:
+                    type: "string"
+                    example: "101"
+                  grade:
+                    type: "string"
+                    example: "1"
+                  count:
+                    type: "string"
+                    example: "10"
       responses:
         200:
           description: "Event Added Successfully"
@@ -421,15 +428,15 @@ paths:
               dimension_name:
                 type: "string"
                 example: "district"
-              schoolId:
-                type: "string"
-                example: 1
-              district:
-                type: "string"
-                example: "Shimla"
-              block:
-                type: "string"
-                example: "Tikkar"
+              dimension:
+                type: "object"
+                properties:
+                  name:
+                    type: "string"
+                    example: "Shimla"
+                  district_id:
+                    type: "string"
+                    example: "SH123"
       responses:
         200:
           description: "Dimension Added Successfully"
@@ -461,13 +468,19 @@ paths:
             properties:
               dataset_name:
                 type: "string"
-                example: "student_count"
-              event_name:
-                type: "string"
-                example: "student_count"
-              dimension_name:
-                type: "string"
-                example: "District"
+                example: "student_count_by_school_and_grade"
+              dataset:
+                type: "object"
+                properties:
+                  school_id:
+                        type: "string"
+                        example: "101"
+                  grade:
+                        type: "string"
+                        example: "1"
+                  student_count:
+                        type: "string"
+                        example: "10"
       responses:
         200:
           description: "Dataset Added Successfully"
@@ -499,10 +512,10 @@ paths:
             properties:
               pipeline_name:
                 type: "string"
-                example: "student_count"
-              schedule_type:
+                example: "student_count_pipe"
+              type:
                 type: "string"
-                example: "ingest to aggregate/aggregate to dataset"
+                example: "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
       responses:
         200:
           description: "Pipeline Triggered Successfully"
@@ -512,44 +525,6 @@ paths:
               message:
                 type: "string"
                 example: "Pipeline Triggered Successfully"
-        400:
-          description: "Something went wrong"
-          schema:
-            $ref: "#/definitions/generic_error"
-  /ingestion/schedule:
-    post:
-      tags:
-        - "ingestion"
-      summary: "create a Schedule"
-      description: "Create a schedule"
-      operationId: "createSchedule"
-      produces:
-        - "application/json"
-      parameters:
-        - in: "body"
-          name: "body"
-          required: true
-          schema:
-            type: "object"
-            properties:
-              schedule_type:
-                type: "string"
-                example: "ingest to aggregate/aggregate to dataset"
-              scheduled_at:
-                type: "string"
-                example: "29/11/2022 14:00:00"
-              pipeline_name:
-                type: "string"
-                example: "student_count"
-      responses:
-        200:
-          description: "Schedule created Successfully"
-          schema:
-            type: "object"
-            properties:
-              message:
-                type: "string"
-                example: "Schedule created Successfully"
         400:
           description: "Something went wrong"
           schema:

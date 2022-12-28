@@ -1,10 +1,9 @@
-import { ConfigService } from '@nestjs/config';
 import { GenericFunction } from './../genericFunction';
 import { checkDuplicacy, checkName, createTable, insertPipeline, insertSchema } from 'src/specifications/queries/queries';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 export class DimensionService {
-    constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private configService: ConfigService) {
+    constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction) {
     }
     async createDimension(dimensionDTO) {
         const queryRunner = this.dataSource.createQueryRunner()
@@ -36,7 +35,7 @@ export class DimensionService {
                     insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
                     const insertResult = await queryRunner.query(insertQuery);
                     if (insertResult[0].pid) {
-                        let dimension_pid = (insertResult[0].pid).toString();
+                        let dimension_pid = insertResult[0].pid;
                         const pipeline_name = dimensionDTO.dimension_name.toLowerCase() + 'pipeline';
                         let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dimension_pid'], 'pipeline', [pipeline_name, dimension_pid]);
                         const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);

@@ -6,12 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DimensionService } from './service/dimension/dimension.service';
 import { GenericFunction } from './service/genericFunction';
 import { TransformerService } from './service/transformer/transformer.service';
+import { DatasetService } from './service/dataset/dataset.service';
 
 
 @Module({
   imports: [],
   controllers: [SpecificationController],
-  providers:[DimensionService,EventService,GenericFunction,TransformerService],
+  providers:[DimensionService,EventService,GenericFunction,TransformerService, DatasetService],
 
 })
 export class SpecificationsModule {}
