@@ -37,8 +37,7 @@ CREATE TABLE IF NOT EXISTS spec.transformer (
   created_at           TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   updated_at           TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   transformer_file     VARCHAR,
-  transformer_function VARCHAR,
-  UNIQUE (transformer_file, transformer_function)
+  UNIQUE (transformer_file)
 );
 
 CREATE TABLE IF NOT EXISTS spec.pipeline (
