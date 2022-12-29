@@ -302,17 +302,17 @@ VALUES (1, 'student_attendance', '{
 }');
 
 INSERT INTO spec.transformer (
-  event_by, transformer_file, transformer_function)
-VALUES (1, 'student_attendance_by_class.py', 'studCount'),
-  (1, 'student_attendance_by_school.py', 'studCount'),
-  (1, 'student_attendance_by_cluster.py', 'studCount'),
-  (1, 'student_attendance_by_block.py', 'studCount'),
-  (1, 'student_attendance_by_district.py', 'studCount'),
-  (1, 'student_attendance_by_state.py', 'studCount'),
-  (1, 'student_attendance_marked_above_50_percent_by_block.py', 'studCount'),
-  (1, 'student_attendance_marked_above_50_percent_by_cluster.py', 'studCount'),
-  (1, 'student_attendance_marked_above_50_percent_by_district.py', 'studCount'),
-  (1, 'student_attendance_marked_above_50_percent_by_state.py', 'studCount');
+  event_by, transformer_file)
+VALUES (1, 'student_attendance_by_class.py'),
+  (1, 'student_attendance_by_school.py'),
+  (1, 'student_attendance_by_cluster.py'),
+  (1, 'student_attendance_by_block.py'),
+  (1, 'student_attendance_by_district.py'),
+  (1, 'student_attendance_by_state.py'),
+  (1, 'student_attendance_marked_above_50_percent_by_block.py'),
+  (1, 'student_attendance_marked_above_50_percent_by_cluster.py'),
+  (1, 'student_attendance_marked_above_50_percent_by_district.py'),
+  (1, 'student_attendance_marked_above_50_percent_by_state.py');
 
 
 INSERT INTO spec.dataset (event_by, dataset_name, dataset_data)
