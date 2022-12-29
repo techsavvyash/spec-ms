@@ -52,10 +52,15 @@ export class DimensionService {
                             await queryRunner.commitTransaction();
                             return { "code": 200, "message": "Dimension Spec Created Successfully", "dimension_name": dimensionDTO.dimension_name, "pid": insertResult[0].pid };
                         }
+                        else{
+                            await queryRunner.rollbackTransaction();
+                            return { "code": 400, "message": "Unable to insert into spec pipeline table" };
+
+                        }
                     }
                     else {
                         await queryRunner.rollbackTransaction()
-                        return { "code": 400, "message": "Something went wrong" };
+                        return { "code": 400, "message": "Unable to insert into spec table" };
                     }
                 }catch (error) {
                     await queryRunner.rollbackTransaction()
