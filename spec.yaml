@@ -168,38 +168,131 @@ paths:
            example: {
             ingestion_type: dataset,
             dataset_name: sample,
-            input:{
-             type: object,
-             properties:{
-               dataset_name:{
-                 type: string
-               },
-               dataset:{
-                 type: object,
-                 properties:{
-                   school_id:
-                   {
-                     type: string
-                   },
-                   grade:{
-                     type: string
-                   },
-                   student_count: {
-                     type: string
-                   }
-                 },
-                 required:[
-                   school_id,
-                   grade,
-                   student_count
-                   ]
-               }
-             },
-             required:[
-               dataset_name,
-               dataset
-           ]
-          }
+            input: {
+        "type": "object",
+        "properties": {
+            "dataset_name": {
+                "type": "string"
+            },
+            "dataset": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "date": {
+                                "type": "string"
+                            },
+                            "school_id": {
+                                "type": "string"
+                            },
+                            "grade": {
+                                "type": "string"
+                            },
+                            "count": {
+                                "type": "number"
+                            },
+                            "sum": {
+                                "type": "number"
+                            },
+                            "percentage": {
+                                "type": "number"
+                            }
+                        },
+                        "required": [
+                            "date",
+                            "school_id",
+                            "grade",
+                            "count",
+                            "sum",
+                            "percentage"
+                        ]
+                    },
+                    "groupBy": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string"
+                                },
+                                "school_id": {
+                                    "type": "string"
+                                },
+                                "grade": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "date",
+                                "school_id",
+                                "grade"
+                            ]
+                        }
+                    },
+                    "aggregate": {
+                        "type": "object",
+                        "properties": {
+                            "function": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "sum": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "targetTable": {
+                                "type": "object",
+                                "properties": {
+                                    "ingestion.student_attendance_by_class": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "columns": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "column": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "students_attendance_marked": {
+                                                        "type": "string"
+                                                    },
+                                                    "total_students": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "required": [
+                            "function",
+                            "targetTable",
+                            "columns"
+                        ]
+                    }
+                },
+                "required": [
+                    "items"
+                ]
+            }
+        },
+        "required": [
+            "dataset_name",
+            "dataset"
+        ]
+    }
+
          }
       responses:
         200:
@@ -236,9 +329,6 @@ paths:
           schema:
             type: "object"
             properties:
-              transformer_name:
-                type: "string"
-                example: "student_count_sum_transformer"
               event_name:
                 type: "string"
                 example: "student_count"
@@ -248,9 +338,6 @@ paths:
               template:
                 type: "string"
                 example: "sum_template"
-              function:
-                type: "string"
-                example: "sum"
       responses:
         200:
           description: "Transformer Spec Created Successfully"
