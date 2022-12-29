@@ -26,7 +26,6 @@ async ajvValidator(schema, inputData) {
 {
     let dbColumns = []
       columnProperties.forEach((element, index) => {
-        console.log("The element is:", element);
         if (element.type == "string") {
           dbColumns[index] = 'VARCHAR'
         }

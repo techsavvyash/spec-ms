@@ -24,9 +24,8 @@ export class EventService {
         }
         else {
             await queryRunner.connect();
-            let values = newObj?.input?.properties?.event;
-            let duplicacyQuery = checkDuplicacy(['event_name', 'event_data'], 'event', ['event_data', 'input', 'properties', 'event'], JSON.stringify(values));
-            console.log("The query is:", duplicacyQuery);
+            let values = newObj?.input?.properties?.event?.properties;
+            let duplicacyQuery = checkDuplicacy(['event_name', 'event_data'], 'event', ['event_data', 'input', 'properties', 'event','properties'], JSON.stringify(values));
             const result = await queryRunner.query(duplicacyQuery);
             console.log("The result is:", result);
             if (result.length == 0) //If there is no record in the DB then insert the first schema
@@ -39,8 +38,8 @@ export class EventService {
                     const insertResult = await queryRunner.query(insertQuery);
                     if (insertResult[0].pid) {
                         let event_pid = (insertResult[0].pid).toString();
-                        const pipeline_name = speceventDTO.dimension_name.toLowerCase() + 'pipeline';
-                        let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dimension_pid'], 'pipeline', [pipeline_name, event_pid]);
+                        const pipeline_name = speceventDTO.event_name.toLowerCase() + 'pipeline';
+                        let insertPipeLineQuery = insertPipeline(['pipeline_name', 'event_pid'], 'pipeline', [pipeline_name, event_pid]);
                         const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                         if (insertPipelineResult[0].pid) {
                             await queryRunner.commitTransaction();

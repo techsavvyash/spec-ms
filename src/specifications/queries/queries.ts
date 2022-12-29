@@ -5,7 +5,7 @@
     }
     export function checkDuplicacy(columnNames: string[],tableName: string, JsonProperties: string[], conditionData)
     {
-        const querStr = `SELECT ${columnNames[0]},${columnNames[1]} FROM spec.${tableName} WHERE (${JsonProperties[0]}->'${JsonProperties[1]}'->'${JsonProperties[2]}'->'${JsonProperties[3]}')::jsonb = ('${conditionData}') ::jsonb `;
+        const querStr = `SELECT ${columnNames[0]},${columnNames[1]} FROM spec.${tableName} WHERE (${JsonProperties[0]}->'${JsonProperties[1]}'->'${JsonProperties[2]}'->'${JsonProperties[3]}'->'${JsonProperties[4]}')::jsonb = ('${conditionData}') ::jsonb `;
         return querStr;
     }
     export function insertSchema(columnNames: string[], tableName: string)
