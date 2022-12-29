@@ -361,32 +361,70 @@ VALUES (1, 'student_attendance_by_class', '{
           },
           "groupBy": {
             "type": "array",
-            "properties": [
-              "date",
-              "school_id",
-              "grade"
-            ],
-            "required": [
-              "date",
-              "school_id",
-              "grade"
-            ]
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "school_id": {
+                  "type": "string"
+                },
+                "grade": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "date",
+                "school_id",
+                "grade"
+              ]
+            }
           },
           "aggregate": {
             "type": "object",
             "properties": {
-              "function": [
-                "sum"
-              ],
-              "targetTable": "ingestion.student_attendance_by_class",
-              "columns": [
-                {
-                  "column": [
-                    "students_attendance_marked",
-                    "total_students"
-                  ]
+              "function": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "sum": {
+                      "type": "string"
+                    }
+                  }
                 }
-              ]
+              },
+              "targetTable": {
+                "type": "object",
+                "properties": {
+                  "ingestion.student_attendance_by_class": {
+                    "type": "string"
+                  }
+                }
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "students_attendance_marked": {
+                            "type": "string"
+                          },
+                          "total_students": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
             "required": [
               "function",
@@ -396,9 +434,7 @@ VALUES (1, 'student_attendance_by_class', '{
           }
         },
         "required": [
-          "items",
-          "groupBy",
-          "aggregate"
+          "items"
         ]
       }
     },
