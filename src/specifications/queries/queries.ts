@@ -51,3 +51,9 @@
             return createQueryStr;
         }
 }
+
+export function insertTransformer(transformer_file:string,transformer_function:string){
+    console.log(transformer_file,transformer_function)
+    const queryStr =`INSERT INTO spec.transformer(transformer_file, transformer_function) VALUES ('${transformer_file}','${transformer_function}') RETURNING pid`;
+    return queryStr;    
+}

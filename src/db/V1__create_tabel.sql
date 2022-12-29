@@ -1,180 +1,178 @@
 CREATE SCHEMA IF NOT EXISTS spec;
 
 CREATE TABLE IF NOT EXISTS spec.event (
-  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  is_deleted BOOLEAN   DEFAULT FALSE,
+  pid        INT          GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN      DEFAULT FALSE,
   event_by   INT NOT NULL DEFAULT 1,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   event_name VARCHAR UNIQUE,
   event_data jsonb
 );
 
 CREATE TABLE IF NOT EXISTS spec.dataset (
-  pid          INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  is_deleted BOOLEAN   DEFAULT FALSE,
-  event_by   INT NOT NULL DEFAULT 1,
-  created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  pid          INT          GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted   BOOLEAN      DEFAULT FALSE,
+  event_by     INT NOT NULL DEFAULT 1,
+  created_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  updated_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   dataset_name VARCHAR UNIQUE,
   dataset_data jsonb
 );
 
 CREATE TABLE IF NOT EXISTS spec.dimension (
-  pid            INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  is_deleted BOOLEAN   DEFAULT FALSE,
-  event_by   INT NOT NULL DEFAULT 1,
-  created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  pid            INT          GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted     BOOLEAN      DEFAULT FALSE,
+  event_by       INT NOT NULL DEFAULT 1,
+  created_at     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  updated_at     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   dimension_name VARCHAR UNIQUE,
   dimension_data jsonb
 );
 
 CREATE TABLE IF NOT EXISTS spec.transformer (
-  pid                  INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  is_deleted BOOLEAN   DEFAULT FALSE,
-  event_by   INT NOT NULL,
-  created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  pid                  INT          GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted           BOOLEAN      DEFAULT FALSE,
+  event_by             INT NOT NULL DEFAULT 1,
+  created_at           TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  updated_at           TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   transformer_file     VARCHAR,
-  transformer_function VARCHAR,
-  UNIQUE (transformer_file, transformer_function)
+  UNIQUE (transformer_file)
 );
 
 CREATE TABLE IF NOT EXISTS spec.pipeline (
   pid             INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  is_deleted BOOLEAN   DEFAULT FALSE,
-  event_by   INT NOT NULL,
+  is_deleted      BOOLEAN   DEFAULT FALSE,
+  event_by        INT NOT NULL,
   created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   pipeline_name   VARCHAR UNIQUE,
-  event_pid       INT  REFERENCES spec.event (pid),
-  dataset_pid     INT  REFERENCES spec.dataset (pid),
-  dimension_pid   INT  REFERENCES spec.dimension (pid),
-  transformer_pid INT  REFERENCES spec.transformer (pid)
+  event_pid       INT REFERENCES spec.event (pid),
+  dataset_pid     INT REFERENCES spec.dataset (pid),
+  dimension_pid   INT REFERENCES spec.dimension (pid),
+  transformer_pid INT REFERENCES spec.transformer (pid)
 );
 
 CREATE SCHEMA IF NOT EXISTS ingestion;
 
 CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_class (
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  school_id                  VARCHAR,
-  grade                       INT,
-  count                      NUMERIC,
-  sum                         NUMERIC,
-  percentage                   NUMERIC,
-  UNIQUE (date,school_id,grade)
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  school_id  VARCHAR,
+  grade      INT,
+  count      NUMERIC,
+  sum        NUMERIC,
+  percentage NUMERIC,
+  UNIQUE (date, school_id, grade)
 );
 
 
 CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_school (
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  school_id                  VARCHAR,
-  count                      NUMERIC,
-  sum				 NUMERIC,
-  percentage                   NUMERIC,
-  UNIQUE(date,school_id)
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  school_id  VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  percentage NUMERIC,
+  UNIQUE (date, school_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_cluster(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  cluster_id               VARCHAR,
-  count                     NUMERIC,
-  sum                  	 NUMERIC,
-  percentage                   NUMERIC,
- UNIQUE (date,cluster_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_cluster (
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  cluster_id VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  percentage NUMERIC,
+  UNIQUE (date, cluster_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_block(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  block_id                  VARCHAR,
-  count 		       NUMERIC,
-  sum 				 NUMERIC,
-  percentage                   NUMERIC,
-  UNIQUE (date,block_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_block (
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  block_id   VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  percentage NUMERIC,
+  UNIQUE (date, block_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_district(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  district_id               VARCHAR,
-  count 		      NUMERIC,
-  sum 				 NUMERIC,
-  percentage                   NUMERIC,
-  UNIQUE (date,district_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_district (
+  pid         INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date        VARCHAR,
+  district_id VARCHAR,
+  count       NUMERIC,
+  sum         NUMERIC,
+  percentage  NUMERIC,
+  UNIQUE (date, district_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_state(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  state_id                   VARCHAR,
-  count 		      NUMERIC,
-  sum 				 NUMERIC,
-  percentage                   NUMERIC,
-  UNIQUE (date,state_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_by_state (
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  state_id   VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  percentage NUMERIC,
+  UNIQUE (date, state_id)
 );
 
- 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_cluster(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  cluster_id               VARCHAR,
-  count                  NUMERIC,
-  sum                    NUMERIC,
-  UNIQUE (date,cluster_id)
+
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_cluster (
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  cluster_id VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  UNIQUE (date, cluster_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_block(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  block_id               VARCHAR,
-  count                  NUMERIC,
-  sum                    NUMERIC,
-  UNIQUE (date,block_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_block (
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  block_id   VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  UNIQUE (date, block_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_district(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  district_id               VARCHAR,
-  count                  NUMERIC,
-  sum                    NUMERIC,
-  UNIQUE (date,district_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_district (
+  pid         INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date        VARCHAR,
+  district_id VARCHAR,
+  count       NUMERIC,
+  sum         NUMERIC,
+  UNIQUE (date, district_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_state(
-  pid                        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  created_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date                       VARCHAR,
-  state_id               VARCHAR,
-  count                  NUMERIC,
-  sum                    NUMERIC,
-  UNIQUE (date,state_id)
+CREATE TABLE IF NOT EXISTS ingestion.student_attendance_marked_above_50_Percent_by_state (
+  pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date       VARCHAR,
+  state_id   VARCHAR,
+  count      NUMERIC,
+  sum        NUMERIC,
+  UNIQUE (date, state_id)
 );
-
 
 
 CREATE TABLE IF NOT EXISTS ingestion.student_attendance (
@@ -186,17 +184,12 @@ CREATE TABLE IF NOT EXISTS ingestion.student_attendance (
   cluster_id    VARCHAR,
   cluster_name  VARCHAR,
   block_id      VARCHAR,
-  block_name     VARCHAR,
+  block_name    VARCHAR,
   district_id   VARCHAR,
   district_name VARCHAR,
   state_id      VARCHAR,
   state_name    VARCHAR
 );
-
-
-
-
-
 
 
 INSERT INTO spec.event (
@@ -246,1089 +239,1199 @@ VALUES (1, 'student_attendance', '{
 
 INSERT INTO spec.dimension (event_by, dimension_name, dimension_data)
 VALUES (1, 'student_attendance', '{
-    "ingestion_type": "dimension",
-    "input": {
+  "ingestion_type": "dimension",
+  "input": {
+    "type": "object",
+    "properties": {
+      "dimension_name": {
+        "type": "string"
+      },
+      "dimension": {
         "type": "object",
         "properties": {
-            "dimension_name": {
-                "type": "string"
-            },
-            "dimension": {
-                "type": "object",
-                "properties": {
-                    "school_id": {
-                        "type": "string"
-                    },
-                    "school_name": {
-                        "type": "string"
-                    },
-                    "cluster_id": {
-                        "type": "string"
-                    },
-                    "cluster_name": {
-                        "type": "string"
-                    },
-                    "block_id": {
-                        "type": "string"
-                    },
-                    "block_name": {
-                        "type": "string"
-                    },
-                    "district_id": {
-                        "type": "string"
-                    },
-                    "district_name": {
-                        "type": "string"
-                    },
-                    "state_id": {
-                        "type": "string"
-                    },
-                    "state_name": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "school_id",
-                    "school_name",
-                    "cluster_id",
-                    "cluster_name",
-                    "block_id",
-                    "block_name",
-                    "district_id",
-                    "district_name",
-                    "state_id",
-                    "state_name"
-                ]
-            }
+          "school_id": {
+            "type": "string"
+          },
+          "school_name": {
+            "type": "string"
+          },
+          "cluster_id": {
+            "type": "string"
+          },
+          "cluster_name": {
+            "type": "string"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "block_name": {
+            "type": "string"
+          },
+          "district_id": {
+            "type": "string"
+          },
+          "district_name": {
+            "type": "string"
+          },
+          "state_id": {
+            "type": "string"
+          },
+          "state_name": {
+            "type": "string"
+          }
         },
         "required": [
-            "dimension_name",
-            "dimension"
+          "school_id",
+          "school_name",
+          "cluster_id",
+          "cluster_name",
+          "block_id",
+          "block_name",
+          "district_id",
+          "district_name",
+          "state_id",
+          "state_name"
         ]
-    }
+      }
+    },
+    "required": [
+      "dimension_name",
+      "dimension"
+    ]
+  }
 }');
 
 INSERT INTO spec.transformer (
   event_by, transformer_file, transformer_function)
 VALUES (1, 'student_attendance_by_class.py', 'studCount'),
-(1, 'student_attendance_by_school.py', 'studCount'),
-(1, 'student_attendance_by_cluster.py', 'studCount'),
-(1, 'student_attendance_by_block.py', 'studCount'),
-(1, 'student_attendance_by_district.py', 'studCount'),
-(1, 'student_attendance_by_state.py', 'studCount'),
-(1, 'student_attendance_marked_above_50_percent_by_block.py', 'studCount'),
-(1, 'student_attendance_marked_above_50_percent_by_cluster.py', 'studCount'),
-(1, 'student_attendance_marked_above_50_percent_by_district.py', 'studCount'),
-(1, 'student_attendance_marked_above_50_percent_by_state.py', 'studCount');
+  (1, 'student_attendance_by_school.py', 'studCount'),
+  (1, 'student_attendance_by_cluster.py', 'studCount'),
+  (1, 'student_attendance_by_block.py', 'studCount'),
+  (1, 'student_attendance_by_district.py', 'studCount'),
+  (1, 'student_attendance_by_state.py', 'studCount'),
+  (1, 'student_attendance_marked_above_50_percent_by_block.py', 'studCount'),
+  (1, 'student_attendance_marked_above_50_percent_by_cluster.py', 'studCount'),
+  (1, 'student_attendance_marked_above_50_percent_by_district.py', 'studCount'),
+  (1, 'student_attendance_marked_above_50_percent_by_state.py', 'studCount');
 
 
 INSERT INTO spec.dataset (event_by, dataset_name, dataset_data)
 VALUES (1, 'student_attendance_by_class', '{
-    "ingestion_type": "dataset",
-    "input": {
+  "ingestion_type": "dataset",
+  "input": {
+    "type": "object",
+    "properties": {
+      "dataset_name": {
+        "type": "string"
+      },
+      "dataset": {
         "type": "object",
         "properties": {
-            "dataset_name": {
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
                 "type": "string"
+              },
+              "school_id": {
+                "type": "string"
+              },
+              "grade": {
+                "type": "string"
+              },
+              "count": {
+                "type": "number"
+              },
+              "sum": {
+                "type": "number"
+              },
+              "percentage": {
+                "type": "number"
+              }
             },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "school_id": {
-                                "type": "string"
-                            },
-                            "grade":{
-                                "type":"string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage":{
-                                "type":"number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "school_id",
-                            "grade",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "school_id",
-                            "grade"
-                        ],
-                        "required": [
-                            "date",
-                            "school_id",
-                            "grade"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "sum"
-                            ],
-                            "targetTable": "ingestion.student_attendance_by_class",
-                            "columns": [
-                                {
-                                    "column": [
-                                        "students_attendance_marked",
-                                         "total_students"
-                                    ]
-                                }
-                            ]
-                             
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
+            "required": [
+              "date",
+              "school_id",
+              "grade",
+              "count",
+              "sum",
+              "percentage"
+            ]
+          },
+          "groupBy": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
                 },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-            "dataset"
-        ]
-    }
-}'),
-(1, 'student_attendance_by_school', '{
-    "ingestion_type": "dataset",
-    "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            }, 
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "school_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage":{
-                                "type":"number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "school_id",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "school_id"
-                        ],
-                        "required": [
-                            "date",
-                            "school_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "sum"
-                            ],
-                            "targetTable": "ingestion.student_attendance_by_school",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_class",
-                                    "column": [
-                                        "sum",
-                                         "count"
-                                    ]
-                                }
-                            ]
-                             
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
+                "school_id": {
+                  "type": "string"
                 },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-            "dimensions",
-            "dataset"
-        ]
-    }
-}'),
-(1, 'student_attendance_by_cluster', '{
-    "ingestion_type": "dataset",
-    "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "cluster_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage":{
-                                "type":"number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "cluster_id",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "cluster_id"
-                        ],
-                        "required": [
-                            "date",
-                            "cluster_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "sum"
-                            ],
-                            "targetTable": "ingestion.student_attendance_by_cluster",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_school",
-                                    "column": [
-                                        "sum",
-                                         "count"
-                                    ]
-                                }
-                            ]
-                             
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-              "dataset"
-        ]
-    }
-}'),
-(1, 'student_attendance_by_block', '{
-    "ingestion_type": "dataset",
-    "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "block_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage":{
-                                "type":"number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "block_id",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "block_id"
-                        ],
-                        "required": [
-                            "date",
-                            "block_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "sum"
-                            ],
-                            "targetTable": "ingestion.student_attendance_by_block",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_cluster",
-                                    "column": [
-                                        "sum",
-                                         "count"
-                                    ]
-                                }
-                            ]
-                             
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-            "dataset"
-        ]
-    }
-}'),
-(1, 'student_attendance_by_district', '{
-    "ingestion_type": "dataset",
-    "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "district_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage":{
-                                "type":"number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "district_id",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "district_id"
-                        ],
-                        "required": [
-                            "date",
-                            "district_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "sum"
-                            ],
-                            "targetTable": "ingestion.student_attendance_by_district",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_block",
-                                    "column": [
-                                        "sum",
-                                         "count"
-                                    ]
-                                }
-                            ]
-                             
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-            "dataset"
-        ]
-    }
-}'),
-(1, 'student_attendance_by_state', '{
-    "ingestion_type": "dataset",
-    "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "state_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage":{
-                                "type":"number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "state_id",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "state_id"
-                        ],
-                        "required": [
-                            "date",
-                            "state_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "sum"
-                            ],
-                            "targetTable": "ingestion.student_attendance_by_state",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_district",
-                                    "column": [
-                                        "sum",
-                                         "count"
-                                    ]
-                                }
-                            ]
-                             
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-            "dataset"
-        ]
-    }
-}'),
-(1, 'student_attendance_marked_above_50_percent_by_cluster', '{
-    "ingestion_type": "dataset",
-    "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dimensions": {
-                "type": "object",
-                "properties": {
-                    "table": "ingestion.student_attendance",
-                    "column": [
-                        "school_id",
-                        "cluster_id"
-                    ],
-                    "merge_On_Cols":"school_id"
+                "grade": {
+                  "type": "string"
                 }
-            },
-            "dataset": {
+              },
+              "required": [
+                "date",
+                "school_id",
+                "grade"
+              ]
+            }
+          },
+          "aggregate": {
+            "type": "object",
+            "properties": {
+              "function": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "sum": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "targetTable": {
                 "type": "object",
                 "properties": {
-                    "items": {
+                  "ingestion.student_attendance_by_class": {
+                    "type": "string"
+                  }
+                }
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "array",
+                      "items": {
                         "type": "object",
                         "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "cluster_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "cluster_id",
-                            "count",
-                            "sum"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "cluster_id"
-                        ],
-                        "required": [
-                            "date",
-                            "cluster_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "count"
-                            ],
-                            "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_cluster",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_school",
-                                    "column": [
-                                        "count",
-                                        "sum"
-                                    ]
-                                }
-                            ],
-                            "filters": {
-                                "filter": "50",
-                                "filterType": ">=",
-                                "column": [
-                                    "percentage"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns",
-                            "filters"
-                        ]
+                          "students_attendance_marked": {
+                            "type": "string"
+                          },
+                          "total_students": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
+                  }
+                }
+              }
+            },
+            "required": [
+              "function",
+              "targetTable",
+              "columns"
+            ]
+          }
         },
         "required": [
-            "dataset_name",
-            "dimensions",
-            "dataset"
+          "items"
         ]
-    }
+      }
+    },
+    "required": [
+      "dataset_name",
+      "dataset"
+    ]
+  }
 }'),
-(1, 'student_attendance_marked_above_50_percent_by_block', '{
+  (1, 'student_attendance_by_school', '{
     "ingestion_type": "dataset",
     "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dimensions": {
-                "type": "object",
-                "properties": {
-                    "table": "ingestion.student_attendance",
-                    "column": [
-                        "school_id",
-                        "block_id"
-                    ],
-                    "merge_On_Cols":"school_id"
-                }
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "block_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "block_id",
-                            "count",
-                            "sum"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "block_id"
-                        ],
-                        "required": [
-                            "date",
-                            "block_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "count"
-                            ],
-                            "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_block",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_school",
-                                    "column": [
-                                        "count",
-                                        "sum"
-                                    ]
-                                }
-                            ],
-                            "filters": {
-                                "filter": "50",
-                                "filterType": ">=",
-                                "column": [
-                                    "percentage"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns",
-                            "filters"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
         },
-        "required": [
-            "dataset_name",
-            "dimensions",
-            "dataset"
-        ]
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "school_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "school_id",
+                "count",
+                "sum",
+                "percentage"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "school_id"
+              ],
+              "required": [
+                "date",
+                "school_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "sum"
+                ],
+                "targetTable": "ingestion.student_attendance_by_school",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_class",
+                    "column": [
+                      "sum",
+                      "count"
+                    ]
+                  }
+                ]
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dimensions",
+        "dataset"
+      ]
     }
-}'),
-(1, 'student_attendance_marked_above_50_percent_by_district', '{
+  }'),
+  (1, 'student_attendance_by_cluster', '{
     "ingestion_type": "dataset",
     "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dimensions": {
-                "type": "object",
-                "properties": {
-                    "table": "ingestion.student_attendance",
-                    "column": [
-                        "school_id",
-                        "district_id"
-                    ],
-                    "merge_On_Cols":"school_id"
-                }
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "district_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "district_id",
-                            "count",
-                            "sum"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "district_id"
-                        ],
-                        "required": [
-                            "date",
-                            "district_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "count"
-                            ],
-                            "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_district",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_school",
-                                    "column": [
-                                        "count",
-                                        "sum"
-                                    ]
-                                }
-                            ],
-                            "filters": {
-                                "filter": "50",
-                                "filterType": ">=",
-                                "column": [
-                                    "percentage"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns",
-                            "filters"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
         },
-        "required": [
-            "dataset_name",
-            "dimensions",
-            "dataset"
-        ]
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "cluster_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "cluster_id",
+                "count",
+                "sum",
+                "percentage"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "cluster_id"
+              ],
+              "required": [
+                "date",
+                "cluster_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "sum"
+                ],
+                "targetTable": "ingestion.student_attendance_by_cluster",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_school",
+                    "column": [
+                      "sum",
+                      "count"
+                    ]
+                  }
+                ]
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dataset"
+      ]
     }
-}'),
-(1, 'student_attendance_marked_above_50_percent_by_state', '{
+  }'),
+  (1, 'student_attendance_by_block', '{
     "ingestion_type": "dataset",
     "input": {
-        "type": "object",
-        "properties": {
-            "dataset_name": {
-                "type": "string"
-            },
-            "dimensions": {
-                "type": "object",
-                "properties": {
-                    "table": "ingestion.student_attendance",
-                    "column": [
-                        "school_id",
-                        "state_id"
-                    ],
-                    "merge_On_Cols":"school_id"
-                }
-            },
-            "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "state_id": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "state_id",
-                            "count",
-                            "sum"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
-                        "properties": [
-                            "date",
-                            "state_id"
-                        ],
-                        "required": [
-                            "date",
-                            "state_id"
-                        ]
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": [
-                                "count"
-                            ],
-                            "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_state",
-                            "columns": [
-                                {
-                                    "table": "ingestion.student_attendance_by_school",
-                                    "column": [
-                                        "count",
-                                        "sum"
-                                    ]
-                                }
-                            ],
-                            "filters": {
-                                "filter": "50",
-                                "filterType": ">=",
-                                "column": [
-                                    "percentage"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns",
-                            "filters"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "groupBy",
-                    "aggregate"
-                ]
-            }
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
         },
-        "required": [
-            "dataset_name",
-            "dimensions",
-            "dataset"
-        ]
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "block_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "block_id",
+                "count",
+                "sum",
+                "percentage"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "block_id"
+              ],
+              "required": [
+                "date",
+                "block_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "sum"
+                ],
+                "targetTable": "ingestion.student_attendance_by_block",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_cluster",
+                    "column": [
+                      "sum",
+                      "count"
+                    ]
+                  }
+                ]
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dataset"
+      ]
     }
-}');
+  }'),
+  (1, 'student_attendance_by_district', '{
+    "ingestion_type": "dataset",
+    "input": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "district_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "district_id",
+                "count",
+                "sum",
+                "percentage"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "district_id"
+              ],
+              "required": [
+                "date",
+                "district_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "sum"
+                ],
+                "targetTable": "ingestion.student_attendance_by_district",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_block",
+                    "column": [
+                      "sum",
+                      "count"
+                    ]
+                  }
+                ]
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dataset"
+      ]
+    }
+  }'),
+  (1, 'student_attendance_by_state', '{
+    "ingestion_type": "dataset",
+    "input": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "state_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "state_id",
+                "count",
+                "sum",
+                "percentage"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "state_id"
+              ],
+              "required": [
+                "date",
+                "state_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "sum"
+                ],
+                "targetTable": "ingestion.student_attendance_by_state",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_district",
+                    "column": [
+                      "sum",
+                      "count"
+                    ]
+                  }
+                ]
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dataset"
+      ]
+    }
+  }'),
+  (1, 'student_attendance_marked_above_50_percent_by_cluster', '{
+    "ingestion_type": "dataset",
+    "input": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "table": "ingestion.student_attendance",
+            "column": [
+              "school_id",
+              "cluster_id"
+            ],
+            "merge_On_Cols": "school_id"
+          }
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "cluster_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "cluster_id",
+                "count",
+                "sum"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "cluster_id"
+              ],
+              "required": [
+                "date",
+                "cluster_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "count"
+                ],
+                "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_cluster",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_school",
+                    "column": [
+                      "count",
+                      "sum"
+                    ]
+                  }
+                ],
+                "filters": {
+                  "filter": "50",
+                  "filterType": ">=",
+                  "column": [
+                    "percentage"
+                  ]
+                }
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns",
+                "filters"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dimensions",
+        "dataset"
+      ]
+    }
+  }'),
+  (1, 'student_attendance_marked_above_50_percent_by_block', '{
+    "ingestion_type": "dataset",
+    "input": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "table": "ingestion.student_attendance",
+            "column": [
+              "school_id",
+              "block_id"
+            ],
+            "merge_On_Cols": "school_id"
+          }
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "block_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "block_id",
+                "count",
+                "sum"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "block_id"
+              ],
+              "required": [
+                "date",
+                "block_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "count"
+                ],
+                "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_block",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_school",
+                    "column": [
+                      "count",
+                      "sum"
+                    ]
+                  }
+                ],
+                "filters": {
+                  "filter": "50",
+                  "filterType": ">=",
+                  "column": [
+                    "percentage"
+                  ]
+                }
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns",
+                "filters"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dimensions",
+        "dataset"
+      ]
+    }
+  }'),
+  (1, 'student_attendance_marked_above_50_percent_by_district', '{
+    "ingestion_type": "dataset",
+    "input": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "table": "ingestion.student_attendance",
+            "column": [
+              "school_id",
+              "district_id"
+            ],
+            "merge_On_Cols": "school_id"
+          }
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "district_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "district_id",
+                "count",
+                "sum"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "district_id"
+              ],
+              "required": [
+                "date",
+                "district_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "count"
+                ],
+                "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_district",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_school",
+                    "column": [
+                      "count",
+                      "sum"
+                    ]
+                  }
+                ],
+                "filters": {
+                  "filter": "50",
+                  "filterType": ">=",
+                  "column": [
+                    "percentage"
+                  ]
+                }
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns",
+                "filters"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dimensions",
+        "dataset"
+      ]
+    }
+  }'),
+  (1, 'student_attendance_marked_above_50_percent_by_state', '{
+    "ingestion_type": "dataset",
+    "input": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string"
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "table": "ingestion.student_attendance",
+            "column": [
+              "school_id",
+              "state_id"
+            ],
+            "merge_On_Cols": "school_id"
+          }
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "state_id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "number"
+                },
+                "sum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "state_id",
+                "count",
+                "sum"
+              ]
+            },
+            "groupBy": {
+              "type": "array",
+              "properties": [
+                "date",
+                "state_id"
+              ],
+              "required": [
+                "date",
+                "state_id"
+              ]
+            },
+            "aggregate": {
+              "type": "object",
+              "properties": {
+                "function": [
+                  "count"
+                ],
+                "targetTable": "ingestion.student_attendance_marked_above_50_percent_by_state",
+                "columns": [
+                  {
+                    "table": "ingestion.student_attendance_by_school",
+                    "column": [
+                      "count",
+                      "sum"
+                    ]
+                  }
+                ],
+                "filters": {
+                  "filter": "50",
+                  "filterType": ">=",
+                  "column": [
+                    "percentage"
+                  ]
+                }
+              },
+              "required": [
+                "function",
+                "targetTable",
+                "columns",
+                "filters"
+              ]
+            }
+          },
+          "required": [
+            "items",
+            "groupBy",
+            "aggregate"
+          ]
+        }
+      },
+      "required": [
+        "dataset_name",
+        "dimensions",
+        "dataset"
+      ]
+    }
+  }');
 
 INSERT INTO spec.pipeline (
   event_by, event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name)
 VALUES (1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_by_class'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_by_class.py'),
-    'student_attendance_by_class'
+        (SELECT pid
+         FROM spec.event
+         WHERE event_name = 'student_attendance'),
+        (SELECT pid
+         FROM spec.dataset
+         WHERE dataset_name = 'student_attendance_by_class'),
+        (SELECT pid
+         FROM spec.dimension
+         WHERE dimension_name = 'student_attendance'),
+        (SELECT pid
+         FROM spec.transformer
+         WHERE transformer_file = 'student_attendance_by_class.py'),
+        'student_attendance_by_class'
 ),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_by_school'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_by_school.py'),
-    'student_attendance_by_school'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_by_cluster'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_by_cluster.py'),
-    'student_attendance_by_cluster'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_by_block'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_by_block.py'),
-    'student_attendance_by_block'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_by_district'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_by_district.py'),
-    'student_attendance_by_district'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_by_state'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_by_state.py'),
-    'student_attendance_by_state'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_cluster'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_cluster.py'),
-    'student_attendance_marked_above_50_percent_by_cluster'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_block'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_block.py'),
-    'student_attendance_marked_above_50_percent_by_block'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_district'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_district.py'),
-    'student_attendance_marked_above_50_percent_by_district'
-),
-(1,
-    (SELECT pid FROM spec.event WHERE event_name = 'student_attendance'),
-    (SELECT pid FROM spec.dataset WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_state'),
-    (SELECT pid FROM spec.dimension WHERE dimension_name = 'student_attendance'),
-    (SELECT pid FROM spec.transformer WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_state.py'),
-    'student_attendance_marked_above_50_percent_by_state'
-);
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_by_school'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_by_school.py'),
+   'student_attendance_by_school'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_by_cluster'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_by_cluster.py'),
+   'student_attendance_by_cluster'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_by_block'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_by_block.py'),
+   'student_attendance_by_block'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_by_district'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_by_district.py'),
+   'student_attendance_by_district'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_by_state'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_by_state.py'),
+   'student_attendance_by_state'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_cluster'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_cluster.py'),
+   'student_attendance_marked_above_50_percent_by_cluster'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_block'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_block.py'),
+   'student_attendance_marked_above_50_percent_by_block'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_district'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_district.py'),
+   'student_attendance_marked_above_50_percent_by_district'
+  ),
+  (1,
+   (SELECT pid
+    FROM spec.event
+    WHERE event_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.dataset
+    WHERE dataset_name = 'student_attendance_marked_above_50_percent_by_state'),
+   (SELECT pid
+    FROM spec.dimension
+    WHERE dimension_name = 'student_attendance'),
+   (SELECT pid
+    FROM spec.transformer
+    WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_state.py'),
+   'student_attendance_marked_above_50_percent_by_state'
+  );

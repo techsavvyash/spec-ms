@@ -7,10 +7,10 @@ import { DimensionService } from './service/dimension/dimension.service';
 import { GenericFunction } from './service/genericFunction';
 import { TransformerService } from './service/transformer/transformer.service';
 import { DatasetService } from './service/dataset/dataset.service';
-
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [],
+  imports: [HttpModule],
   controllers: [SpecificationController],
   providers:[DimensionService,EventService,GenericFunction,TransformerService, DatasetService],
 
