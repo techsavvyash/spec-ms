@@ -335,6 +335,9 @@ paths:
               dataset_name:
                 type: "string"
                 example: "student_count"
+              transformer_type:
+                type: "string"
+                example: "event_to_dataset"
               template:
                 type: "string"
                 example: "sum_template"
