@@ -6,7 +6,7 @@ export class DimensionService {
     constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction) {
     }
     async createDimension(dimensionDTO) {
-        const queryRunner = this.dataSource.createQueryRunner()
+        const queryRunner = this.dataSource.createQueryRunner();
         let dbColumns = []
         let newObj = this.specService.convertKeysToLowerCase(dimensionDTO);
         if (dimensionDTO?.dimension_name.toLowerCase() == "") {
@@ -23,7 +23,7 @@ export class DimensionService {
         }
         else {
             await queryRunner.connect();
-            let values = newObj?.input?.properties?.dimension;
+            let values = newObj?.input?.properties?.dimension?.properties;
             let duplicacyQuery = checkDuplicacy(['dimension_name', 'dimension_data'], 'dimension', ['dimension_data', 'input', 'properties', 'dimension'], JSON.stringify(values));
             const result = await queryRunner.query(duplicacyQuery);
             if (result.length == 0) //If there is no record in the DB then insert the first schema
@@ -36,14 +36,15 @@ export class DimensionService {
                     const insertResult = await queryRunner.query(insertQuery);
                     if (insertResult[0].pid) {
                         let dimension_pid = insertResult[0].pid;
+                        console.log("The dimension pid is:", dimension_pid);
                         const pipeline_name = dimensionDTO.dimension_name.toLowerCase() + 'pipeline';
                         let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dimension_pid'], 'pipeline', [pipeline_name, dimension_pid]);
                         const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                         if (insertPipelineResult[0].pid) {
                             let columnProperties = []
-                            let columnNames = [];
-                            columnNames.push(Object.keys(values?.properties));
-                            columnProperties.push(Object.values(values?.properties))
+                            let columnNames = [];                
+                            columnNames.push(Object.keys(values));
+                            columnProperties.push(Object.values(values));
                             dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
                             let tbName: string = newObj?.ingestion_type;
                             let createQuery = createTable(tbName, columnNames[0], dbColumns);
@@ -51,10 +52,15 @@ export class DimensionService {
                             await queryRunner.commitTransaction();
                             return { "code": 200, "message": "Dimension Spec Created Successfully", "dimension_name": dimensionDTO.dimension_name, "pid": insertResult[0].pid };
                         }
+                        else{
+                            await queryRunner.rollbackTransaction();
+                            return { "code": 400, "message": "Unable to insert into spec pipeline table" };
+
+                        }
                     }
                     else {
                         await queryRunner.rollbackTransaction()
-                        return { "code": 400, "message": "Something went wrong" };
+                        return { "code": 400, "message": "Unable to insert into spec table" };
                     }
                 }catch (error) {
                     await queryRunner.rollbackTransaction()

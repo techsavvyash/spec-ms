@@ -5,7 +5,6 @@ const ajv = new Ajv();
 export class GenericFunction {
 async ajvValidator(schema, inputData) {
     const isValid = ajv.validate(schema, inputData);
-    console.log("Valid",isValid);
     if (isValid) {
         return inputData;
     } else {
@@ -26,7 +25,6 @@ async ajvValidator(schema, inputData) {
 {
     let dbColumns = []
       columnProperties.forEach((element, index) => {
-        console.log("The element is:", element);
         if (element.type == "string") {
           dbColumns[index] = 'VARCHAR'
         }

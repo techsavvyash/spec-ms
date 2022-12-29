@@ -68,8 +68,11 @@ export class SpecificationController {
       if(result.code == 400){
         response.status(400).send({"message":result.message});
       }
-      else{
-        response.status(200).send({"message":result.message,"pid":result.pid,"transformer_name":result.transformer_name});
+      else if(result.code == 200) {
+        response.status(200).send({"message":result.message,"pid":result.pid,"file":result.file});
+      }
+      else {
+        response.status(404).send({"error":result.error});
       }
     } catch (error) {
       console.error("create.Transformer impl :", error) 

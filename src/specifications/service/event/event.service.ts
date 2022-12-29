@@ -24,9 +24,8 @@ export class EventService {
         }
         else {
             await queryRunner.connect();
-            let values = newObj?.input?.properties?.event;
-            let duplicacyQuery = checkDuplicacy(['event_name', 'event_data'], 'event', ['event_data', 'input', 'properties', 'event'], JSON.stringify(values));
-            console.log("The query is:", duplicacyQuery);
+            let values = newObj?.input?.properties?.event?.properties;
+            let duplicacyQuery = checkDuplicacy(['event_name', 'event_data'], 'event', ['event_data', 'input', 'properties', 'event','properties'], JSON.stringify(values));
             const result = await queryRunner.query(duplicacyQuery);
             console.log("The result is:", result);
             if (result.length == 0) //If there is no record in the DB then insert the first schema
@@ -36,23 +35,25 @@ export class EventService {
                     let insertQuery = insertSchema(['event_name', 'event_data'], 'event');
                     insertQuery = insertQuery.replace('$1', `'${speceventDTO.event_name.toLowerCase()}'`);
                     insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
+                    console.log("The insert query is:", insertQuery)
                     const insertResult = await queryRunner.query(insertQuery);
                     if (insertResult[0].pid) {
-                        let event_pid = (insertResult[0].pid).toString();
-                        const pipeline_name = speceventDTO.dimension_name.toLowerCase() + 'pipeline';
-                        let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dimension_pid'], 'pipeline', [pipeline_name, event_pid]);
+                        let event_pid = insertResult[0].pid;
+                        const pipeline_name = speceventDTO.event_name.toLowerCase() + 'pipeline';
+                        let insertPipeLineQuery = insertPipeline(['pipeline_name', 'event_pid'], 'pipeline', [pipeline_name, event_pid]);
                         const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                         if (insertPipelineResult[0].pid) {
                             await queryRunner.commitTransaction();
                             return { "code": 200, "message": "Event Spec Created Successfully", "event_name": speceventDTO.event_name, "pid": insertResult[0].pid };
                         }
                         else {
-                            return { "code": 400, "message": "Something went wrong" };
+                            await queryRunner.rollbackTransaction()
+                            return { "code": 400, "message": "Unable to insert into pipeline table" };
                         }
                     }
                     else {
                         await queryRunner.rollbackTransaction()
-                        return { "code": 400, "message": "Something went wrong" };
+                        return { "code": 400, "message": "Uable to insert into spec table" };
                     }
                 }
                 catch (error) {
