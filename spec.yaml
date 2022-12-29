@@ -252,6 +252,23 @@ paths:
                                     }
                                 }
                             },
+                            "updateCols":{
+                              "type":"array",
+                              "items":{
+                                "type":"object",
+                                "propeties":{
+                                  "sum":{
+                                    "type":"number"
+                                  },
+                                  "count":{
+                                    "type":"number"
+                                  },
+                                  "percentage":{
+                                    "type":"number"
+                                  }
+                                }
+                              }
+                            },
                             "columns": {
                                 "type": "array",
                                 "items": {
