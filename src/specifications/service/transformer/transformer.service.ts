@@ -5,74 +5,72 @@ import { DataSource } from 'typeorm';
 import { specTransformer } from '../../../utils/specSchemaData';
 import { TransformerType, TemplateType } from '../contsant'
 import { HttpService } from '@nestjs/axios';
-import { insertTransformer } from 'src/specifications/queries/queries';
-
+import { getdatasetName, getEventData, insertTransformer } from 'src/specifications/queries/queries';
 @Injectable()
 export class TransformerService {
     constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction, private http: HttpService) { }
     async createTransformer(inputData) {
         try {
-            const transformerName = inputData.transformer_name;
             const eventName = inputData.event_name;
             const datasetName = inputData.dataset_name;
             const transformerTypeInput = inputData.transformer_type;
             const template = inputData.template;
-            const transformerFunction = inputData.function
             const isValidSchema: any = await this.gnFunction.ajvValidator(specTransformer.input, inputData);
             if (!isValidSchema.errors) {
-                if (TransformerType.includes(transformerTypeInput) && TemplateType.includes(template)) {
-                    let queryStr = `SELECT event_name FROM spec.event WHERE event_name = '${eventName}'`;
-                    const quaryResult = await this.dataSource.query(queryStr);
-                    let quaryTransformer = `SELECT transformer_file FROM spec.transformer WHERE transformer_file = '${transformerName}'`
-                    const transformerResult = await this.dataSource.query(quaryTransformer);
-                    if (transformerResult.length != 1) {
+                if (TransformerType.includes(transformerTypeInput)) {
+                    if (TemplateType.includes(template)) {
+                        const quaryResult = await this.dataSource.query(getEventData(eventName));
                         if (quaryResult?.length === 1) {
-                            let quaryDataset = `SELECT dataset_name FROM spec.dataset where dataset_name= '${datasetName}'`;
-                            const result = await this.dataSource.query(quaryDataset);
-                            const data = {
-                                "event": eventName,
-                                "dataset": datasetName,
-                                "template": template,
-                                "transformer_type": transformerTypeInput,
-                            }
+                            const result = await this.dataSource.query(getdatasetName(datasetName));
                             if (result.length === 1) {
+                                const data = {
+                                    "event": eventName,
+                                    "dataset": datasetName,
+                                    "template": template,
+                                    "transformer_type": transformerTypeInput,
+                                }
                                 const apiGenrator = await this.genratorAPI(data);
                                 if (apiGenrator) {
-                                    const transResult:any = await this.dataSource.query(insertTransformer(transformerName,transformerFunction));
-                                    if (transResult) {
-                                        return {
-                                            "code":200,
-                                            "message": "Transformer Spec Created Successfully",
-                                            "pid":transResult[0].pid,
-                                            "transformer_name": transformerName
+                                    try {
+                                        const transResult: any = await this.dataSource.query(insertTransformer(apiGenrator.data.transformerFile));
+                                        if (transResult) {
+                                            return {
+                                                "code": 200,
+                                                "message": apiGenrator.data.message,
+                                                "pid": transResult[0].pid,
+                                                "file": apiGenrator.data.transformerFile
+                                            }
                                         }
+                                    } catch (error) {
+                                        console.log(error)
+                                        return { code: 400, message: "something went wrong" }
                                     }
                                 }
                             }
                             else {
-                                return {"code":400, message: "Invalid Dataset Name" }
+                                return { "code": 400, message: "Invalid Dataset Name" }
                             }
                         }
                         else {
-                            return {"code":400, message: "Invalid Event Name" };
+                            return { "code": 400, message: "Invalid Event Name" };
                         }
                     }
                     else {
-                        return {"code":400, message: "The Transformer Name is alredy present" }
+                        return { "code": 400, message: "Invalid template Name" }
                     }
+
                 }
                 else {
-                    return {"code":400, message: "Invalid Input" }
+                    return { "code": 400, message: "Invalid Transformer Type" }
                 }
             } else {
-                return {"code":404, error: isValidSchema.errors }
+                return { "code": 404, error: isValidSchema.errors }
             }
         } catch (e) {
-            console.error('impl.: ', e.message);
+            console.error('transformer.service.ts.createTransformer: ', e.message);
             throw new Error(e);
         }
     }
-
     async genratorAPI(data) {
         try {
             return new Promise<any>((resolve, reject) => {
@@ -85,10 +83,9 @@ export class TransformerService {
                     }
                 });
             });
-        } catch (error) {
-            console.error("error imple genrator api", error)
+        } catch (e) {
+            console.error("transformer.service.ts.genratorAPI", e.message);
+            throw new Error(e);
         }
-
-
     }
 }

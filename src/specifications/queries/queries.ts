@@ -52,8 +52,17 @@
         }
 }
 
-export function insertTransformer(transformer_file:string,transformer_function:string){
-    console.log(transformer_file,transformer_function)
-    const queryStr =`INSERT INTO spec.transformer(transformer_file, transformer_function) VALUES ('${transformer_file}','${transformer_function}') RETURNING pid`;
+export function insertTransformer(transformer_file:string){
+    const queryStr =`INSERT INTO spec.transformer(transformer_file) VALUES ('${transformer_file}') 
+    ON CONFLICT ON CONSTRAINT transformer_transformer_file_key 
+    DO UPDATE SET updated_at = CURRENT_TIMESTAMP RETURNING pid; `;
     return queryStr;    
+}
+export function getEventData(eventName:string){
+    const queryStr =`SELECT event_name FROM spec.event WHERE event_name = '${eventName}'`;
+    return queryStr;    
+}
+export function getdatasetName(datasetName:string){
+    const queryStr =`SELECT dataset_name FROM spec.dataset where dataset_name='${datasetName}'`;
+    return queryStr;  
 }
