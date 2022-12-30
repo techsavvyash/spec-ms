@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS spec.transformer (
 CREATE TABLE IF NOT EXISTS spec.pipeline (
   pid             INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   is_deleted      BOOLEAN   DEFAULT FALSE,
-  event_by        INT NOT NULL,
+  event_by        INT NOT NULL DEFAULT 1,
   created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   pipeline_name   VARCHAR UNIQUE,
@@ -193,8 +193,8 @@ CREATE TABLE IF NOT EXISTS ingestion.student_attendance (
 
 
 INSERT INTO spec.event (
-  event_by, event_name, event_data)
-VALUES (1, 'student_attendance', '{
+  event_name, event_data)
+VALUES ('student_attendance', '{
   "ingestion_type": "event",
   "input": {
     "type": "object",
@@ -237,8 +237,8 @@ VALUES (1, 'student_attendance', '{
   }
 }');
 
-INSERT INTO spec.dimension (event_by, dimension_name, dimension_data)
-VALUES (1, 'student_attendance', '{
+INSERT INTO spec.dimension (dimension_name, dimension_data)
+VALUES ('student_attendance', '{
   "ingestion_type": "dimension",
   "input": {
     "type": "object",
@@ -301,22 +301,21 @@ VALUES (1, 'student_attendance', '{
   }
 }');
 
-INSERT INTO spec.transformer (
-  event_by, transformer_file)
-VALUES (1, 'student_attendance_by_class.py'),
-  (1, 'student_attendance_by_school.py'),
-  (1, 'student_attendance_by_cluster.py'),
-  (1, 'student_attendance_by_block.py'),
-  (1, 'student_attendance_by_district.py'),
-  (1, 'student_attendance_by_state.py'),
-  (1, 'student_attendance_marked_above_50_percent_by_block.py'),
-  (1, 'student_attendance_marked_above_50_percent_by_cluster.py'),
-  (1, 'student_attendance_marked_above_50_percent_by_district.py'),
-  (1, 'student_attendance_marked_above_50_percent_by_state.py');
+INSERT INTO spec.transformer (transformer_file)
+VALUES ('student_attendance_by_class.py'),
+  ('student_attendance_by_school.py'),
+  ('student_attendance_by_cluster.py'),
+  ('student_attendance_by_block.py'),
+  ('student_attendance_by_district.py'),
+  ('student_attendance_by_state.py'),
+  ('student_attendance_marked_above_50_percent_by_block.py'),
+  ('student_attendance_marked_above_50_percent_by_cluster.py'),
+  ('student_attendance_marked_above_50_percent_by_district.py'),
+  ('student_attendance_marked_above_50_percent_by_state.py');
 
 
-INSERT INTO spec.dataset (event_by, dataset_name, dataset_data)
-VALUES (1, 'student_attendance_by_class', '{
+INSERT INTO spec.dataset (dataset_name, dataset_data)
+VALUES ('student_attendance_by_class', '{
   "ingestion_type": "dataset",
   "input": {
     "type": "object",
@@ -443,7 +442,7 @@ VALUES (1, 'student_attendance_by_class', '{
     ]
   }
 }'),
-  (1, 'student_attendance_by_school', '{
+  ('student_attendance_by_school', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -530,7 +529,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_by_cluster', '{
+  ('student_attendance_by_cluster', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -616,7 +615,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_by_block', '{
+  ('student_attendance_by_block', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -702,7 +701,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_by_district', '{
+  ('student_attendance_by_district', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -788,7 +787,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_by_state', '{
+  ('student_attendance_by_state', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -874,7 +873,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_marked_above_50_percent_by_cluster', '{
+  ('student_attendance_marked_above_50_percent_by_cluster', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -976,7 +975,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_marked_above_50_percent_by_block', '{
+  ('student_attendance_marked_above_50_percent_by_block', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -1078,7 +1077,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_marked_above_50_percent_by_district', '{
+  ('student_attendance_marked_above_50_percent_by_district', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -1180,7 +1179,7 @@ VALUES (1, 'student_attendance_by_class', '{
       ]
     }
   }'),
-  (1, 'student_attendance_marked_above_50_percent_by_state', '{
+  ('student_attendance_marked_above_50_percent_by_state', '{
     "ingestion_type": "dataset",
     "input": {
       "type": "object",
@@ -1283,10 +1282,8 @@ VALUES (1, 'student_attendance_by_class', '{
     }
   }');
 
-INSERT INTO spec.pipeline (
-  event_by, event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name)
-VALUES (1,
-        (SELECT pid
+INSERT INTO spec.pipeline (event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name)
+VALUES ((SELECT pid
          FROM spec.event
          WHERE event_name = 'student_attendance'),
         (SELECT pid
@@ -1300,8 +1297,7 @@ VALUES (1,
          WHERE transformer_file = 'student_attendance_by_class.py'),
         'student_attendance_by_class'
 ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1315,8 +1311,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_by_school.py'),
    'student_attendance_by_school'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1330,8 +1325,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_by_cluster.py'),
    'student_attendance_by_cluster'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1345,8 +1339,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_by_block.py'),
    'student_attendance_by_block'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1360,8 +1353,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_by_district.py'),
    'student_attendance_by_district'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1375,8 +1367,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_by_state.py'),
    'student_attendance_by_state'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1390,8 +1381,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_cluster.py'),
    'student_attendance_marked_above_50_percent_by_cluster'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1405,8 +1395,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_block.py'),
    'student_attendance_marked_above_50_percent_by_block'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
@@ -1420,8 +1409,7 @@ VALUES (1,
     WHERE transformer_file = 'student_attendance_marked_above_50_percent_by_district.py'),
    'student_attendance_marked_above_50_percent_by_district'
   ),
-  (1,
-   (SELECT pid
+  ((SELECT pid
     FROM spec.event
     WHERE event_name = 'student_attendance'),
    (SELECT pid
