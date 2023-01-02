@@ -365,10 +365,10 @@ VALUES ('student_attendance_by_class', '{
         }
       },
       "dataset": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
             "items": {
               "type": "object",
               "properties": {
@@ -399,102 +399,102 @@ VALUES ('student_attendance_by_class', '{
                 "sum",
                 "percentage"
               ]
-            },
-            "groupBy": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "date": {
-                    "type": "string"
-                  },
-                  "school_id": {
-                    "type": "string"
-                  },
-                  "grade": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "date",
-                  "school_id",
-                  "grade"
-                ]
-              }
-            },
-            "aggregate": {
+            }
+          },
+          "groupBy": {
+            "type": "array",
+            "items": {
               "type": "object",
               "properties": {
-                "function": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "sum": {
-                        "type": "string"
-                      }
-                    }
-                  }
+                "date": {
+                  "type": "string"
                 },
-                "targetTable": {
+                "school_id": {
+                  "type": "string"
+                },
+                "grade": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "date",
+                "school_id",
+                "grade"
+              ]
+            }
+          },
+          "aggregate": {
+            "type": "object",
+            "properties": {
+              "function": {
+                "type": "array",
+                "items": {
                   "type": "object",
                   "properties": {
-                    "ingestion.student_attendance_by_class": {
+                    "sum": {
                       "type": "string"
                     }
                   }
-                },
-                "updateCols": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "propeties": {
-                      "sum": {
-                        "type": "number"
-                      },
-                      "count": {
-                        "type": "number"
-                      },
-                      "percentage": {
-                        "type": "number"
-                      }
+                }
+              },
+              "targetTable": {
+                "type": "object",
+                "properties": {
+                  "ingestion.student_attendance_by_class": {
+                    "type": "string"
+                  }
+                }
+              },
+              "updateCols": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propeties": {
+                    "sum": {
+                      "type": "number"
+                    },
+                    "count": {
+                      "type": "number"
+                    },
+                    "percentage": {
+                      "type": "number"
                     }
                   }
-                },
-                "columns": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "column": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "students_attendance_marked": {
-                              "type": "string"
-                            },
-                            "total_students": {
-                              "type": "string"
-                            }
+                }
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "students_attendance_marked": {
+                            "type": "string"
+                          },
+                          "total_students": {
+                            "type": "string"
                           }
                         }
                       }
                     }
                   }
                 }
-              },
-              "required": [
-                "function",
-                "targetTable",
-                "columns"
-              ]
-            }
-          },
-          "required": [
-            "items"
-          ]
-        }
+              }
+            },
+            "required": [
+              "function",
+              "targetTable",
+              "columns"
+            ]
+          }
+        },
+        "required": [
+          "items"
+        ]
       }
     },
     "required": [
