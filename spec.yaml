@@ -30,40 +30,51 @@ paths:
           schema:
             example:
               {
-              ingestion_type: event,
-              event_name: student_attendance,
-                    input:{
-                      type: object,
-                      properties:{
-                        event_name:{
-                          type: string
+    "ingestion_type": "event",
+    "event_name": "student_attendance",
+    "input": {
+        "type": "object",
+        "properties": {
+            "event_name": {
+                "type": "string"
+            },
+            "event": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "date": {
+                            "type": "string"
                         },
-                        event:{
-                          type: object,
-                          properties:{
-                            school_id:{
-                              type: string
-                            },
-                            grade:{
-                              type: string
-                            },
-                            count:{
-                              type: string
-                            }
+                        "school_id": {
+                            "type": "number"
                         },
-                        required:[
-                          school_id,
-                          grade,
-                          count
-                        ]
-                      }
+                        "grade": {
+                            "type": "number"
+                        },
+                        "total_students": {
+                            "type": "number"
+                        },
+                        "students_attendance_marked": {
+                            "type": "number"
+                        }
                     },
-                      required:[
-                        event_name,
-                        event
-                        ]
-              }
-              }
+                    "required": [
+                        "date",
+                        "school_id",
+                        "grade",
+                        "total_students",
+                        "students_attendance_marked"
+                    ]
+                }
+            }
+        },
+        "required": [
+            "event_name",
+            "event"
+        ]
+    }
+}
 
 
       responses:
@@ -100,37 +111,71 @@ paths:
           required: true
           schema:
             example: {
-              ingestion_type: dimension,
-              dimension_name: state_970,
-              input:{
-              type: object,
-              properties: {
-                dimension_name: {
-                  type: string
-                },
-                dimension: {
-                  type: object,
-                  properties: {
-                    name: {
-                      type: string
+    "ingestion_type": "dimension",
+    "dimension_name": "dimension",
+    "input": {
+        "type": "object",
+        "properties": {
+            "dimension_name": {
+                "type": "string"
+            },
+            "dimension": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "school_id": {
+                            "type": "string"
+                        },
+                        "school_name": {
+                            "type": "string"
+                        },
+                        "cluster_id": {
+                            "type": "string"
+                        },
+                        "cluster_name": {
+                            "type": "string"
+                        },
+                        "block_id": {
+                            "type": "string"
+                        },
+                        "block_name": {
+                            "type": "string"
+                        },
+                        "district_id": {
+                            "type": "string"
+                        },
+                        "district_name": {
+                            "type": "string"
+                        },
+                        "state_id": {
+                            "type": "string"
+                        },
+                        "state_name": {
+                            "type": "string"
+                        }
                     },
-                    district_id: {
-                      type: string
-
-                    }
-                  },
-                  required: [
-                    name,
-                    district_id
+                    "required": [
+                        "school_id",
+                        "school_name",
+                        "cluster_id",
+                        "cluster_name",
+                        "block_id",
+                        "block_name",
+                        "district_id",
+                        "district_name",
+                        "state_id",
+                        "state_name"
                     ]
                 }
-              },
-              required: [
-                dimension_name,
-                dimension
-                ]
             }
-          }
+        },
+        "required": [
+            "dimension_name",
+            "dimension"
+        ]
+    }
+}
 
       responses:
         200:
@@ -166,50 +211,19 @@ paths:
           required: true
           schema:
            example: {
-            ingestion_type: dataset,
-            dataset_name: sample,
-            input: {
+    "ingestion_type": "dataset",
+    "dataset_name": "student_attendance_by_class",
+    "input": {
         "type": "object",
         "properties": {
             "dataset_name": {
                 "type": "string"
             },
             "dataset": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string"
-                            },
-                            "school_id": {
-                                "type": "string"
-                            },
-                            "grade": {
-                                "type": "string"
-                            },
-                            "count": {
-                                "type": "number"
-                            },
-                            "sum": {
-                                "type": "number"
-                            },
-                            "percentage": {
-                                "type": "number"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "school_id",
-                            "grade",
-                            "count",
-                            "sum",
-                            "percentage"
-                        ]
-                    },
-                    "groupBy": {
-                        "type": "array",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
                         "items": {
                             "type": "object",
                             "properties": {
@@ -221,38 +235,71 @@ paths:
                                 },
                                 "grade": {
                                     "type": "string"
+                                },
+                                "count": {
+                                    "type": "number"
+                                },
+                                "sum": {
+                                    "type": "number"
+                                },
+                                "percentage": {
+                                    "type": "number"
                                 }
                             },
                             "required": [
                                 "date",
                                 "school_id",
-                                "grade"
+                                "grade",
+                                "count",
+                                "sum",
+                                "percentage"
                             ]
-                        }
-                    },
-                    "aggregate": {
-                        "type": "object",
-                        "properties": {
-                            "function": {
-                                "type": "array",
-                                "items": {
+                        },
+                        "groupBy": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "date": {
+                                        "type": "string"
+                                    },
+                                    "school_id": {
+                                        "type": "string"
+                                    },
+                                    "grade": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "date",
+                                    "school_id",
+                                    "grade"
+                                ]
+                            }
+                        },
+                        "aggregate": {
+                            "type": "object",
+                            "properties": {
+                                "function": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "sum": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "targetTable": {
                                     "type": "object",
                                     "properties": {
-                                        "sum": {
+                                        "ingestion.student_attendance_by_class": {
                                             "type": "string"
                                         }
                                     }
-                                }
-                            },
-                            "targetTable": {
-                                "type": "object",
-                                "properties": {
-                                    "ingestion.student_attendance_by_class": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "updateCols":{
+                                },
+                                "updateCols":{
                               "type":"array",
                               "items":{
                                 "type":"object",
@@ -269,39 +316,40 @@ paths:
                                 }
                               }
                             },
-                            "columns": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "column": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "students_attendance_marked": {
-                                                        "type": "string"
-                                                    },
-                                                    "total_students": {
-                                                        "type": "string"
+                                "columns": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "column": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "students_attendance_marked": {
+                                                            "type": "string"
+                                                        },
+                                                        "total_students": {
+                                                            "type": "string"
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        },
-                        "required": [
-                            "function",
-                            "targetTable",
-                            "columns"
-                        ]
-                    }
-                },
-                "required": [
-                    "items"
-                ]
+                            },
+                            "required": [
+                                "function",
+                                "targetTable",
+                                "columns"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "items"
+                    ]
+                }
             }
         },
         "required": [
@@ -309,8 +357,7 @@ paths:
             "dataset"
         ]
     }
-
-         }
+}
       responses:
         200:
           description: "Dataset Spec Created Successfully"
@@ -492,17 +539,19 @@ paths:
                 type: "string"
                 example: "student_count"
               event:
-                type: "object"
-                properties:
-                  school_id:
-                    type: "string"
-                    example: "101"
-                  grade:
-                    type: "string"
-                    example: "1"
-                  count:
-                    type: "string"
-                    example: "10"
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    school_id:
+                      type: "string"
+                      example: "101"
+                    grade:
+                      type: "string"
+                      example: "1"
+                    count:
+                      type: "string"
+                      example: "10"
       responses:
         200:
           description: "Event Added Successfully"
@@ -536,14 +585,16 @@ paths:
                 type: "string"
                 example: "district"
               dimension:
-                type: "object"
-                properties:
-                  name:
-                    type: "string"
-                    example: "Shimla"
-                  district_id:
-                    type: "string"
-                    example: "SH123"
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    name:
+                      type: "string"
+                      example: "Shimla"
+                    district_id:
+                      type: "string"
+                      example: "SH123"
       responses:
         200:
           description: "Dimension Added Successfully"
@@ -577,17 +628,19 @@ paths:
                 type: "string"
                 example: "student_count_by_school_and_grade"
               dataset:
-                type: "object"
-                properties:
-                  school_id:
-                        type: "string"
-                        example: "101"
-                  grade:
-                        type: "string"
-                        example: "1"
-                  student_count:
-                        type: "string"
-                        example: "10"
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    school_id:
+                          type: "string"
+                          example: "101"
+                    grade:
+                          type: "string"
+                          example: "1"
+                    student_count:
+                          type: "string"
+                          example: "10"
       responses:
         200:
           description: "Dataset Added Successfully"
