@@ -449,7 +449,7 @@ VALUES ('student_attendance_by_class', '{
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "propeties": {
+                  "properties": {
                     "sum": {
                       "type": "number"
                     },
