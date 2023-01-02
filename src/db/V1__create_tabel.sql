@@ -329,6 +329,41 @@ VALUES ('student_attendance_by_class', '{
       "dataset_name": {
         "type": "string"
       },
+      "dimensions": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "object",
+            "properties": {
+              "ingestion.student_attendance": {
+                "type": "string"
+              }
+            }
+          },
+          "column": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "school_id": {
+                  "type": "string"
+                },
+                "cluster_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "merge_On_Col": {
+            "type": "object",
+            "properties": {
+              "school_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "dataset": {
         "type": "array",
         "items": {
@@ -409,19 +444,19 @@ VALUES ('student_attendance_by_class', '{
                     }
                   }
                 },
-                "updateCols":{
-                  "type":"array",
-                  "items":{
-                    "type":"object",
-                    "propeties":{
-                      "sum":{
-                        "type":"number"
+                "updateCols": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "propeties": {
+                      "sum": {
+                        "type": "number"
                       },
-                      "count":{
-                        "type":"number"
+                      "count": {
+                        "type": "number"
                       },
-                      "percentage":{
-                        "type":"number"
+                      "percentage": {
+                        "type": "number"
                       }
                     }
                   }
@@ -464,6 +499,7 @@ VALUES ('student_attendance_by_class', '{
     },
     "required": [
       "dataset_name",
+      "dimensions",
       "dataset"
     ]
   }
