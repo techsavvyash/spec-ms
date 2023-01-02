@@ -24,7 +24,6 @@ async createDataset(datasetDTO) {
         return { "code": 400, "message": "Dataset Name already exists" };
     }
     else {
-        console.log("name duplicacy passed");
         await queryRunner.connect();
         let values = newObj?.input?.properties?.dataset;
         let duplicacyQuery = checkDuplicacy(['dataset_name', 'dataset_data'], 'dataset', ['dataset_data', 'input', 'properties', 'dataset'], JSON.stringify(values));
@@ -38,7 +37,6 @@ async createDataset(datasetDTO) {
                 insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
                 const insertResult = await queryRunner.query(insertQuery);
                 if (insertResult[0].pid) {
-                    console.log("The spec dataset pid is:",insertResult[0].pid);
                     let dataset_pid = insertResult[0].pid;
                     const pipeline_name = datasetDTO.dataset_name.toLowerCase() + 'pipeline';
                     let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dataset_pid'], 'pipeline', [pipeline_name, dataset_pid]);
