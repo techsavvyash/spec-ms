@@ -1,75 +1,106 @@
-import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { checkDuplicacy, checkName, createTable, insertPipeline, insertSchema } from 'src/specifications/queries/queries';
-import { DataSource } from 'typeorm';
-import { GenericFunction } from '../genericFunction';
+import {Injectable} from '@nestjs/common';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {checkDuplicacy, checkName, createTable, insertPipeline, insertSchema} from 'src/specifications/queries/queries';
+import {DataSource} from 'typeorm';
+import {GenericFunction} from '../genericFunction';
+import {datasetSchemaData} from "../../../utils/spec-data";
+import {datasetResponse} from "../../dto/specData.dto";
+
 @Injectable()
 export class DatasetService {
- constructor(@InjectDataSource() private dataSource: DataSource,private specService: GenericFunction){
- }
-async createDataset(datasetDTO) {
-    const queryRunner = this.dataSource.createQueryRunner()
-    let dbColumns = []
-    let newObj = this.specService.convertKeysToLowerCase(datasetDTO);
-    if (datasetDTO?.dataset_name.toLowerCase() == "") {
-        return { "code": 400, "message": "Dataset Name cannot be empty" };
+    constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction) {
     }
-    if (newObj?.ingestion_type == "") {
-        return { "code": 400, "message": "Ingestion Type cannot be empty" };
-    }
-    let queryResult = checkName('dataset_name', "dataset");
-    queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name.toLowerCase()}`)
-    const resultDname = await this.dataSource.query(queryResult);
-    if (resultDname.length > 0) {
-        return { "code": 400, "message": "Dataset Name already exists" };
-    }
-    else {
-        await queryRunner.connect();
-        let values = newObj?.input?.properties?.dataset;
-        let duplicacyQuery = checkDuplicacy(['dataset_name', 'dataset_data'], 'dataset', ['dataset_data', 'input', 'properties', 'dataset'], JSON.stringify(values));
-        const result = await queryRunner.query(duplicacyQuery);
-        if (result.length == 0) //If there is no record in the DB then insert the first schema
-        {
-            await queryRunner.startTransaction();
-            try {
-                let insertQuery = insertSchema(['dataset_name', 'dataset_data'], 'dataset');
-                insertQuery = insertQuery.replace('$1', `'${datasetDTO.dataset_name.toLowerCase()}'`);
-                insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
-                const insertResult = await queryRunner.query(insertQuery);
-                if (insertResult[0].pid) {
-                    let dataset_pid = insertResult[0].pid;
-                    const pipeline_name = datasetDTO.dataset_name.toLowerCase() + 'pipeline';
-                    let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dataset_pid'], 'pipeline', [pipeline_name, dataset_pid]);
-                    const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
-                    if (insertPipelineResult[0].pid) {
-                        console.log("The spec pipeline pid is:",insertPipelineResult[0].pid);
-                        let columnProperties = []
-                        let columnNames = [];
-                        columnNames.push(Object.keys(values?.properties));
-                        columnProperties.push(Object.values(values?.properties))
-                        dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
-                        let tbName: string = newObj?.ingestion_type;
-                        let createQuery = createTable(tbName, columnNames[0], dbColumns);
-                        const createResult = await queryRunner.query(createQuery);
-                        console.log("The result is:", createResult);
-                        await queryRunner.commitTransaction();
-                        return { "code": 200, "message": "Dataset Spec Created Successfully", "dataset_name": datasetDTO.dataset_name, "pid": insertResult[0].pid };
-                    }
+
+    async createDataset(datasetDTO) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        let dbColumns = [];
+        let newObj = this.specService.convertKeysToLowerCase(datasetDTO);
+
+        const isValidSchema: any = await this.specService.ajvValidator(datasetSchemaData, datasetDTO);
+        if (isValidSchema.errors) {
+            return {"code": 400, error: isValidSchema.errors}
+        } else {
+            let response: datasetResponse = await this.validateRequiredFields(isValidSchema);
+            if (response.code == 400) {
+                return {
+                    code: 400,
+                    error: response.error
+                }
+            } else {
+                let queryResult = checkName('dataset_name', "dataset");
+                queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name.toLowerCase()}`);
+                const resultDname = await this.dataSource.query(queryResult);
+                if (resultDname.length > 0) {
+                    return {"code": 400, "error": "Dataset Name already exists"};
                 }
                 else {
-                    await queryRunner.rollbackTransaction()
-                    return { "code": 400, "message": "Something went wrong" };
+                    await queryRunner.connect();
+                    let values = newObj?.input?.properties?.dataset;
+                    let duplicacyQuery = checkDuplicacy(['dataset_name', 'dataset_data'], 'dataset', ['dataset_data', "'input'->'properties'->'dataset'"], JSON.stringify(values));
+                    const result = await queryRunner.query(duplicacyQuery);
+                    if (result.length == 0) { //If there is no record in the DB then insert the first schema
+                        await queryRunner.startTransaction();
+                        try {
+                            let insertQuery = insertSchema(['dataset_name', 'dataset_data'], 'dataset');
+                            insertQuery = insertQuery.replace('$1', `'${datasetDTO.dataset_name.toLowerCase()}'`);
+                            insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
+                            const insertResult = await queryRunner.query(insertQuery);
+                            if (insertResult[0].pid) {
+                                let dataset_pid = insertResult[0].pid;
+                                const pipeline_name = datasetDTO.dataset_name.toLowerCase() + 'pipeline';
+                                let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dataset_pid'], 'pipeline', [pipeline_name, dataset_pid]);
+                                const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
+                                if (insertPipelineResult[0].pid) {
+                                    let columnProperties = [];
+                                    let columnNames = [];
+                                    columnNames.push(Object.keys(values?.properties?.items?.items?.properties));
+                                    columnProperties.push(Object.values(values?.properties?.items?.items?.properties));
+                                    dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
+                                    let tbName: string = newObj?.dataset_name;
+                                    let createQuery = createTable(tbName, columnNames[0], dbColumns);
+                                    await queryRunner.query(createQuery);
+                                    await queryRunner.commitTransaction();
+                                    return {
+                                        "code": 200,
+                                        "message": "Dataset Spec Created Successfully",
+                                        "dataset_name": datasetDTO.dataset_name,
+                                        "pid": insertResult[0].pid
+                                    };
+                                }
+                            } else {
+                                await queryRunner.rollbackTransaction();
+                                return {"code": 400, "error": "Dataset Spec was not added"};
+                            }
+                        } catch (error) {
+                            await queryRunner.rollbackTransaction();
+                            return {"code": 400, "error": error.message}
+                        } finally {
+                            await queryRunner.release();
+                        }
+                    }
+                    else {
+                        return {"code": 400, "error": "Duplicate Dataset not allowed"}
+                    }
                 }
-            } catch (error) {
-                await queryRunner.rollbackTransaction()
-                return { "code": 400, "message": "something went wrong" }
-            }finally {
-                await queryRunner.release();
             }
         }
-        else {
-            return { "code": 400, "message": "Duplicate Dataset not allowed" }
-        }
     }
-}
+
+    async validateRequiredFields(inputData) {
+        let responseObj = {
+            code: 200,
+            error: ""
+        };
+        if (inputData?.input?.properties?.dataset?.properties?.items?.items?.required && inputData?.input?.properties?.dataset?.properties?.items?.items?.required?.length > 0) {
+            inputData?.input?.properties?.dataset?.properties?.items?.items?.required?.map((key) => {
+                if (!Object.keys(inputData?.input?.properties?.dataset?.properties?.items?.items?.properties).includes(key)) {
+                    responseObj = {
+                        "code": 400,
+                        "error": 'One/more invalid required fields'
+                    }
+                }
+            })
+        }
+        return responseObj;
+    }
 }
