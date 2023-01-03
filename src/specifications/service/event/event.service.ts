@@ -21,7 +21,7 @@ export class EventService {
         let queryResult = checkName('event_name', "event");
         queryResult = queryResult.replace('$1', `${speceventDTO?.event_name.toLowerCase()}`);
         const resultDname = await this.dataSource.query(queryResult);
-        if (resultDname.length > 0) {
+        if (resultDname?.length > 0) {
             return {"code": 400, "message": "Event Name already exists"};
         }
         else {

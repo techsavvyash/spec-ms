@@ -12,22 +12,17 @@ describe('TransformerService', () => {
       providers: [TransformerService,DataSource,GenericFunction,HttpService,
         {
           provide: TransformerService,
-          useValue: {
-            createTransformer: jest.fn(),
-          }
+          useClass:TransformerService
         },
         {
           provide: DataSource,
           useValue: {
-            query: jest.fn(dto => { dto }),
+            query: jest.fn(),
           }
         },
         {
           provide:GenericFunction,
-          useValue: {
-            convertKeysToLowerCase: jest.fn(dto => { dto }),
-            getDbColumnNames: jest.fn(dto => { dto }),
-          }
+          useClass:GenericFunction
         },
         {
           provide: HttpService,
@@ -44,13 +39,17 @@ describe('TransformerService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should call transformer api' ,() =>{
+  it('should call transformer api' ,async () =>{
     const transformerData= {
-      "event_name": "student_attendance",
+      "event_name": "student_attend",
       "dataset_name": "student_attendance_by_class",
       "template": "EventToCube-AggTemplate.py",
       "transformer_type":"EventToCube-agg"
     }
-    expect(service.createTransformer(transformerData)).toBeCalled;
+    
+    let result ={
+     "code": 400, "message": "Invalid Event Name"
+    }
+    expect(await service.createTransformer(transformerData)).toStrictEqual(result);
   })
 });
