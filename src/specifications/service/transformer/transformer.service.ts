@@ -5,11 +5,12 @@ import { DataSource } from 'typeorm';
 import { specTransformer } from '../../../utils/specSchemaData';
 import { TransformerType, TemplateType } from '../contsant'
 import { HttpService } from '@nestjs/axios';
-import { getdatasetName, getEventData, insertTransformer } from 'src/specifications/queries/queries';
+import { getdatasetName, getEventData, insertTransformer } from '../../queries/queries';
+import { specTrasformer } from '../../dto/specData.dto';
 @Injectable()
 export class TransformerService {
     constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction, private http: HttpService) { }
-    async createTransformer(inputData) {
+    async createTransformer(inputData:specTrasformer) {
         try {
             const eventName = inputData.event_name;
             const datasetName = inputData.dataset_name;

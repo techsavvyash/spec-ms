@@ -1,5 +1,5 @@
 import { GenericFunction } from './../genericFunction';
-import { checkDuplicacy, checkName, createTable, insertPipeline, insertSchema } from 'src/specifications/queries/queries';
+import { checkDuplicacy, checkName, createTable, insertPipeline, insertSchema } from '../../queries/queries';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 export class DimensionService {

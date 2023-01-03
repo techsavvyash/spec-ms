@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {InjectDataSource} from '@nestjs/typeorm';
-import {checkDuplicacy, checkName, insertPipeline, insertSchema} from 'src/specifications/queries/queries';
+import {checkDuplicacy, checkName, insertPipeline, insertSchema} from '../../queries/queries';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
 
