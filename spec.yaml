@@ -244,7 +244,7 @@ paths:
                             }
                         }
                     },
-                    "merge_On_Col": {
+                    "merge_on_col": {
                         "type": "object",
                         "properties": {
                             "school_id": {
@@ -291,7 +291,7 @@ paths:
                             ]
                         }
                     },
-                    "groupBy": {
+                    "group_by": {
                         "type": "array",
                         "items": {
                             "type": "object",
@@ -327,7 +327,7 @@ paths:
                                     }
                                 }
                             },
-                            "targetTable": {
+                            "target_table": {
                                 "type": "object",
                                 "properties": {
                                     "ingestion.student_attendance_by_class": {
@@ -335,7 +335,7 @@ paths:
                                     }
                                 }
                             },
-                            "updateCols": {
+                            "update_cols": {
                                 "type": "array",
                                 "items": {
                                     "type": "object",
@@ -377,7 +377,7 @@ paths:
                         },
                         "required": [
                             "function",
-                            "targetTable",
+                            "target_table",
                             "columns"
                         ]
                     }
@@ -664,19 +664,22 @@ paths:
                 type: "string"
                 example: "student_count_by_school_and_grade"
               dataset:
-                type: "array"
-                items:
                   type: "object"
                   properties:
-                    school_id:
-                          type: "string"
-                          example: "101"
-                    grade:
-                          type: "string"
-                          example: "1"
-                    student_count:
-                          type: "string"
-                          example: "10"
+                    items:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          school_id:
+                            type: "string"
+                            example: "101"
+                          grade:
+                            type: "string"
+                            example: "1"
+                          student_count:
+                            type: "string"
+                            example: "10"
       responses:
         200:
           description: "Dataset Added Successfully"
