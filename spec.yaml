@@ -664,19 +664,22 @@ paths:
                 type: "string"
                 example: "student_count_by_school_and_grade"
               dataset:
-                type: "array"
-                items:
                   type: "object"
                   properties:
-                    school_id:
-                          type: "string"
-                          example: "101"
-                    grade:
-                          type: "string"
-                          example: "1"
-                    student_count:
-                          type: "string"
-                          example: "10"
+                    items:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          school_id:
+                            type: "string"
+                            example: "101"
+                          grade:
+                            type: "string"
+                            example: "1"
+                          student_count:
+                            type: "string"
+                            example: "10"
       responses:
         200:
           description: "Dataset Added Successfully"
