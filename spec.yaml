@@ -237,9 +237,6 @@ paths:
                             "properties": {
                                 "school_id": {
                                     "type": "string"
-                                },
-                                "cluster_id": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -378,12 +375,15 @@ paths:
                         "required": [
                             "function",
                             "target_table",
-                            "columns"
+                            "columns",
+                            "update_cols"
                         ]
                     }
                 },
                 "required": [
-                    "items"
+                    "items",
+                    "group_by",
+                    "aggregate"
                 ]
             }
         },
@@ -712,16 +712,18 @@ paths:
               pipeline_name:
                 type: "string"
                 example: "student_count_pipe"
-              
+              type:
+                type: "string"
+                example: "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
       responses:
         200:
-          description: "Processor Group Running Successfully"
+          description: "Pipeline Triggered Successfully"
           schema:
             type: "object"
             properties:
               message:
                 type: "string"
-                example: "Processor Group Running Successfully"
+                example: "Pipeline Triggered Successfully"
         400:
           description: "Something went wrong"
           schema:
