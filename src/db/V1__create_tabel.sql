@@ -207,19 +207,29 @@ VALUES ('student_attendance', '{
           "type": "object",
           "properties": {
             "date": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true,
+              "format": "date"
             },
             "school_id": {
-              "type": "number"
+              "type": "string",
+              "shouldNotNull": true,
+              "minLength": 10,
+              "maxLength": 10
             },
             "grade": {
-              "type": "number"
+              "type": "number",
+              "shouldNotNull": true,
+              "minimum": 1,
+              "maximum": 12
             },
             "total_students": {
-              "type": "number"
+              "type": "number",
+              "shouldNotNull": true
             },
             "students_attendance_marked": {
-              "type": "number"
+              "type": "number",
+              "shouldNotNull": true
             }
           },
           "required": [
@@ -255,34 +265,54 @@ VALUES ('student_attendance', '{
           "type": "object",
           "properties": {
             "school_id": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true,
+              "minLength": 10,
+              "maxLength": 10
             },
             "school_name": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true
             },
             "cluster_id": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true,
+              "minLength": 9,
+              "maxLength": 9
             },
             "cluster_name": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true
             },
             "block_id": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true,
+              "minLength": 5,
+              "maxLength": 5
             },
             "block_name": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true
             },
             "district_id": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true,
+              "minLength": 3,
+              "maxLength": 3
             },
             "district_name": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true
             },
             "state_id": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true,
+              "minLength": 2,
+              "maxLength": 2
             },
             "state_name": {
-              "type": "string"
+              "type": "string",
+              "shouldNotNull": true
             }
           },
           "required": [
@@ -347,14 +377,11 @@ VALUES ('student_attendance_by_class', '{
               "properties": {
                 "school_id": {
                   "type": "string"
-                },
-                "cluster_id": {
-                  "type": "string"
                 }
               }
             }
           },
-          "merge_On_Col": {
+          "merge_on_col": {
             "type": "object",
             "properties": {
               "school_id": {
@@ -373,22 +400,33 @@ VALUES ('student_attendance_by_class', '{
               "type": "object",
               "properties": {
                 "date": {
-                  "type": "string"
+                  "type": "string",
+                  "shouldNotNull": true,
+                  "format": "date"
                 },
                 "school_id": {
-                  "type": "string"
+                  "type": "string",
+                  "shouldNotNull": true,
+                  "minLength": 10,
+                  "maxLength": 10
                 },
                 "grade": {
-                  "type": "string"
+                  "type": "number",
+                  "shouldNotNull": true,
+                  "minimum": 1,
+                  "maximum": 12
                 },
                 "count": {
-                  "type": "number"
+                  "type": "number",
+                  "shouldNotNull": true
                 },
                 "sum": {
-                  "type": "number"
+                  "type": "number",
+                  "shouldNotNull": true
                 },
                 "percentage": {
-                  "type": "number"
+                  "type": "number",
+                  "shouldNotNull": true
                 }
               },
               "required": [
@@ -401,19 +439,27 @@ VALUES ('student_attendance_by_class', '{
               ]
             }
           },
-          "groupBy": {
+          "group_by": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
                 "date": {
-                  "type": "string"
+                  "type": "string",
+                  "shouldNotNull": true,
+                  "format": "date"
                 },
                 "school_id": {
-                  "type": "string"
+                  "type": "string",
+                  "shouldNotNull": true,
+                  "minLength": 10,
+                  "maxLength": 10
                 },
                 "grade": {
-                  "type": "string"
+                  "type": "number",
+                  "shouldNotNull": true,
+                  "minimum": 1,
+                  "maximum": 12
                 }
               },
               "required": [
@@ -437,7 +483,7 @@ VALUES ('student_attendance_by_class', '{
                   }
                 }
               },
-              "targetTable": {
+              "target_table": {
                 "type": "object",
                 "properties": {
                   "ingestion.student_attendance_by_class": {
@@ -445,7 +491,7 @@ VALUES ('student_attendance_by_class', '{
                   }
                 }
               },
-              "updateCols": {
+              "update_cols": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -487,13 +533,16 @@ VALUES ('student_attendance_by_class', '{
             },
             "required": [
               "function",
-              "targetTable",
-              "columns"
+              "target_table",
+              "columns",
+              "update_cols"
             ]
           }
         },
         "required": [
-          "items"
+          "items",
+          "group_by",
+          "aggregate"
         ]
       }
     },

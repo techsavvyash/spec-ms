@@ -44,19 +44,29 @@ paths:
                     "type": "object",
                     "properties": {
                         "date": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true,
+                            "format":"date"
                         },
                         "school_id": {
-                            "type": "number"
+                            "type": "string",
+                            "shouldNotNull": true,
+                             "minLength":10,
+                             "maxLength":10
                         },
                         "grade": {
-                            "type": "number"
+                            "type": "number",
+                            "shouldNotNull": true,
+                            "minimum":1,
+                            "maximum":12
                         },
                         "total_students": {
-                            "type": "number"
+                            "type": "number",
+                            "shouldNotNull": true
                         },
                         "students_attendance_marked": {
-                            "type": "number"
+                            "type": "number",
+                            "shouldNotNull": true
                         }
                     },
                     "required": [
@@ -125,34 +135,54 @@ paths:
                     "type": "object",
                     "properties": {
                         "school_id": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true,
+                             "minLength":10,
+                             "maxLength":10
                         },
                         "school_name": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true
                         },
                         "cluster_id": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true,
+                             "minLength":9,
+                             "maxLength":9
                         },
                         "cluster_name": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true
                         },
                         "block_id": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true,
+                             "minLength":5,
+                             "maxLength":5
                         },
                         "block_name": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true
                         },
                         "district_id": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true,
+                             "minLength":3,
+                             "maxLength":3
                         },
                         "district_name": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true
                         },
                         "state_id": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true,
+                             "minLength":2,
+                             "maxLength":2
                         },
                         "state_name": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true
                         }
                     },
                     "required": [
@@ -237,9 +267,6 @@ paths:
                             "properties": {
                                 "school_id": {
                                     "type": "string"
-                                },
-                                "cluster_id": {
-                                    "type": "string"
                                 }
                             }
                         }
@@ -263,22 +290,33 @@ paths:
                             "type": "object",
                             "properties": {
                                 "date": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "shouldNotNull": true,
+                                    "format":"date"
                                 },
                                 "school_id": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "shouldNotNull": true,
+                                    "minLength":10,
+                                    "maxLength":10
                                 },
                                 "grade": {
-                                    "type": "string"
+                                    "type": "number",
+                                    "shouldNotNull": true,
+                                    "minimum":1,
+                                    "maximum":12
                                 },
                                 "count": {
-                                    "type": "number"
+                                    "type": "number",
+                                    "shouldNotNull": true
                                 },
                                 "sum": {
-                                    "type": "number"
+                                    "type": "number",
+                                    "shouldNotNull": true
                                 },
                                 "percentage": {
-                                    "type": "number"
+                                    "type": "number",
+                                    "shouldNotNull": true
                                 }
                             },
                             "required": [
@@ -297,13 +335,21 @@ paths:
                             "type": "object",
                             "properties": {
                                 "date": {
-                                    "type": "string"
+                                    "type": "string",
+                                     "shouldNotNull": true,
+                                     "format":"date"
                                 },
                                 "school_id": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "shouldNotNull": true,
+                                    "minLength":10,
+                                    "maxLength":10
                                 },
                                 "grade": {
-                                    "type": "string"
+                                    "type": "number",
+                                    "shouldNotNull": true,
+                                    "minimum":1,
+                                    "maximum":12
                                 }
                             },
                             "required": [
@@ -378,12 +424,15 @@ paths:
                         "required": [
                             "function",
                             "target_table",
-                            "columns"
+                            "columns",
+                            "update_cols"
                         ]
                     }
                 },
                 "required": [
-                    "items"
+                    "items",
+                    "group_by",
+                    "aggregate"
                 ]
             }
         },
@@ -712,16 +761,18 @@ paths:
               pipeline_name:
                 type: "string"
                 example: "student_count_pipe"
-              
+              type:
+                type: "string"
+                example: "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
       responses:
         200:
-          description: "Processor Group Running Successfully"
+          description: "Pipeline Triggered Successfully"
           schema:
             type: "object"
             properties:
               message:
                 type: "string"
-                example: "Processor Group Running Successfully"
+                example: "Pipeline Triggered Successfully"
         400:
           description: "Something went wrong"
           schema:
