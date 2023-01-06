@@ -212,10 +212,9 @@ VALUES ('student_attendance', '{
               "format": "date"
             },
             "school_id": {
-              "type": "string",
+              "type": "number",
               "shouldNotNull": true,
-              "minLength": 10,
-              "maxLength": 10
+              "pattern": "^[0-9]{10}$"
             },
             "grade": {
               "type": "number",
@@ -265,50 +264,45 @@ VALUES ('student_attendance', '{
           "type": "object",
           "properties": {
             "school_id": {
-              "type": "string",
+              "type": "number",
               "shouldNotNull": true,
-              "minLength": 10,
-              "maxLength": 10
+              "pattern": "^[0-9]{10}$"
             },
             "school_name": {
               "type": "string",
               "shouldNotNull": true
             },
             "cluster_id": {
-              "type": "string",
+              "type": "number",
               "shouldNotNull": true,
-              "minLength": 9,
-              "maxLength": 9
+              "pattern": "^[0-9]{9}$"
             },
             "cluster_name": {
               "type": "string",
               "shouldNotNull": true
             },
             "block_id": {
-              "type": "string",
+              "type": "number",
               "shouldNotNull": true,
-              "minLength": 5,
-              "maxLength": 5
+              "pattern": "^[0-9]{5}$"
             },
             "block_name": {
               "type": "string",
               "shouldNotNull": true
             },
             "district_id": {
-              "type": "string",
+              "type": "number",
               "shouldNotNull": true,
-              "minLength": 3,
-              "maxLength": 3
+              "pattern": "^[0-9]{3}$"
             },
             "district_name": {
               "type": "string",
               "shouldNotNull": true
             },
             "state_id": {
-              "type": "string",
+              "type": "number",
               "shouldNotNull": true,
-              "minLength": 2,
-              "maxLength": 2
+              "pattern": "^[0-9]{2}$"
             },
             "state_name": {
               "type": "string",
@@ -405,10 +399,9 @@ VALUES ('student_attendance_by_class', '{
                   "format": "date"
                 },
                 "school_id": {
-                  "type": "string",
+                  "type": "number",
                   "shouldNotNull": true,
-                  "minLength": 10,
-                  "maxLength": 10
+                  "pattern": "^[0-9]{10}$"
                 },
                 "grade": {
                   "type": "number",
@@ -445,21 +438,13 @@ VALUES ('student_attendance_by_class', '{
               "type": "object",
               "properties": {
                 "date": {
-                  "type": "string",
-                  "shouldNotNull": true,
-                  "format": "date"
+                  "type": "string"
                 },
                 "school_id": {
-                  "type": "string",
-                  "shouldNotNull": true,
-                  "minLength": 10,
-                  "maxLength": 10
+                  "type": "string"
                 },
                 "grade": {
-                  "type": "number",
-                  "shouldNotNull": true,
-                  "minimum": 1,
-                  "maximum": 12
+                  "type": "number"
                 }
               },
               "required": [
