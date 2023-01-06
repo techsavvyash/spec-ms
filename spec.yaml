@@ -786,13 +786,13 @@ paths:
 
       responses:
         200:
-          description: "Pipeline Triggered Successfully"
+          description: "CSV Uploaded Successfully"
           schema:
             type: "object"
             properties:
               message:
                 type: "string"
-                example: "Pipeline Triggered Successfully"
+                example: "CSV Uploaded Successfully"
         400:
           description: "Something went wrong"
           schema:
