@@ -358,6 +358,7 @@ VALUES ('student_attendance_by_class', '{
         "properties": {
           "table": {
             "type": "object",
+            "shouldNotNull": true,
             "properties": {
               "ingestion.student_attendance": {
                 "type": "string"
