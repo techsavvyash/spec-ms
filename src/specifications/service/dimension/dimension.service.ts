@@ -1,5 +1,5 @@
 import {GenericFunction} from './../genericFunction';
-import {checkDuplicacy, checkName, createTable, insertPipeline, insertSchema} from 'src/specifications/queries/queries';
+import {checkDuplicacy, checkName, createTable, insertPipeline, insertSchema} from '../../queries/queries';
 import {DataSource} from 'typeorm';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {dimensionSchemaData} from "../../../utils/spec-data";
@@ -14,7 +14,7 @@ export class DimensionService {
         let dbColumns = [];
         let newObj = this.specService.convertKeysToLowerCase(dimensionDTO);
         const isValidSchema: any = await this.specService.ajvValidator(dimensionSchemaData, dimensionDTO);
-        if (isValidSchema.errors) {
+        if (isValidSchema?.errors) {
             return {"code": 400, error: isValidSchema.errors}
         } else {
             let response: dimensionResponse = await this.validateRequiredFields(isValidSchema);
@@ -24,18 +24,18 @@ export class DimensionService {
                     error: response.error
                 }
             } else {
-                let queryResult = checkName('dimension_name', "dimension");
+                let queryResult:any = checkName('dimension_name', "dimension");
                 queryResult = queryResult.replace('$1', `${dimensionDTO?.dimension_name.toLowerCase()}`);
                 const resultDname = await this.dataSource.query(queryResult);
-                if (resultDname.length > 0) {
+                if (resultDname?.length > 0) {
                     return {"code": 400, "error": "Dimension Name already exists"};
                 }
                 else {
                     await queryRunner.connect();
                     let values = newObj?.input?.properties?.dimension?.items?.properties;
                     let duplicacyQuery = checkDuplicacy(['dimension_name', 'dimension_data'], 'dimension', ['dimension_data', "'input'->'properties'->'dimension'->'items'->'properties'"], JSON.stringify(values));
-                    const result = await queryRunner.query(duplicacyQuery);
-                    if (result.length == 0) //If there is no record in the DB then insert the first schema
+                    const result = await this.dataSource.query(duplicacyQuery);
+                    if (result?.length == 0) //If there is no record in the DB then insert the first schema
                     {
                         await queryRunner.startTransaction();
                         try {

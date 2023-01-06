@@ -10,7 +10,6 @@ export function checkDuplicacy(columnNames: string[], tableName: string, JsonPro
 
 export function insertSchema(columnNames: string[], tableName: string) {
     const queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}, ${columnNames[1]}) VALUES ($1,$2) RETURNING pid`;
-    console.log('queries.insertSchema: ', queryStr);
     return queryStr;
 }
 
