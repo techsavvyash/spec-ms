@@ -84,8 +84,6 @@ paths:
         ]
     }
 }
-
-
       responses:
         200:
           description: "Event Spec Created Successfully"
@@ -328,20 +326,13 @@ paths:
                             "type": "object",
                             "properties": {
                                 "date": {
-                                    "type": "string",
-                                     "shouldNotNull": true,
-                                     "format":"date"
+                                    "type": "string"
                                 },
                                 "school_id": {
-                                    "type": "string",
-                                    "shouldNotNull": true,
-                                    "pattern":"^[0-9]{10}$"
+                                    "type": "string"
                                 },
                                 "grade": {
-                                    "type": "number",
-                                    "shouldNotNull": true,
-                                    "minimum":1,
-                                    "maximum":12
+                                    "type": "number"
                                 }
                             },
                             "required": [
@@ -595,7 +586,6 @@ paths:
           schema:
             $ref: "#/definitions/generic_error"
 
-
   /ingestion/event:
     post:
       tags:
@@ -756,6 +746,44 @@ paths:
               type:
                 type: "string"
                 example: "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
+      responses:
+        200:
+          description: "Pipeline Triggered Successfully"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "Pipeline Triggered Successfully"
+        400:
+          description: "Something went wrong"
+          schema:
+            $ref: "#/definitions/generic_error"
+  /ingestion/csv:
+    post:
+      tags:
+        - "ingestion"
+      summary: "CSV Import"
+      description: "CSV Import"
+      operationId: "csvImport"
+      consumes:
+        - "multipart/form-data"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "formData"
+          name: "body"
+          type: file
+          required: true
+        - in: "formData"
+          name: "ingestion_type"
+          type: string
+          required: true
+        - in: "formData"
+          name: "ingestion_name"
+          type: string
+          required: true
+
       responses:
         200:
           description: "Pipeline Triggered Successfully"
