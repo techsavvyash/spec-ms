@@ -28,7 +28,7 @@ export class DimensionService {
                 queryResult = queryResult.replace('$1', `${dimensionDTO?.dimension_name.toLowerCase()}`);
                 const resultDname = await this.dataSource.query(queryResult);
                 if (resultDname?.length > 0) {
-                    return {"code": 400, "error": "Dimension Name already exists"};
+                    return {"code": 400, "error": "Dimension name already exists"};
                 }
                 else {
                     await queryRunner.connect();
@@ -60,7 +60,7 @@ export class DimensionService {
                                     await queryRunner.commitTransaction();
                                     return {
                                         "code": 200,
-                                        "message": "Dimension Spec Created Successfully",
+                                        "message": "Dimension spec created successfully",
                                         "dimension_name": dimensionDTO.dimension_name,
                                         "pid": insertResult[0].pid
                                     };
@@ -77,7 +77,7 @@ export class DimensionService {
                             }
                         } catch (error) {
                             await queryRunner.rollbackTransaction();
-                            return {"code": 400, "error": "something went wrong"}
+                            return {"code": 400, "error": "Something went wrong"}
                         }
                         finally {
                             await queryRunner.release();

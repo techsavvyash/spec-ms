@@ -30,7 +30,7 @@ export class EventService {
                 queryResult = queryResult.replace('$1', `${eventDTO?.event_name.toLowerCase()}`);
                 const resultDname:any = await this.dataSource.query(queryResult);
                 if (resultDname?.length > 0) {
-                    return {"code": 400, "error": "Event Name already exists"};
+                    return {"code": 400, "error": "Event name already exists"};
                 }
                 else {
                     await queryRunner.connect();
@@ -53,7 +53,7 @@ export class EventService {
                                     await queryRunner.commitTransaction();
                                     return {
                                         "code": 200,
-                                        "message": "Event Spec Created Successfully",
+                                        "message": "Event spec created successfully",
                                         "event_name": eventDTO.event_name,
                                         "pid": insertResult[0].pid
                                     };

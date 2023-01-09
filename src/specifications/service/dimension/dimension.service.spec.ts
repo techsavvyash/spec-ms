@@ -269,7 +269,7 @@ describe('DimensionService', () => {
 
     }
     let result = {
-      "code": 400, "error": "Dimension Name already exists"
+      "code": 400, "error": "Dimension name already exists"
     }
     expect(await service.createDimension(inputData)).toStrictEqual(result)
   });
@@ -420,7 +420,7 @@ describe('DimensionService', () => {
 
     let result = {
       "code": 200,
-      "message": "Dimension Spec Created Successfully",
+      "message": "Dimension spec created successfully",
       "dimension_name":"dimensionsssss",
       "pid": 1
     }

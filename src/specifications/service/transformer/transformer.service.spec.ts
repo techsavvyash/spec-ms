@@ -14,7 +14,7 @@ describe('TransformerService', () => {
     };
 
     let apiDta = {
-        data: {transformerFile: "test", Message: "Transformer Created Successfully",}
+        data: {transformerFile: "test", Message: "Transformer created successfully",}
     };
 
     const mockHttpservice = {
@@ -83,7 +83,7 @@ describe('TransformerService', () => {
         };
 
         let result = {
-            "code": 400, "error": "Invalid Event Name"
+            "code": 400, "error": "Invalid event name"
         };
         expect(await service.createTransformer(transformerData)).toStrictEqual(result);
     });
@@ -97,7 +97,7 @@ describe('TransformerService', () => {
         };
 
         let result = {
-            "code": 400, "error": "Invalid Dataset Name"
+            "code": 400, "error": "Invalid dataset name"
         };
         expect(await service.createTransformer(transformerData)).toStrictEqual(result);
     });
@@ -111,7 +111,7 @@ describe('TransformerService', () => {
         };
         let result = {
             "code": 200,
-            "message": "Transformer Created Successfully",
+            "message": "Transformer created successfully",
             "pid": 1,
             "file": "test"
         };
@@ -128,7 +128,7 @@ describe('TransformerService', () => {
       }
 
       let result ={
-       "code": 400, "error": "Invalid template Name"
+       "code": 400, "error": "Invalid template name"
       }
       expect(await service.createTransformer(transformerData)).toStrictEqual(result);
     })
@@ -142,7 +142,7 @@ describe('TransformerService', () => {
       }
 
       let result ={
-       "code": 400, "error": "Invalid Transformer Type"
+       "code": 400, "error": "Invalid transformer type"
       }
       expect(await service.createTransformer(transformerData)).toStrictEqual(result);
     })

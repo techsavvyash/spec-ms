@@ -54,20 +54,20 @@ export class TransformerService {
                                 }
                             }
                             else {
-                                return {"code": 400, error: "Invalid Dataset Name"}
+                                return {"code": 400, error: "Invalid dataset name"}
                             }
                         }
                         else {
-                            return {"code": 400, error: "Invalid Event Name"};
+                            return {"code": 400, error: "Invalid event name"};
                         }
                     }
                     else {
-                        return {"code": 400, error: "Invalid template Name"}
+                        return {"code": 400, error: "Invalid template name"}
                     }
 
                 }
                 else {
-                    return {"code": 400, error: "Invalid Transformer Type"}
+                    return {"code": 400, error: "Invalid transformer type"}
                 }
 
             }
