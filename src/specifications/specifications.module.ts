@@ -8,11 +8,12 @@ import { GenericFunction } from './service/genericFunction';
 import { TransformerService } from './service/transformer/transformer.service';
 import { DatasetService } from './service/dataset/dataset.service';
 import { HttpModule } from '@nestjs/axios';
+import { HttpCustomService } from './service/httpservices';
 
 @Module({
   imports: [HttpModule],
   controllers: [SpecificationController],
-  providers:[DimensionService,EventService,GenericFunction,TransformerService, DatasetService],
+  providers:[DimensionService,EventService,GenericFunction,TransformerService, DatasetService,HttpCustomService],
 
 })
 export class SpecificationsModule {}

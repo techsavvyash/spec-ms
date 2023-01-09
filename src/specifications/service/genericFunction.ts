@@ -1,43 +1,58 @@
-import { Injectable } from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import Ajv from "ajv";
-const ajv = new Ajv();
+import Ajv2019 from "ajv/dist/2019"
+
+const ajv = new Ajv2019()
+ajv.addKeyword({
+    keyword: 'shouldNotNull',
+    validate: (schema, data) => {
+        if (schema) {
+            if (typeof data === 'object') return typeof data === 'object' && Object.keys(data).length > 0
+            if (typeof data === 'string') return typeof data === 'string' && data.trim() !== ''
+            if (typeof data === 'number') return typeof data === 'number'
+        }
+        else return true;
+    }
+});
+
+
 @Injectable()
 export class GenericFunction {
-async ajvValidator(schema, inputData) {
-    const isValid = ajv.validate(schema, inputData);
-    if (isValid) {
-        return inputData;
-    } else {
-        return {errors: ajv.errors};
+    async ajvValidator(schema, inputData) {
+        const isValid = ajv.validate(schema, inputData);
+        if (isValid) {
+            return inputData;
+        } else {
+            return {errors: ajv.errors};
+        }
     }
-}
+
 // converting all the keys in request body to lowercase to avoid duplication
-  convertKeysToLowerCase(dimensionDTO)
-{
-    let json = JSON.stringify(dimensionDTO);
-    let obj = json.replace(/"([\w]+)":/g, function ($0, $1) {
-    return ('"' + $1.toLowerCase() + '":');
-    });
-    let newObj = JSON.parse(obj);
-    return newObj
-}
- getDbColumnNames(columnProperties)
-{
-    let dbColumns = []
-      columnProperties.forEach((element, index) => {
-        if (element.type == "string") {
-          dbColumns[index] = 'VARCHAR'
-        }
-        else if (element.type == "number") {
-          dbColumns[index] = 'INT';
-        }
-        else if (element.type == "json") {
-          dbColumns[index] = 'jsonb';
-        }
-        else if (element.type == 'date') {
-          dbColumns[index] = 'TIMESTAMP WITH TIME ZONE';
-        }
-      });
-      return dbColumns;
-}
+    convertKeysToLowerCase(dimensionDTO) {
+        let json = JSON.stringify(dimensionDTO);
+        let obj = json.replace(/"([\w]+)":/g, function ($0, $1) {
+            return ('"' + $1.toLowerCase() + '":');
+        });
+        let newObj = JSON.parse(obj);
+        return newObj
+    }
+
+    getDbColumnNames(columnProperties) {
+        let dbColumns = []
+        columnProperties.forEach((element, index) => {
+            if (element.type == "string") {
+                dbColumns[index] = 'VARCHAR'
+            }
+            else if (element.type == "number") {
+                dbColumns[index] = 'INT';
+            }
+            else if (element.type == "json") {
+                dbColumns[index] = 'jsonb';
+            }
+            else if (element.type == 'date') {
+                dbColumns[index] = 'TIMESTAMP WITH TIME ZONE';
+            }
+        });
+        return dbColumns;
+    }
 }
