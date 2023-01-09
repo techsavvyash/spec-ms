@@ -743,18 +743,15 @@ paths:
               pipeline_name:
                 type: "string"
                 example: "student_count_pipe"
-              type:
-                type: "string"
-                example: "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
       responses:
         200:
-          description: "Pipeline Triggered Successfully"
+          description: "Processor Group Running Successfully"
           schema:
             type: "object"
             properties:
               message:
                 type: "string"
-                example: "Pipeline Triggered Successfully"
+                example: "Processor Group Running Successfully"
         400:
           description: "Something went wrong"
           schema:
