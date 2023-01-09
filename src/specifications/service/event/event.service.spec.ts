@@ -213,7 +213,7 @@ describe('EventService', () => {
       }
     }
     let result = {
-      "code": 400, "error": "Event Name already exists"
+      "code": 400, "error": "Event name already exists"
     }
     expect(await service.createEvent(inputData)).toStrictEqual(result)
   })
@@ -322,7 +322,7 @@ describe('EventService', () => {
 
     let result = {
       "code": 200,
-      "message": "Event Spec Created Successfully",
+      "message": "Event spec created successfully",
       "event_name": "student_attendanceggee1",
       "pid": 1
     }

@@ -642,7 +642,7 @@ describe('DatasetService', () => {
     }
 
     let result = {
-      "code": 400, "error": "Dataset Name already exists"
+      "code": 400, "error": "Dataset name already exists"
     }
     expect(await service.createDataset(inputData)).toStrictEqual(result)
   });
@@ -843,7 +843,7 @@ describe('DatasetService', () => {
       }
     }
     let result = {
-      "code": 400, "error": "Duplicate Dataset not allowed"
+      "code": 400, "error": "Duplicate dataset not allowed"
     }
 
     expect(await service.createDataset(inputData)).toStrictEqual(result)
@@ -1046,7 +1046,7 @@ describe('DatasetService', () => {
     }
     let result = {
       "code": 200,
-      "message": "Dataset Spec Created Successfully",
+      "message": "Dataset spec created successfully",
       "dataset_name": "student_attendance_by_class",
       "pid": 1
     }

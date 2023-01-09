@@ -31,7 +31,7 @@ export class DatasetService {
                 queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name.toLowerCase()}`);
                 const resultDname:any = await this.dataSource.query(queryResult);
                 if (resultDname?.length > 0) {
-                    return {"code": 400, "error": "Dataset Name already exists"};
+                    return {"code": 400, "error": "Dataset name already exists"};
                 }
                 else {
                     await queryRunner.connect();
@@ -62,14 +62,14 @@ export class DatasetService {
                                     await queryRunner.commitTransaction();
                                     return {
                                         "code": 200,
-                                        "message": "Dataset Spec Created Successfully",
+                                        "message": "Dataset spec created successfully",
                                         "dataset_name": datasetDTO.dataset_name,
                                         "pid": insertResult[0].pid
                                     };
                                 }
                             } else {
                                 await queryRunner.rollbackTransaction();
-                                return {"code": 400, "error": "Dataset Spec was not added"};
+                                return {"code": 400, "error": "Dataset spec was not added"};
                             }
                         } catch (error) {
                             await queryRunner.rollbackTransaction();
@@ -79,7 +79,7 @@ export class DatasetService {
                         }
                     }
                     else {
-                        return {"code": 400, "error": "Duplicate Dataset not allowed"}
+                        return {"code": 400, "error": "Duplicate dataset not allowed"}
                     }
                 }
             }

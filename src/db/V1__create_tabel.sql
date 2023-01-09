@@ -203,6 +203,7 @@ VALUES ('student_attendance', '{
       },
       "event": {
         "type": "array",
+        "shouldNotNull": true,
         "items": {
           "type": "object",
           "properties": {
@@ -260,6 +261,7 @@ VALUES ('student_attendance', '{
       },
       "dimension": {
         "type": "array",
+        "shouldNotNull": true,
         "items": {
           "type": "object",
           "properties": {
