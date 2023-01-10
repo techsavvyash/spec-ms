@@ -119,6 +119,12 @@ def DimensionSpec(request,Response):
     return Response(json.dumps({"Message": "Spec Created Successfully", "SpecFile": DimensionName}))
 
 
+def Dataset_csv_colums_validation(DatasetKeyFileColumns):
+    for col in DatasetKeyFileColumns:
+        DatasetKeyFileColumnsDict={"key":col}
+    if  DatasetKeyFileColumnsDict['key'] != []
+
+
 def DatasetSpec(request,Response):
 
     DatasetKeys = request.json['key_file']
@@ -139,17 +145,20 @@ def DatasetSpec(request,Response):
     df_dataset = pd.read_csv('./key_files/' + DatasetKeys)
     df_dataset=df_dataset.loc[df_dataset['program'] == Program]
     D_keys=df_dataset.keys().tolist()
+    Dataset_csv_colums_validation(D_keys)
     Dataset_items=df_dataset.values.tolist()
     for value in Dataset_items:
         dataset=(dict(zip(D_keys,value)))
         DatasetName = dataset['dataset_name']
         Template = dataset['template']
-        if (dataset['template'] == 'CubeToCubePerIncrement')|(dataset['template'] == 'CubeToCubeIncrement'):
+        if dataset['template'] in ['CubeToCube','CubeToCubeIncrement','CubeToCubePer','CubeToCubePerIncrement','E&CToCubePer', 'E&CToCubePer']:
             Template = 'CubeToCube'
-        if (dataset['template'] == 'E&CToCubePerIncrement')|(dataset['template'] == 'EventToCubePerIncrement')|(dataset['template'] == 'EventToCubeIncrement'):
+        elif dataset['template'] in ['EventToCube', 'EventToCubeIncrement', 'EventToCubePer', 'EventToCubePerIncrement']:
             Template = 'EventToCube'
-        if (dataset['template'] == 'CubeToCubePerFilterIncrement') | (dataset['template'] == 'CubeToCubeFilterIncrement'):
+        elif dataset['template'] in ['CubeToCubeFilterPer','CubeToCubeFilterPerIncrement','CubeToCubeFilter','CubeToCubeFilterIncrement']:
             Template = 'CubeToCubeFilter'
+        else:
+            return Response(json.dumps({"Message": "Template Name Is Not Correct", "Template": Template,"Dataset":DatasetName}))
         DimensionCol = dataset['dimension_col'].split(',')
         DimensionTable = dataset['dimension_table'].split(',')
         MergeOnCol = dataset['merge_on_col'].split(',')
@@ -200,6 +209,9 @@ def DatasetSpec(request,Response):
             print("ERROR: Template Name is Not Correct")
         KeysMaping(Program,InputKeys,Template,DatasetName,Response)
     return  Response(json.dumps({"Message": "Spec Created Successfully", "SpecFile": DatasetName}))
+
+
+
 
 
 
