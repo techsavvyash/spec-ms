@@ -1,73 +1,59 @@
-import {Injectable} from '@nestjs/common';
-import {InjectDataSource} from '@nestjs/typeorm';
-import {GenericFunction} from '../genericFunction';
-import {DataSource} from 'typeorm';
-import {transformerSchemaData} from '../../../utils/spec-data';
-import {TransformerType, TemplateType} from '../contsant'
-import {HttpService} from '@nestjs/axios';
-import {getdatasetName, getEventData, insertTransformer} from '../../queries/queries';
-import {HttpCustomService} from '../httpservices';
-
+import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { GenericFunction } from '../genericFunction';
+import { DataSource } from 'typeorm';
+import { transformerSchemaData } from '../../../utils/spec-data';
+import { getEventData, insertTransformer } from '../../queries/queries';
+import { HttpCustomService } from '../HttpCustomService';
 @Injectable()
 export class TransformerService {
-    constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction, private http: HttpCustomService) {
+    constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction,private http:HttpCustomService) {
     }
 
     async createTransformer(inputData) {
+        const queryRunner: any = this.dataSource.createQueryRunner();
         try {
             const eventName = inputData.event_name;
-            const datasetName = inputData.dataset_name;
-            const transformerTypeInput = inputData.transformer_type;
-            const template = inputData.template;
+            const keyFileName = inputData.key_file;
+            const programName = inputData.programName;
             const isValidSchema: any = await this.gnFunction.ajvValidator(transformerSchemaData.input, inputData);
             if (isValidSchema.errors) {
-                return {"code": 400, error: isValidSchema.errors}
+                return { "code": 400, error: isValidSchema.errors }
             } else {
-                if (TransformerType.includes(transformerTypeInput)) {
-                    if (TemplateType.includes(template)) {
-                        const queryResult = await this.dataSource.query(getEventData(eventName));
-                        if (queryResult?.length === 1) {
-                            const result = await this.dataSource.query(getdatasetName(datasetName));
-                            if (result.length === 1) {
-                                const data = {
-                                    "event": eventName,
-                                    "dataset": datasetName,
-                                    "template": template,
-                                    "transformer_type": transformerTypeInput,
-                                };
-                                const apiGenerator = await this.generatorAPI(data);
-                                if (apiGenerator) {
-                                    try {
-                                        const transResult: any = await this.dataSource.query(insertTransformer(apiGenerator.data.transformerFile));
-                                        if (transResult) {
-                                            return {
-                                                "code": 200,
-                                                "message": apiGenerator.data.Message,
-                                                "pid": transResult[0].pid,
-                                                "file": apiGenerator.data.transformerFile
-                                            }
-                                        }
-                                    } catch (error) {
-                                        console.error('transformer.service.createTransformer: ', error.message);
-                                        return {code: 400, error: "something went wrong"}
-                                    }
+                const queryResult = await this.dataSource.query(getEventData(eventName));
+                if (queryResult?.length === 1) {
+                    await queryRunner.connect();
+                    const data = {
+                        "event": eventName,
+                        "key_file": keyFileName,
+                        "program": programName
+                    };
+                    const apiGenerator: any = await this.generatorAPI(data);
+                    console.log('datdas',apiGenerator);
+                    if (apiGenerator) {
+                        await queryRunner.startTransaction();
+                        try {
+                            const transResult: any = await queryRunner.query(insertTransformer(apiGenerator.transformerFile));
+                            if (transResult[0].pid && apiGenerator.transformerFile) {
+                                await queryRunner.commitTransaction();
+                                return {
+                                    "code": 200,
+                                    "message": apiGenerator.Message,
+                                    "pid": transResult[0].pid,
+                                    "file": apiGenerator.transformerFile
                                 }
                             }
                             else {
-                                return {"code": 400, error: "Invalid dataset name"}
+                                await queryRunner.rollbackTransaction();
+                                return { "code": 400, "error": "Unable to insert transformer" }
                             }
-                        }
-                        else {
-                            return {"code": 400, error: "Invalid event name"};
+                        } catch (error) {
+                            console.error('transformer.service.createTransformer: ', error.message);
                         }
                     }
-                    else {
-                        return {"code": 400, error: "Invalid template name"}
-                    }
-
                 }
                 else {
-                    return {"code": 400, error: "Invalid transformer type"}
+                    return { "code": 400, error: "Invalid event name" };
                 }
 
             }
@@ -78,15 +64,17 @@ export class TransformerService {
     }
 
     async generatorAPI(APIdata) {
-        let url = `${process.env.FLASKAPI}/generator/transformer`;
-        try {
-            const result: any = await this.http.post(url, APIdata);
-            if (result) {
-                return result;
-            }
-        } catch (error) {
-            console.error('transformer.service.ts.generatorAPI: ', error.message);
-            return {code: 400, error: "could not create transformer"}
-        }
+        // let url = `${process.env.FLASKAPI}/generator/transformer`;
+        // try {
+        //     const result: any = await this.http.post(url, APIdata);
+        //     if (result) {
+        //         return result;
+        //     }
+        // } catch (error) {
+        //     console.error('transformer.service.ts.generatorAPI: ', error.message);
+        //     return { code: 400, error: "could not create transformer" }
+        // }
+        let result ={"Message" : "succussfully" ,"transformerFile":"dsjfbjhad.py" }
+        return result
     }
 }
