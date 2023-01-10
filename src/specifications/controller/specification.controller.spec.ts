@@ -1,3 +1,4 @@
+import { PipelineService } from './../service/pipeline/pipeline.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatasetService } from '../service/dataset/dataset.service';
 import { DimensionService } from '../service/dimension/dimension.service';
@@ -11,7 +12,7 @@ describe('SpecificationController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SpecificationController],
-      providers:[DimensionService,EventService,TransformerService,DatasetService,
+      providers:[DimensionService,EventService,TransformerService,DatasetService,PipelineService,
         {
           provide: DimensionService,
           useValue: {
@@ -34,6 +35,12 @@ describe('SpecificationController', () => {
           provide: DatasetService,
           useValue: {
             createTransformer: jest.fn(dto =>{dto}),
+          }
+        },
+        {
+          provide: PipelineService,
+          useValue: {
+            createSpecPipeline: jest.fn(dto =>{dto})
           }
         },
       
