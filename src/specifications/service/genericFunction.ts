@@ -1,8 +1,9 @@
 import {Injectable} from "@nestjs/common";
 import Ajv from "ajv";
-import Ajv2019 from "ajv/dist/2019"
-
-const ajv = new Ajv2019()
+import Ajv2019 from "ajv/dist/2019";
+import addFormats from "ajv-formats"
+const ajv = new Ajv2019();
+addFormats(ajv);
 ajv.addKeyword({
     keyword: 'shouldNotNull',
     validate: (schema, data) => {
