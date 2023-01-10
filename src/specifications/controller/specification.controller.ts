@@ -89,7 +89,7 @@ export class SpecificationController {
     async createPipeline(@Body() pipelineDto: pipelineDto, @Res()response: Response)
     {
         try {
-            const result: Result = await this.pipelineService.createPipeline(pipelineDto)
+            const result: Result = await this.pipelineService.createSpecPipeline(pipelineDto)
             console.log('result',result);
             if(result?.code == 400)
             {

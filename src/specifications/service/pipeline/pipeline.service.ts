@@ -5,13 +5,13 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { pipelineDto } from 'src/specifications/dto/specData.dto';
 import { DataSource } from 'typeorm';
 import { GenericFunction } from '../genericFunction';
-import { checkName, getPipelineSpec, insertIntoSpecPipeline } from 'src/specifications/queries/queries';
+import { checkName, getPipelineSpec, insertIntoSpecPipeline } from '../../queries/queries';
 // PipelineSchemaDimension
 @Injectable()
 export class PipelineService {
 
     constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private http: HttpCustomService) { }
-    async createPipeline(pipelineData: pipelineDto) {
+    async createSpecPipeline(pipelineData: pipelineDto) {
             let isValidSchema: any;
             let checkCoulmnPid: string[];
             const queryRunner = this.dataSource.createQueryRunner();
@@ -27,7 +27,7 @@ export class PipelineService {
                     isValidSchema = await this.specService.ajvValidator(PipelineSchemaDatasettoDB, pipelineData);
                     break;
                 default:
-                    return { code: 400, error: "Invalid Pipeline type" }
+                    return { code: 400, error: "Invalid pipeline type" }
             }
 
             
