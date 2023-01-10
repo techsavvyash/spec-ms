@@ -1,14 +1,15 @@
 import {EventService} from './../service/event/event.service';
 import {DimensionService} from './../service/dimension/dimension.service';
-import {Body, Controller, HttpCode, Post, Res} from '@nestjs/common';
+import {Body, Controller, Post, Res} from '@nestjs/common';
 import {Response} from 'express';
-import {specTrasformer} from '../dto/specData.dto';
+import {pipelineDto, Result, specTrasformer} from '../dto/specData.dto';
 import {TransformerService} from '../service/transformer/transformer.service';
 import {DatasetService} from '../service/dataset/dataset.service';
+import { PipelineService } from '../service/pipeline/pipeline.service';
 
 @Controller('spec')
 export class SpecificationController {
-    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService) {
+    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService) {
     }
 
     @Post('/dimension')
@@ -83,6 +84,25 @@ export class SpecificationController {
             }
         } catch (error) {
             console.error("create.Transformer impl :", error)
+        }
+    }
+
+    @Post('/pipeline')
+    async createPipeline(@Body() pipelineDto: pipelineDto, @Res()response: Response)
+    {
+        try {
+            const result: Result = await this.pipelineService.createPipeline(pipelineDto)
+            console.log('result',result);
+            if(result?.code == 400)
+            {
+                response.status(400).send({"message": result.error});
+            }
+            else{
+                response.status(200).send({"message":result.message});
+            }
+        }catch(error)
+        {
+            console.error("create.Pipeline impl :", error)
         }
     }
 }

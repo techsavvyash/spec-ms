@@ -1069,3 +1069,116 @@ export const transformerSchemaData = {
         ]
     }
 };
+
+export const PipelineSchemaDimensiontoDB ={
+    "type": "object",
+    "properties": {
+        "pipeline_name": {
+            "type": "string",
+            "shouldNotNull": true
+        },
+        "pipeline_type": {
+            "type": "string",
+            "shouldNotNull": true
+        },
+        "pipeline": {
+            "type": "array",
+            "shouldNotNull": true,
+        
+        "items": {
+            "type": "object",
+            "properties": {
+                "transformer_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                },
+                "dimension_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                }
+            },
+            "required": ["transformer_name","dimension_name"]
+        }
+    }
+    },
+    "required":["pipeline_name","pipeline_type","pipeline"]
+}
+
+export const PipelineSchemaDatasettoDB = {
+    "type": "object",
+    "properties": {
+        "pipeline_name": {
+            "type": "string",
+            "shouldNotNull": true
+        },
+        "pipeline_type": {
+            "type": "string",
+            "shouldNotNull": true
+        },
+        "pipeline": {
+            "type": "array",
+            "shouldNotNull": true,
+        
+        "items": {
+            "type": "object",
+            "properties": {
+                "transformer_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                },
+                "dataset_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                }
+            },
+            "required": ["transformer_name","dataset_name"]
+        }
+    }
+    },
+    "required":["pipeline_name","pipeline_type","pipeline"]
+
+}
+
+export const PipelineSchemaIngesttoDB = {
+    "type": "object",
+    "properties": {
+        "pipeline_name": {
+            "type": "string",
+            "shouldNotNull": true
+        },
+        "pipeline_type": {
+            "type": "string",
+            "shouldNotNull": true
+        },
+        "pipeline": {
+            "type": "array",
+            "shouldNotNull": true,
+        
+        "items": {
+            "type": "object",
+            "properties": {
+                "transformer_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                },
+                "dataset_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                },
+                "dimension_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                },
+                "event_name": {
+                    "type": "string",
+                    "shouldNotNull": true
+                },
+
+            },
+            "required": ["transformer_name","dataset_name","dimension_name"]
+        }
+    }
+    },
+    "required":["pipeline_name","pipeline_type","pipeline"]
+
+}
