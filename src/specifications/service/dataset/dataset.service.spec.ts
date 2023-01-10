@@ -3,7 +3,6 @@ import {DatasetService} from './dataset.service';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
 import {async} from 'rxjs';
-import {DatabaseService} from "../../../../../ingestion-ms/src/database/database.service";
 
 let inputData = {
     "ingestion_type": "dataset",
