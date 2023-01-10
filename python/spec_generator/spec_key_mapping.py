@@ -144,10 +144,12 @@ def DatasetSpec(request,Response):
         dataset=(dict(zip(D_keys,value)))
         DatasetName = dataset['dataset_name']
         Template = dataset['template']
-        if dataset['template'] == 'CubeToCubePer':
+        if (dataset['template'] == 'CubeToCubePerIncrement')|(dataset['template'] == 'CubeToCubeIncrement'):
             Template = 'CubeToCube'
-        if (dataset['template'] == 'E&CToCubePer')|(dataset['template'] == 'EventToCubePer'):
+        if (dataset['template'] == 'E&CToCubePerIncrement')|(dataset['template'] == 'EventToCubePerIncrement')|(dataset['template'] == 'EventToCubeIncrement'):
             Template = 'EventToCube'
+        if (dataset['template'] == 'CubeToCubePerFilterIncrement') | (dataset['template'] == 'CubeToCubeFilterIncrement'):
+            Template = 'CubeToCubeFilter'
         DimensionCol = dataset['dimension_col'].split(',')
         DimensionTable = dataset['dimension_table'].split(',')
         MergeOnCol = dataset['merge_on_col'].split(',')
@@ -189,7 +191,7 @@ def DatasetSpec(request,Response):
             InputKeys.update(InputKeys)
         elif Template == "CubeToCube":
             InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}])))})
-        elif Template == "CubeToCubeFilterPer":
+        elif Template == "CubeToCubeFilter":
             InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}]))),
                               "FilterCol":json.dumps(dict(zip(FilterCol,[{"type":"string"}]))),
                               "FilterType": json.dumps(dict(zip(FilterType, [{"type": "string"}]))),
