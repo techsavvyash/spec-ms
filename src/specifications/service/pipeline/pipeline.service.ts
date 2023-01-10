@@ -8,7 +8,7 @@ import { GenericFunction } from '../genericFunction';
 import { checkName, getPipelineSpec, insertIntoSpecPipeline } from '../../queries/queries';
 // PipelineSchemaDimension
 @Injectable()
-export class PipelineService {
+export class PipelineService { 
 
     constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private http: HttpCustomService) { }
     async createSpecPipeline(pipelineData: pipelineDto) {
