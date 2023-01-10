@@ -80,7 +80,6 @@ def collect_keys(request,Response):
         df = df.loc[df['event_name'] == EventName]
         Datasetkeys = df.keys().tolist()
         DatasetItems = df.values.tolist()
-        print(DatasetItems)
         for value in DatasetItems:
             TemplateDatasetMaping = (dict(zip(Datasetkeys, value)))
             DatasetName = TemplateDatasetMaping['dataset_name']
@@ -127,20 +126,19 @@ def collect_keys(request,Response):
                         'InputCols': ','.join(DatasetItems),'ConflictCols': ','.join(list(Dataset['group_by']['items']['properties'].keys())),
                         'IncrementFormat': ','.join(IncrementFormat),'ReplaceFormat': ','.join(ReplaceFormat),
                         'Denominator': PercentageIncrement[1],'Numerator': PercentageIncrement[0],
-
                         'UpdateCols': ','.join(UpdateCols * 2),'UpdateCol': ','.join(UpdateCols)})
-                if (TranformerType=='EventToCube')|(TranformerType=='EventToCubePer')|(TranformerType=='EventToCubeIncrement')|(TranformerType=='EventToCubePerIncrement')|(TranformerType=='E&CToCubePer'):
+                if TranformerType in ['EventToCube', 'EventToCubeIncrement', 'EventToCubePer', 'EventToCubePerIncrement']:
                     InputKeys.update(InputKeys)
-                elif (TranformerType=='CubeToCube')|(TranformerType=='CubeToCubePer')|(TranformerType=='CubeToCubeIncrement')|(TranformerType=='CubeToCubePerIncrement'):
+                elif TranformerType in ['CubeToCube','CubeToCubeIncrement','CubeToCubePer','CubeToCubePerIncrement','E&CToCubePer', 'E&CToCubePer']:
                     table = list(Dataset['aggregate']['properties']['columns']['items']['properties']['table']['properties'].keys())
                     InputKeys.update({'Table':table[0]})
-                elif (TranformerType == 'CubeToCubeFilterPer')|(TranformerType == 'CubeToCubeFilterPerIncrement')|(TranformerType == 'CubeToCubeFilter')|(TranformerType == 'CubeToCubeFilterIncrement'):
+                elif TranformerType in ['CubeToCubeFilterPer','CubeToCubeFilterPerIncrement','CubeToCubeFilter','CubeToCubeFilterIncrement']:
                     table = list(Dataset['aggregate']['properties']['columns']['items']['properties']['table']['properties'].keys())
                     filter = Dataset['aggregate']['properties']['filters']['items']['properties']
                     InputKeys.update({'Table':table[0],'FilterCol':list(filter['column']['properties'].keys()),'FilterType':list(filter['filter_type']['properties'].keys())[0],
                              'Filter':list(filter['filter']['properties'].keys())[0],'DimensionTable':list(Dimensions['table']['properties'].keys())[0]})
                 else:
-                    return Response(json.dumps({"Message": "Transformer Type is Not Correct"}))
+                    return Response(json.dumps({"Message": "Transformer Type is Not Correct","TransformerType":TranformerType,"Dataset":DatasetName}))
                 KeysMaping(InputKeys,Template,Program+'_'+Transformer,Response)
     except Exception as error:
         print(error)
