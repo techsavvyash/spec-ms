@@ -74,16 +74,14 @@ export class SpecificationController {
         try {
             const result: any = await this.transformerservice.createTransformer(transformerDTO)
             if (result.code == 400) {
-                response.status(400).send({"message": result.message});
-            }
-            else if (result.code == 200) {
-                response.status(200).send({"message": result.message, "pid": result.pid, "file": result.file});
+                response.status(400).send({"message": result.error});
             }
             else {
-                response.status(404).send({"error": result.error});
+                response.status(200).send({"message": result.message, "pid": result.pid, "file": result.file});
             }
         } catch (error) {
             console.error("create.Transformer impl :", error)
+            throw new Error(error);
         }
     }
 

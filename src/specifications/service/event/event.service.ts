@@ -12,7 +12,7 @@ export class EventService {
     }
 
     async createEvent(eventDTO) {
-        const queryRunner = this.dataSource.createQueryRunner();
+        const queryRunner :any = this.dataSource.createQueryRunner();
         let newObj = this.specService.convertKeysToLowerCase(eventDTO);
 
         const isValidSchema: any = await this.specService.ajvValidator(eventSchemaData, eventDTO);
@@ -28,22 +28,22 @@ export class EventService {
             } else {
                 let queryResult = checkName('event_name', "event");
                 queryResult = queryResult.replace('$1', `${eventDTO?.event_name.toLowerCase()}`);
-                const resultDname = await this.dataSource.query(queryResult);
-                if (resultDname.length > 0) {
-                    return {"code": 400, "error": "Event Name already exists"};
+                const resultDname:any = await this.dataSource.query(queryResult);
+                if (resultDname?.length > 0) {
+                    return {"code": 400, "error": "Event name already exists"};
                 }
                 else {
                     await queryRunner.connect();
                     let values = newObj?.input?.properties?.event?.items?.properties;
                     let duplicacyQuery = checkDuplicacy(['event_name', 'event_data'], 'event', ['event_data', "'input'->'properties'->'event'->'items'->'properties'"], JSON.stringify(values));
-                    const result = await queryRunner.query(duplicacyQuery);
-                    if (result.length == 0) { //If there is no record in the DB then insert the first schema
-                        await queryRunner.startTransaction();
+                    const result:any = await this.dataSource.query(duplicacyQuery);
+                    if (result?.length == 0) { //If there is no record in the DB then insert the first schema
+                        await queryRunner.startTransaction();                       
                         try {
                             let insertQuery = insertSchema(['event_name', 'event_data'], 'event');
                             insertQuery = insertQuery.replace('$1', `'${eventDTO.event_name.toLowerCase()}'`);
                             insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
-                            const insertResult = await queryRunner.query(insertQuery);
+                            const insertResult = await queryRunner.query(insertQuery);                          
                             if (insertResult[0].pid) {
                                 let event_pid = insertResult[0].pid;
                                 const pipeline_name = eventDTO.event_name.toLowerCase() + 'pipeline';
@@ -53,7 +53,7 @@ export class EventService {
                                     await queryRunner.commitTransaction();
                                     return {
                                         "code": 200,
-                                        "message": "Event Spec Created Successfully",
+                                        "message": "Event spec created successfully",
                                         "event_name": eventDTO.event_name,
                                         "pid": insertResult[0].pid
                                     };

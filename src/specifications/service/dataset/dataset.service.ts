@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {InjectDataSource} from '@nestjs/typeorm';
-import {checkDuplicacy, checkName, createTable, insertPipeline, insertSchema} from 'src/specifications/queries/queries';
+import {checkDuplicacy, checkName, createTable, insertPipeline, insertSchema} from '../../queries/queries';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
 import {datasetSchemaData} from "../../../utils/spec-data";
@@ -13,11 +13,11 @@ export class DatasetService {
 
     async createDataset(datasetDTO) {
         const queryRunner = this.dataSource.createQueryRunner();
-        let dbColumns = [];
+        let dbColumns = [];    
         let newObj = this.specService.convertKeysToLowerCase(datasetDTO);
 
         const isValidSchema: any = await this.specService.ajvValidator(datasetSchemaData, datasetDTO);
-        if (isValidSchema.errors) {
+        if (isValidSchema?.errors) {
             return {"code": 400, error: isValidSchema.errors}
         } else {
             let response: datasetResponse = await this.validateRequiredFields(isValidSchema);
@@ -29,16 +29,16 @@ export class DatasetService {
             } else {
                 let queryResult = checkName('dataset_name', "dataset");
                 queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name.toLowerCase()}`);
-                const resultDname = await this.dataSource.query(queryResult);
-                if (resultDname.length > 0) {
-                    return {"code": 400, "error": "Dataset Name already exists"};
+                const resultDname:any = await this.dataSource.query(queryResult);
+                if (resultDname?.length > 0) {
+                    return {"code": 400, "error": "Dataset name already exists"};
                 }
                 else {
                     await queryRunner.connect();
                     let values = newObj?.input?.properties?.dataset;
                     let duplicacyQuery = checkDuplicacy(['dataset_name', 'dataset_data'], 'dataset', ['dataset_data', "'input'->'properties'->'dataset'"], JSON.stringify(values));
-                    const result = await queryRunner.query(duplicacyQuery);
-                    if (result.length == 0) { //If there is no record in the DB then insert the first schema
+                    const result:any = await this.dataSource.query(duplicacyQuery);
+                    if (result?.length == 0) { //If there is no record in the DB then insert the first schema
                         await queryRunner.startTransaction();
                         try {
                             let insertQuery = insertSchema(['dataset_name', 'dataset_data'], 'dataset');
@@ -62,14 +62,14 @@ export class DatasetService {
                                     await queryRunner.commitTransaction();
                                     return {
                                         "code": 200,
-                                        "message": "Dataset Spec Created Successfully",
+                                        "message": "Dataset spec created successfully",
                                         "dataset_name": datasetDTO.dataset_name,
                                         "pid": insertResult[0].pid
                                     };
                                 }
                             } else {
                                 await queryRunner.rollbackTransaction();
-                                return {"code": 400, "error": "Dataset Spec was not added"};
+                                return {"code": 400, "error": "Dataset spec was not added"};
                             }
                         } catch (error) {
                             await queryRunner.rollbackTransaction();
@@ -79,7 +79,7 @@ export class DatasetService {
                         }
                     }
                     else {
-                        return {"code": 400, "error": "Duplicate Dataset not allowed"}
+                        return {"code": 400, "error": "Duplicate dataset not allowed"}
                     }
                 }
             }
