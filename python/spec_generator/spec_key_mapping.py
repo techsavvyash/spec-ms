@@ -2,6 +2,8 @@ import json
 import os
 import re
 import pandas as pd
+from flask import app
+
 
 def KeysMaping(Program,InputKeys,template,SpecFile,Response):
     template=template+'.json'
@@ -119,10 +121,10 @@ def DimensionSpec(request,Response):
     return Response(json.dumps({"Message": "Spec Created Successfully", "SpecFile": DimensionName}))
 
 
-def Dataset_csv_colums_validation(DatasetKeyFileColumns):
-    for col in DatasetKeyFileColumns:
-        DatasetKeyFileColumnsDict={"key":col}
-    if  DatasetKeyFileColumnsDict['key'] != []
+# def Dataset_csv_colums_validation(DatasetKeyFileColumns):
+#     for col in DatasetKeyFileColumns:
+#         DatasetKeyFileColumnsDict={"key":col}
+#     if  DatasetKeyFileColumnsDict['key'] != []
 
 
 def DatasetSpec(request,Response):
@@ -130,7 +132,6 @@ def DatasetSpec(request,Response):
     DatasetKeys = request.json['key_file']
     Program = request.json['program']
     ValidationKeys=request.json['validation_keys']
-
     ########## Reading additional validation csv file ###########
     df_validation = pd.read_csv('./key_files/'+ValidationKeys)
     Validation_items = df_validation.values.tolist()
@@ -145,7 +146,7 @@ def DatasetSpec(request,Response):
     df_dataset = pd.read_csv('./key_files/' + DatasetKeys)
     df_dataset=df_dataset.loc[df_dataset['program'] == Program]
     D_keys=df_dataset.keys().tolist()
-    Dataset_csv_colums_validation(D_keys)
+    # Dataset_csv_colums_validation(D_keys)
     Dataset_items=df_dataset.values.tolist()
     for value in Dataset_items:
         dataset=(dict(zip(D_keys,value)))
