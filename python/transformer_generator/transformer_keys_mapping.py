@@ -56,11 +56,11 @@ def collect_keys(request,Response):
             Template=TranformerType+'.py'
             con = pg.connect(database=database, user=user, password=password, host=host, port=port)
             cur = con.cursor()
-            EvenyQueryString = ''' SELECT event_data FROM spec.events WHERE event_name='{}';'''.format(EventName)
+            EvenyQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
             cur.execute(EvenyQueryString)
             con.commit()
             if cur.rowcount == 1:
-                DatasetQueryString = '''SELECT dataset_data FROM spec.datasets WHERE dataset_name='{}';'''.format(DatasetName)
+                DatasetQueryString = '''SELECT dataset_data FROM spec.dataset WHERE dataset_name='{}';'''.format(DatasetName)
                 cur.execute(DatasetQueryString)
                 con.commit()
                 if cur.rowcount == 1:
