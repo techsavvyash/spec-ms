@@ -17,9 +17,9 @@ password = config['CREDs']['password']
 database = config['CREDs']['database']
 
 def KeysMaping(InputKeys,Template,Transformer,Response,KeyFile):
-    if os.path.exists('./transformers/'+Transformer):
-        os.remove('./transformers/'+Transformer)
-    with open('./templates/'+Template, 'r') as fs:
+    if os.path.exists(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer):
+        os.remove(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer)
+    with open(os.path.dirname(os.path.abspath(__file__))+'/templates/'+Template, 'r') as fs:
         valueOfTemplate=fs.readlines()
     if (len(InputKeys)!=0):
         for valueOfTemplate in valueOfTemplate:
@@ -28,7 +28,7 @@ def KeysMaping(InputKeys,Template,Transformer,Response,KeyFile):
             for key in templateKeys:
                 replaceStr = '{'+key+'}'
                 ToreplaceString=ToreplaceString.replace(replaceStr,str(InputKeys[key]))
-            with open('./transformers/'+Transformer, 'a') as fs:
+            with open(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer, 'a') as fs:
                    fs.write(ToreplaceString)
         return Response(json.dumps({"Message": "Transformer created succesfully","transformerFile": Transformer,"code":200}))
     else:
