@@ -2,7 +2,8 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {TransformerService} from './transformer.service';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
-import {HttpCustomService} from '../HttpCustomService';
+import {transformerSchemaData} from '../../../utils/spec-data';
+import { HttpCustomService } from '../HttpCustomService';
 
 describe('TransformerService', () => {
     let service: TransformerService;

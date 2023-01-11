@@ -102,12 +102,10 @@ export class PipelineService {
                 } finally {
                     await queryRunner.release();
                 }
-
-
+                }
             }
         }
-    }
-
+    
 
     async CreatePipeline(queryRunner, pipelineName) {
         try {
@@ -306,8 +304,6 @@ export class PipelineService {
         } catch (error) {
             return {code: 400, error: "coould not get Processor Group Port"}
         }
-
-
     }
 
     async connect(sourceId, destinationId, relationship, pg_source_id) {
@@ -334,7 +330,7 @@ export class PipelineService {
                     },
                     "selectedRelationships": relationship
                 }
-            }
+            };
             let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`;
             try {
                 let result = await this.http.post(url, json_body);
@@ -347,8 +343,6 @@ export class PipelineService {
             } catch (error) {
                 return {code: 400, message: "Errror occured during connection"};
             }
-
-
         }
     }
 
@@ -471,6 +465,4 @@ export class PipelineService {
     async processSleep(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
-
-
 }
