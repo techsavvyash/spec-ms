@@ -30,15 +30,12 @@ def KeysMaping(InputKeys,Template,Transformer,Response,KeyFile):
                 ToreplaceString=ToreplaceString.replace(replaceStr,str(InputKeys[key]))
             with open('./transformers/'+Transformer, 'a') as fs:
                    fs.write(ToreplaceString)
-        if os.path.exists('./key_files/' + KeyFile):
-            os.remove('./key_files/' + KeyFile)
         return Response(json.dumps({"Message": "Transformer created succesfully","transformerFile": Transformer,"code":200}))
     else:
         print('ERROR : InputKey is Empty')
         return Response(json.dumps({"Message":"InputKey is empty"}))
 
-con = pg.connect(database=database, user=user, password=password, host=host, port=port)
-cur = con.cursor()
+
 InputKeys={}
 def collect_keys(request,Response):
     KeyFile = request.json['key_file']
@@ -59,6 +56,8 @@ def collect_keys(request,Response):
             Transformer = DatasetName+'.py'
             TranformerType=TemplateDatasetMaping['template']
             Template=TranformerType+'.py'
+            con = pg.connect(database=database, user=user, password=password, host=host, port=port)
+            cur = con.cursor()
             EventQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
             cur.execute(EventQueryString)
             con.commit()
@@ -130,13 +129,14 @@ def collect_keys(request,Response):
             else:
                 print('ERROR : No Event Found')
                 return Response(json.dumps({"Message": "No event found "+EventName }))
+            if cur is not None:
+                cur.close()
+            if con is not None:
+                con.close()
     except Exception as error:
         print(error)
-    finally:
-        if cur is not None:
-            cur.close()
-        if con is not None:
-            con.close()
+
+
     return Response(json.dumps({"Message": "Transformer not created", "TransformerFile":Transformer,"code":400}))
 
 
