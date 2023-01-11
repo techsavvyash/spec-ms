@@ -28,10 +28,19 @@ cur = con.connect()
 def aggTransformer(valueCols={ValueCols}):
     # path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
     # df_events = pd.read_csv(smart_open(path))
-    df_events = pd.read_csv('/home/ramya/CQube/INPUTS/input_students_attendance.csv')
+    df_events = pd.read_csv('')
+    df_dataset=pd.read_sql('select * from {Table};',con=con)
+    {DateCasting}
     df_dimension = pd.read_sql('select {DimensionCols} from {DimensionTable}', con=con)
     df_dimension_merge = df_events.merge(df_dimension, on={MergeOnCol}, how='inner')
     df_agg = df_dimension_merge.groupby({GroupBy}, as_index=False).agg({AggCols})
+    merge_on_col_list=[]
+    for i,j in (df_agg.columns.to_list(),df_dataset.columns.to_list()):
+        if(i==j):
+            merge_on_col_list.append(j)
+    df_merge=df_agg.merge(df_dataset,on=merge_on_col_list,how='inner')
+    df_merge_col_list=df_merge.columns.to_list()
+    df_merge['percentage'] = ((df_merge[df_merge_col_list[-2]] / df_merge[df_merge_col_list[-1]]) * 100)  ### Calculating Percentage
     col_list = df_agg.columns.to_list()
     df_snap = df_agg[col_list]
     df_snap.columns = valueCols
@@ -40,27 +49,10 @@ def aggTransformer(valueCols={ValueCols}):
             values = []
             for i in valueCols:
               values.append(row[i])
-            query = ''' INSERT INTO {TargetTable} As main_table({InputCols}) VALUES ({Values}) ON CONFLICT ({ConflictCols}) DO UPDATE SET {IncrementFormat};'''\
-            .format(','.join(map(str,values)),{UpdateCol})
+            query = ''' INSERT INTO {TargetTable}({InputCols}) VALUES ({Values}) ON CONFLICT ({ConflictCols}) DO UPDATE SET {ReplaceFormat};'''\
+            .format(','.join(map(str,values)))
             cur.execute(query)
     except Exception as error:
         print(error)
 
 aggTransformer()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
