@@ -290,10 +290,10 @@ describe('PipelineService', () => {
             code: 400, error: [
                 {
                     "instancePath": "/pipeline_name",
-                    "schemaPath": "#/properties/pipeline_name/shouldNotNull",
-                    "keyword": "shouldNotNull",
+                    "schemaPath": "#/properties/pipeline_name/shouldnotnull",
+                    "keyword": "shouldnotnull",
                     "params": {},
-                    "message": "must pass \"shouldNotNull\" keyword validation"
+                    "message": "must pass \"shouldnotnull\" keyword validation"
                 }
             ]
         };
