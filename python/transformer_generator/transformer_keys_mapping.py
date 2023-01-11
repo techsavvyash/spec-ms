@@ -16,10 +16,10 @@ user = config['CREDs']['user']
 password = config['CREDs']['password']
 database = config['CREDs']['database']
 
-def KeysMaping(InputKeys,Template,Transformer,Response):
-    if os.path.exists('./transformers/'+Transformer):
-        os.remove('./transformers/'+Transformer)
-    with open('./templates/'+Template, 'r') as fs:
+def KeysMaping(InputKeys,Template,Transformer,Response,KeyFile):
+    if os.path.exists(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer):
+        os.remove(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer)
+    with open(os.path.dirname(os.path.abspath(__file__))+'/templates/'+Template, 'r') as fs:
         valueOfTemplate=fs.readlines()
     if (len(InputKeys)!=0):
         for valueOfTemplate in valueOfTemplate:
@@ -28,22 +28,24 @@ def KeysMaping(InputKeys,Template,Transformer,Response):
             for key in templateKeys:
                 replaceStr = '{'+key+'}'
                 ToreplaceString=ToreplaceString.replace(replaceStr,str(InputKeys[key]))
-            with open('./transformers/'+Transformer, 'a') as fs:
+            with open(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer, 'a') as fs:
                    fs.write(ToreplaceString)
         return Response(json.dumps({"Message": "Transformer created succesfully","transformerFile": Transformer,"code":200}))
     else:
         print('ERROR : InputKey is Empty')
-        return Response(json.dumps({"Message":"InputKey is Empty"}))
+        return Response(json.dumps({"Message":"InputKey is empty"}))
+
 
 InputKeys={}
 def collect_keys(request,Response):
     KeyFile = request.json['key_file']
     Program = request.json['program']
     EventName = request.json['event']
+    Path=os.path.dirname(os.path.abspath(__file__)) + "/key_files/"+KeyFile
+    print(Path)
     ####### Reading Transformer Mapping Key Files ################
-
     try:
-        df = pd.read_csv('./key_files/' + KeyFile)
+        df = pd.read_csv(Path)
         df = df.loc[df['program'] == Program]
         df = df.loc[df['event_name'] == EventName]
         Datasetkeys = df.keys().tolist()
@@ -56,8 +58,8 @@ def collect_keys(request,Response):
             Template=TranformerType+'.py'
             con = pg.connect(database=database, user=user, password=password, host=host, port=port)
             cur = con.cursor()
-            EvenyQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
-            cur.execute(EvenyQueryString)
+            EventQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
+            cur.execute(EventQueryString)
             con.commit()
             if cur.rowcount == 1:
                 DatasetQueryString = '''SELECT dataset_data FROM spec.dataset WHERE dataset_name='{}';'''.format(DatasetName)
@@ -119,21 +121,22 @@ def collect_keys(request,Response):
                                      'DimensionTable': list(Dimensions['table']['properties'].keys())[0]})
                             else:
                                 return Response(json.dumps(
-                                    {"Message": "Transformer Type is Not Correct", "TransformerType": TranformerType,
-                                     "Dataset": DatasetName}))
-                            KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
+                                    {"Message": "Transformer type is not correct", "TransformerType": TranformerType,"Dataset": DatasetName}))
+                            KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response,KeyFile)
                 else:
-                    print('ERROR : No Dataset Found')
-                    return Response(json.dumps({"Message": "No Dataset Found "+DatasetName}))
+                    print('ERROR : No dataset found')
+                    return Response(json.dumps({"Message": "No dataset found "+DatasetName}))
             else:
                 print('ERROR : No Event Found')
-                return Response(json.dumps({"Message": "No Event Found" +EventName }))
-
+                return Response(json.dumps({"Message": "No event found "+EventName }))
+            if cur is not None:
+                cur.close()
+            if con is not None:
+                con.close()
     except Exception as error:
         print(error)
-    finally:
-        if cur is not None:
-            cur.close()
-        if con is not None:
-            con.close()
-    return Response(json.dumps({"Message": "transformer Not Created", "TransformerFile":Transformer,"code":400}))
+
+
+    return Response(json.dumps({"Message": "Transformer not created", "TransformerFile":Transformer,"code":400}))
+
+
