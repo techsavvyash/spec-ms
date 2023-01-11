@@ -1,34 +1,35 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {TransformerService} from './transformer.service';
-import {DataSource} from 'typeorm';
-import {GenericFunction} from '../genericFunction';
-import {transformerSchemaData} from '../../../utils/spec-data';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TransformerService } from './transformer.service';
+import { DataSource } from 'typeorm';
+import { GenericFunction } from '../genericFunction';
+import { transformerSchemaData } from '../../../utils/spec-data';
 import { HttpCustomService } from '../HttpCustomService';
+import { async } from 'rxjs';
 
 describe('TransformerService', () => {
     let service: TransformerService;
     const mockTransacation = {
         createQueryRunner: jest.fn().mockImplementation(() => ({
-          connect: jest.fn(),
-          startTransaction: jest.fn(),
-          release: jest.fn(),
-          rollbackTransaction: jest.fn(),
-          commitTransaction:jest.fn(),
-          query: jest.fn()
+            connect: jest.fn(),
+            startTransaction: jest.fn(),
+            release: jest.fn(),
+            rollbackTransaction: jest.fn(),
+            commitTransaction: jest.fn(),
+            query: jest.fn().mockReturnValueOnce([{ pid: 1 }])
         })),
-        query: jest.fn().mockReturnValueOnce(0).mockReturnValueOnce([{data: "data"}]).mockReturnValueOnce(0).mockReturnValueOnce([{data: "data"}])
-        .mockReturnValueOnce([{data: "data"}]).mockReturnValueOnce([{pid: 1}])
-      }
+        query: jest.fn().mockReturnValueOnce(0).mockReturnValueOnce([]).mockReturnValueOnce([{ length: 1 }])
+
+    }
 
 
     let apiDta = {
-        data: {transformerFile: "test", Message: "Transformer created successfully",}
+        data: { TransformerFile: "test", Message: "Transformer created succesfully", }
     };
 
     const mockHttpservice = {
         post: jest.fn().mockReturnValueOnce(apiDta),
     };
-
+ 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [TransformerService, DataSource, GenericFunction, HttpCustomService,
@@ -63,8 +64,8 @@ describe('TransformerService', () => {
         const transformerData = {
 
             // "event_name":"students_attendance",
-            "key_file":"transformer_dataset_maping.csv",
-            "program":"SAC"
+            "key_file": "transformer_dataset_maping.csv",
+            "program": "SAC"
         };
         let result = {
             "code": 400, error: [
@@ -84,9 +85,9 @@ describe('TransformerService', () => {
 
     it('invalid event name ', async () => {
         const transformerData = {
-            "event_name":"students_attendance11",
-            "key_file":"transformer_dataset_maping.csv",
-            "program":"SAC"
+            "event_name": "students_attendance11",
+            "key_file": "transformer_dataset_maping.csv",
+            "program": "SAC"
         };
         let result = {
             "code": 400, error: "Invalid event name"
@@ -94,34 +95,19 @@ describe('TransformerService', () => {
         expect(await service.createTransformer(transformerData)).toStrictEqual(result);
     });
 
-    // it('invalid dataset name ', async () => {
-    //     const transformerData = {
-    //         "event_name": "student_attendence",
-    //         "dataset_name": "student_attendance_by",//passing invalid name
-    //         "template": "EventToCube-AggTemplate.py",
-    //         "transformer_type": "EventToCube-agg"
-    //     };
 
-    //     let result = {
-    //         "code": 400, "error": "Invalid dataset name"
-    //     };
-    //     expect(await service.createTransformer(transformerData)).toStrictEqual(result);
-    // });
-
-    // it('transformer added sucessfully ', async () => {
+    // it(' create a transformer', async () => {
     //     const transformerData = {
-    //         "event_name": "student_attendance",
-    //         "dataset_name": "student_attendance_by_class",
-    //         "template": "EventToCube-AggTemplate.py",
-    //         "transformer_type": "EventToCube-agg"
+    //         "event_name": "students_attendance",
+    //         "key_file": "transformer_dataset_maping.csv",
+    //         "program": "SAC"
     //     };
     //     let result = {
     //         "code": 200,
-    //         "message": "Transformer created successfully",
+    //         "file": "test",
+    //         "message": "Transformer created succesfully",
     //         "pid": 1,
-    //         "file": "test"
-    //     };
+    //     }
     //     expect(await service.createTransformer(transformerData)).toStrictEqual(result)
     // })
-
 });

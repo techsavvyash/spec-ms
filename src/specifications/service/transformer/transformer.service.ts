@@ -7,7 +7,7 @@ import { getEventData, insertTransformer } from '../../queries/queries';
 import { HttpCustomService } from '../HttpCustomService';
 @Injectable()
 export class TransformerService {
-    constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction,private http:HttpCustomService) {
+    constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction, private http: HttpCustomService) {
     }
 
     async createTransformer(inputData) {
@@ -15,7 +15,7 @@ export class TransformerService {
         try {
             const eventName = inputData.event_name;
             const keyFileName = inputData.key_file;
-            const programName = inputData.programName;
+            const programName = inputData.program;
             const isValidSchema: any = await this.gnFunction.ajvValidator(transformerSchemaData.input, inputData);
             if (isValidSchema.errors) {
                 return { "code": 400, error: isValidSchema.errors }
@@ -29,27 +29,34 @@ export class TransformerService {
                         "program": programName
                     };
                     const apiGenerator: any = await this.generatorAPI(data);
-                    console.log('datdas',apiGenerator);
-                    if (apiGenerator) {
-                        await queryRunner.startTransaction();
+
+                    if (apiGenerator.data.code === 200) {
+                        await queryRunner.startTransaction(); 
                         try {
-                            const transResult: any = await queryRunner.query(insertTransformer(apiGenerator.transformerFile));
-                            if (transResult[0].pid && apiGenerator.transformerFile) {
+                            const transResult: any = await queryRunner.query(insertTransformer(apiGenerator.data.TransformerFile));
+                            if (transResult[0].pid) {
                                 await queryRunner.commitTransaction();
                                 return {
                                     "code": 200,
-                                    "message": apiGenerator.Message,
+                                    "message": apiGenerator.data.Message,
                                     "pid": transResult[0].pid,
-                                    "file": apiGenerator.transformerFile
-                                }
+                                    "file": apiGenerator.data.TransformerFile
+                                } 
                             }
                             else {
                                 await queryRunner.rollbackTransaction();
-                                return { "code": 400, "error": "Unable to insert transformer" }
+                                return { "code": 400, "error": "unable to create a transformer" }
                             }
                         } catch (error) {
+                            await queryRunner.rollbackTransaction();
                             console.error('transformer.service.createTransformer: ', error.message);
                         }
+                        finally {
+                            await queryRunner.release();
+                        }
+                    }  
+                    else {
+                        return { "code": 400, "error": apiGenerator.data.Message }
                     }
                 }
                 else {
@@ -59,22 +66,22 @@ export class TransformerService {
             }
         } catch (e) {
             console.error('transformer.service.ts.createTransformer: ', e.message);
-            throw new Error(e);
         }
     }
 
     async generatorAPI(APIdata) {
-        // let url = `${process.env.FLASKAPI}/generator/transformer`;
-        // try {
-        //     const result: any = await this.http.post(url, APIdata);
-        //     if (result) {
-        //         return result;
-        //     }
-        // } catch (error) {
-        //     console.error('transformer.service.ts.generatorAPI: ', error.message);
-        //     return { code: 400, error: "could not create transformer" }
-        // }
-        let result ={"Message" : "succussfully" ,"transformerFile":"dsjfbjhad.py" }
-        return result
+        let url = `${process.env.FLASKAPI}/api/generator`;
+      
+        try {
+            const result: any = await this.http.post(url, APIdata);
+            if (result) {
+                console.log('data', result.data);
+                return result;
+            }
+        } catch (error) {
+            console.error('transformer.service.ts.generatorAPI: ', error.message);
+            return { "code": 400, "error": "Error occured during creating transformer" }
+        }
+
     }
 }
