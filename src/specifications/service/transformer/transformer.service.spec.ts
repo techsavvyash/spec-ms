@@ -3,7 +3,7 @@ import {TransformerService} from './transformer.service';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
 import {transformerSchemaData} from '../../../utils/spec-data';
-import {HttpCustomService} from '../httpservices';
+import { HttpCustomService } from '../HttpCustomService';
 
 describe('TransformerService', () => {
     let service: TransformerService;
