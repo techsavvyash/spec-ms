@@ -16,7 +16,7 @@ user = config['CREDs']['user']
 password = config['CREDs']['password']
 database = config['CREDs']['database']
 
-def KeysMaping(InputKeys,Template,Transformer,Response,KeyFile):
+def KeysMaping(InputKeys,Template,Transformer,Response):
     if os.path.exists(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer):
         os.remove(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer)
     with open(os.path.dirname(os.path.abspath(__file__))+'/templates/'+Template, 'r') as fs:
@@ -30,7 +30,7 @@ def KeysMaping(InputKeys,Template,Transformer,Response,KeyFile):
                 ToreplaceString=ToreplaceString.replace(replaceStr,str(InputKeys[key]))
             with open(os.path.dirname(os.path.abspath(__file__))+'/transformers/'+Transformer, 'a') as fs:
                    fs.write(ToreplaceString)
-        return Response(json.dumps({"Message": "Transformer created succesfully","transformerFile": Transformer,"code":200}))
+        return Response(json.dumps({"Message": "Transformer created successfully","transformerFile": Transformer,"code":200}))
     else:
         print('ERROR : InputKey is Empty')
         return Response(json.dumps({"Message":"InputKey is empty"}))
@@ -46,6 +46,8 @@ def collect_keys(request,Response):
     ####### Reading Transformer Mapping Key Files ################
     try:
         df = pd.read_csv(Path)
+        if len(df) == 0:
+            return Response(json.dumps({"Message": KeyFile + " is empty"}))
         df = df.loc[df['program'] == Program]
         df = df.loc[df['event_name'] == EventName]
         Datasetkeys = df.keys().tolist()
@@ -54,8 +56,6 @@ def collect_keys(request,Response):
             TemplateDatasetMaping = (dict(zip(Datasetkeys, value)))
             DatasetName = TemplateDatasetMaping['dataset_name']
             Transformer = DatasetName+'.py'
-            TranformerType=TemplateDatasetMaping['template']
-            Template=TranformerType+'.py'
             con = pg.connect(database=database, user=user, password=password, host=host, port=port)
             cur = con.cursor()
             EventQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
@@ -97,7 +97,7 @@ def collect_keys(request,Response):
                             InputKeys.update({'AWSKey': '{}', 'AWSSecretKey': '{}', 'BucketName': '{}', 'ObjKey': '{}', 'Values': '{}',
                                  'DateCasting': ','.join(DateCasting),'ValueCols': DatasetItems,
                                  'GroupBy': list(Dataset['group_by']['items']['properties'].keys()),
-                                 'AggCols': AggCols, 'PercDenominator': UpdateColList[1], 'PercNumerator': UpdateColList[0],
+                                 'AggCols': AggCols,
                                  'DimensionTable': list(Dimensions['table']['properties'].keys())[0],
                                  'DimensionCols': ','.join(list(Dimensions['column']['items']['properties'].keys())),
                                  'MergeOnCol': list(Dimensions['merge_on_col']['properties'].keys()),
@@ -105,24 +105,29 @@ def collect_keys(request,Response):
                                  'InputCols': ','.join(DatasetItems),
                                  'ConflictCols': ','.join(list(Dataset['group_by']['items']['properties'].keys())),
                                  'IncrementFormat': ','.join(IncrementFormat), 'ReplaceFormat': ','.join(ReplaceFormat),
-                                 'Denominator': PercentageIncrement[1], 'Numerator': PercentageIncrement[0],
-                                 'UpdateCols': ','.join(UpdateCols * 2), 'UpdateCol': ','.join(UpdateCols)})
-                            if TranformerType in ['EventToCube','EventToCubeIncrement', 'EventToCubePer','EventToCubePerIncrement']:
+                                 'UpdateCols': ','.join(UpdateCols * 2),'UpdateCol': ','.join(UpdateCols)})
+                            TranformerType = TemplateDatasetMaping['template']
+                            Template = TranformerType + '.py'
+                            if TranformerType in ['EventToCube','EventToCubeIncrement']:
                                 InputKeys.update(InputKeys)
-                            elif TranformerType in ['CubeToCube','CubeToCubeIncrement','CubeToCubePer','CubeToCubePerIncrement','E&CToCubePerIncrement', 'E&CToCubePer']:
+                            elif TranformerType in ['EventToCubePer','EventToCubePerIncrement']:
+                                InputKeys.update({'PercDenominator': UpdateColList[1], 'PercNumerator': UpdateColList[0],'Denominator': PercentageIncrement[1], 'Numerator': PercentageIncrement[0]})
+                            elif TranformerType in ['CubeToCube','CubeToCubeIncrement']:
                                 table = list(Dataset['aggregate']['properties']['columns']['items']['properties']['table']['properties'].keys())
                                 InputKeys.update({'Table': table[0]})
+                            elif TranformerType in ['CubeToCubePer','CubeToCubePerIncrement','E&CToCubePerIncrement','E&CToCubePer']:
+                                table = list(Dataset['aggregate']['properties']['columns']['items']['properties']['table']['properties'].keys())
+                                InputKeys.update({'Table': table[0],'PercDenominator': UpdateColList[1], 'PercNumerator': UpdateColList[0],'Denominator': PercentageIncrement[1], 'Numerator': PercentageIncrement[0]})
                             elif TranformerType in ['CubeToCubePerFilter','CubeToCubePerFilterIncrement']:
                                 table = list(Dataset['aggregate']['properties']['columns']['items']['properties']['table']['properties'].keys())
                                 filter = Dataset['aggregate']['properties']['filters']['items']['properties']
                                 InputKeys.update({'Table': table[0], 'FilterCol': list(filter['column']['properties'].keys()),
-                                     'FilterType': list(filter['filter_type']['properties'].keys())[0],
-                                     'Filter': list(filter['filter']['properties'].keys())[0],
-                                     'DimensionTable': list(Dimensions['table']['properties'].keys())[0]})
+                                     'FilterType': list(filter['filter_type']['properties'].keys())[0],'Filter': list(filter['filter']['properties'].keys())[0],
+                                     'DimensionTable': list(Dimensions['table']['properties'].keys())[0],'PercDenominator': UpdateColList[1],
+                                     'PercNumerator': UpdateColList[0],'Denominator': PercentageIncrement[1], 'Numerator': PercentageIncrement[0]})
                             else:
-                                return Response(json.dumps(
-                                    {"Message": "Transformer type is not correct", "TransformerType": TranformerType,"Dataset": DatasetName}))
-                            KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response,KeyFile)
+                                return Response(json.dumps({"Message": "Transformer type is not correct", "TransformerType": TranformerType,"Dataset": DatasetName}))
+                            KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
                 else:
                     print('ERROR : No dataset found')
                     return Response(json.dumps({"Message": "No dataset found "+DatasetName}))
@@ -135,8 +140,6 @@ def collect_keys(request,Response):
                 con.close()
     except Exception as error:
         print(error)
-
-
     return Response(json.dumps({"Message": "Transformer not created", "TransformerFile":Transformer,"code":400}))
 
 
