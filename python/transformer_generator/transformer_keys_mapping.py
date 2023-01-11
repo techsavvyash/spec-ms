@@ -59,7 +59,6 @@ def collect_keys(request,Response):
             Transformer = DatasetName+'.py'
             TranformerType=TemplateDatasetMaping['template']
             Template=TranformerType+'.py'
-
             EventQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
             cur.execute(EventQueryString)
             con.commit()
