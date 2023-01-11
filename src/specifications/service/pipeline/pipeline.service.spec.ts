@@ -4,7 +4,6 @@ import { DataSource } from 'typeorm';
 import { GenericFunction } from '../genericFunction';
 import { HttpCustomService } from '../HttpCustomService';
 import { PipelineService } from './pipeline.service';
-import exp from 'constants';
 
 describe('PipelineService', () => {
   let service: PipelineService;
@@ -164,9 +163,11 @@ const mockTransacation = {
     release: jest.fn(),
     rollbackTransaction: jest.fn(),
     commitTransaction:jest.fn(),
-    query: jest.fn().mockReturnValueOnce([{pid:1}]).mockReturnValueOnce([{pid:1}])
+    query: jest.fn()
+    // mockReturnValueOnce([{pid:1}]).mockReturnValueOnce([{pid:1}])
   })),
-  query: jest.fn().mockReturnValueOnce([{length: 1}]).mockReturnValueOnce([]).mockReturnValueOnce([{length: 1}]).mockReturnValueOnce([]).mockReturnValueOnce([])
+  query: jest.fn().mockReturnValueOnce([{length:1}]).mockReturnValueOnce([]).mockReturnValueOnce([])
+  // mockReturnValueOnce([]).mockReturnValueOnce([{length: 1}]).mockReturnValueOnce([]).mockReturnValueOnce([])
 }
 
   beforeEach(async () => {
@@ -193,29 +194,8 @@ const mockTransacation = {
     expect(service).toBeDefined();
   });
 
-  it('pipeline Name already exists',async ()=>{
-    let inputData = {
-      "pipeline_type":"ingest_to_db",
-      "pipeline_name":"student_attendance_by_class",
-      "pipeline": [
-       {
-         "event_name": "student_attendance",
-         "dataset_name": "student_attendance_by_class",
-         "dimension_name": "student_attendance",
-         "transformer_name": "student_attendance_by_class.py"
-       
-       }
-     ]
-    }
-    let result = {
-      "code": 400, "error": "Pipeline name already exists"
-    }
-    expect(await service.createSpecPipeline(inputData)).toStrictEqual(result)
-
-  })
-
   it('Invalid Pipeline Type', async ()=>{
-    let inputData ={
+    let inputData = {
       "pipeline_type":"",
       "pipeline_name":"student_attendance_by_class",
       "pipeline": [
@@ -230,6 +210,48 @@ const mockTransacation = {
     }
     let result = {code:400, error:"Invalid pipeline type"}
     expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
+  })
+
+  it('pipeline Name already exists',async ()=>{
+    let inputData = {
+      "pipeline_type":"ingest_to_db",
+      "pipeline_name":"student_attendance_by_class",
+      "pipeline": [
+       {
+         "event_name": "student_attendance",
+         "dataset_name": "student_attendance_by_class",
+         "dimension_name": "student_attendance",
+         "transformer_name": "student_attendance_by_class_1.py"
+       
+       }
+     ]
+    }
+    let result = {
+      "code": 400, "error": "Pipeline name already exists"
+    }
+    expect(await service.createSpecPipeline(inputData)).toStrictEqual(result)
+
+  })
+
+  
+
+  it("transformer Not found", async()=>{
+    let inputData =  {
+      "pipeline_type":"ingest_to_db",
+      "pipeline_name":"student_attendance_by_class_1",
+      "pipeline": [
+        {
+          "event_name": "student_attendance",
+          "dataset_name": "student_attendance_by_class",
+          "dimension_name": "student_attendance",
+          "transformer_name": "student_attendance_by_class_1.py"
+        
+        }
+      ]
+    }
+    let result = {code:400, error:"Transformer not found"}
+    expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
+
   })
 
   // it('Processor group exists', async()=>{
