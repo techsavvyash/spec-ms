@@ -211,8 +211,10 @@ def DatasetSpec(request, Response):
              "UpdateCol": json.dumps(dict(zip(UpdateCol, ([{"type": "number"}]) * len(UpdateCol))))})
         if Template == "EventToCube":
             InputKeys.update(InputKeys)
+            KeysMaping(Program, InputKeys, Template, DatasetName, Response)
         elif Template == "CubeToCube":
             InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}])))})
+            KeysMaping(Program, InputKeys, Template, DatasetName, Response)
         elif Template == "CubeToCubeFilter":
             InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}]))),
                               "FilterCol": json.dumps(dict(zip(FilterCol, [{"type": "string"}]))),
@@ -221,5 +223,4 @@ def DatasetSpec(request, Response):
         else:
             print("ERROR: Template name is not correct")
             return Response(json.dumps({"Message": "Template name is not correct", "Template": Template}))
-        KeysMaping(Program, InputKeys, Template, DatasetName, Response)
     return KeysMaping(Program, InputKeys, Template, DatasetName, Response)

@@ -140,6 +140,6 @@ def collect_keys(request,Response):
                 con.close()
     except Exception as error:
         print(error)
-    return Response(json.dumps({"Message": "Transformer not created", "TransformerFile":Transformer,"code":400}))
+    return Response(json.dumps({"Message": "Transformer created succsessfully", "TransformerFile":Transformer,"code":200}))
 
 
