@@ -858,7 +858,7 @@ export const datasetSchemaData = {
                                                                             "type": "object",
                                                                             "shouldnotnull": true,
                                                                             "properties": {
-                                                                                "filter_col": {
+                                                                                "column": {
                                                                                     "type": "object",
                                                                                     "shouldnotnull": true,
                                                                                     "properties": {
@@ -977,7 +977,7 @@ export const datasetSchemaData = {
                                                                                 }
                                                                             },
                                                                             "required": [
-                                                                                "filter_col",
+                                                                                "column",
                                                                                 "filter",
                                                                                 "filter_type"
                                                                             ]
