@@ -60,7 +60,7 @@ export class SpecificationController {
             else {
                 response.status(200).send({
                     "message": result.message,
-                    "event_name": result?.dataset_name,
+                    "dataset_name": result?.dataset_name,
                     "pid": result.pid
                 });
             }
