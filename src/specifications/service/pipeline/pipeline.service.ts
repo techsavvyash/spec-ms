@@ -1,117 +1,107 @@
-import { HttpCustomService } from './../HttpCustomService';
-import { PipelineSchemaDimensiontoDB, PipelineSchemaDatasettoDB, PipelineSchemaIngesttoDB } from './../../../utils/spec-data';
-import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { pipelineDto } from 'src/specifications/dto/specData.dto';
-import { DataSource } from 'typeorm';
-import { GenericFunction } from '../genericFunction';
-import { checkName, getPipelineSpec, insertIntoSpecPipeline } from '../../queries/queries';
+import {HttpCustomService} from './../HttpCustomService';
+import {
+    PipelineSchemaDimensiontoDB,
+    PipelineSchemaDatasettoDB,
+    PipelineSchemaIngesttoDB
+} from './../../../utils/spec-data';
+import {Injectable} from '@nestjs/common';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {pipelineDto} from 'src/specifications/dto/specData.dto';
+import {DataSource} from 'typeorm';
+import {GenericFunction} from '../genericFunction';
+import {checkName, getPipelineSpec, insertIntoSpecPipeline} from '../../queries/queries';
+
 // PipelineSchemaDimension
 @Injectable()
 export class PipelineService { 
 
-    constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private http: HttpCustomService) { }
-    async createSpecPipeline(pipelineData: pipelineDto) {
-            let isValidSchema: any;
-            let checkCoulmnPid: string[];
-            const queryRunner = this.dataSource.createQueryRunner();
-            let PipeStr = pipelineData?.pipeline_type?.toLowerCase();
-            switch (PipeStr) {
-                case 'ingest_to_db':
-                    isValidSchema = await this.specService.ajvValidator(PipelineSchemaIngesttoDB, pipelineData);
-                    break;
-                case 'dimension_to_db':
-                    isValidSchema = await this.specService.ajvValidator(PipelineSchemaDimensiontoDB, pipelineData);
-                    break;
-                case 'dataset_to_db':
-                    isValidSchema = await this.specService.ajvValidator(PipelineSchemaDatasettoDB, pipelineData);
-                    break;
-                default:
-                    return { code: 400, error: "Invalid pipeline type" }
-            }
+    constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private http: HttpCustomService) {
+    }
 
-            
-            if (isValidSchema.errors) {
-                return { code: 400, error: isValidSchema.errors }
+    async createSpecPipeline(pipelineData: pipelineDto) {
+        let isValidSchema: any;
+        let checkCoulmnPid: string[];
+        const queryRunner = this.dataSource.createQueryRunner();
+        let PipeStr = pipelineData?.pipeline_type?.toLowerCase();
+        switch (PipeStr) {
+            case 'ingest_to_db':
+                isValidSchema = await this.specService.ajvValidator(PipelineSchemaIngesttoDB, pipelineData);
+                break;
+            case 'dimension_to_db':
+                isValidSchema = await this.specService.ajvValidator(PipelineSchemaDimensiontoDB, pipelineData);
+                break;
+            case 'dataset_to_db':
+                isValidSchema = await this.specService.ajvValidator(PipelineSchemaDatasettoDB, pipelineData);
+                break;
+            default:
+                return {code: 400, error: "Invalid pipeline type"}
+        }
+
+
+        if (isValidSchema.errors) {
+            return {code: 400, error: isValidSchema.errors}
+        }
+        else {
+            let queryResult = checkName('pipeline_name', "pipeline");
+            queryResult = queryResult.replace('$1', `${pipelineData?.pipeline_name?.toLowerCase()}`);
+            const resultPipeName = await queryRunner.query(queryResult);
+            if (resultPipeName.length > 0) {
+                return {code: 400, error: "Pipeline name already exists"}
             }
             else {
-                let queryResult = checkName('pipeline_name', "pipeline");
-                queryResult = queryResult.replace('$1', `${pipelineData?.pipeline_name?.toLowerCase()}`);
-                const resultPipeName = await queryRunner.query(queryResult);
-               
-                if (resultPipeName.length > 0) {
-                    return { code: 400, error: "Pipeline name already exists" }
+                let dataset_name = pipelineData?.pipeline[0]['dataset_name'];
+                let dimension_name = pipelineData?.pipeline[0]['dimension_name'];
+                let event_name = pipelineData?.pipeline[0]['event_name'];
+                let transformer_name = pipelineData?.pipeline[0]['transformer_name'];
+                let checkTransformerQuery = checkName('transformer_file', 'transformer');
+                checkTransformerQuery = checkTransformerQuery.replace('$1', `${transformer_name}`);
+                let checkTransformerResult = await queryRunner.query(checkTransformerQuery);
+                if (checkTransformerResult.length == 0) {
+                    return {code: 400, error: 'Transformer not found'}
                 }
-                else {
-                    let dataset_name = pipelineData?.pipeline[0]['dataset_name'];
-                    let dimension_name = pipelineData?.pipeline[0]['dimension_name'];
-                    let event_name = pipelineData?.pipeline[0]['event_name'];
-                    let transformer_name = pipelineData?.pipeline[0]['transformer_name']; 
-                    let checkTransformerQuery = checkName('transformer_file','transformer');
-                    checkTransformerQuery=checkTransformerQuery.replace('$1',`${transformer_name}`);
-                    let checkTransformerResult  = await queryRunner.query(checkTransformerQuery)
-                    if(checkTransformerResult.length == 0)
-                    {
-                        return {code:400,error:'Transformer not found'}
-                    }                       
-                    await queryRunner.connect();
-                    await queryRunner.startTransaction();
-                    try {
-                        
-                        let insertPipeLineQuery = await insertIntoSpecPipeline(pipelineData?.pipeline_name,dataset_name,dimension_name,event_name,transformer_name);
-                        const insertPipelineResult = await queryRunner.query(insertPipeLineQuery); 
-                       if (insertPipelineResult[0].pid) {  
-                            if(PipeStr === 'ingest_to_db')
-                            {
-                               if(insertPipelineResult[0].dimension_pid == null )
-                               {
-                                 await queryRunner.rollbackTransaction();
-                                 return {code:400, error:"Cannot find dimension_name"}
-                               }
-                               if(insertPipelineResult[0].dataset_pid == null )
-                               {
-                                 await queryRunner.rollbackTransaction();
-                                 return {code:400, error:"Cannot find dataset_name"}
-                               }
-
-
-
-                            }
-                            else if(PipeStr === 'dimension_to_db')
-                            {
-                                if(insertPipelineResult[0].dimension_pid == null)
-                                {
-                                 await queryRunner.rollbackTransaction();
-                                 return {code:400, error:"Cannot find dimension name"}
-                                }
-                            }
-                            else{
-                                if(insertPipelineResult[0].dataset_pid == null)
-                                {
-                                 await queryRunner.rollbackTransaction();
-                                 return {code:400, error:"Cannot find dataset name"}
-                                }
-                            }
-                            const result = await this.CreatePipeline(queryRunner, pipelineData?.pipeline_name?.toLowerCase());
-                            if(result.code == 400)
-                            {
+                await queryRunner.connect();
+                await queryRunner.startTransaction();
+                try {
+                    let insertPipeLineQuery = await insertIntoSpecPipeline(pipelineData?.pipeline_name, dataset_name, dimension_name, event_name, transformer_name);
+                    const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
+                    if (insertPipelineResult[0].pid) {
+                        if (PipeStr === 'ingest_to_db') {
+                            if (insertPipelineResult[0].dimension_pid == null) {
                                 await queryRunner.rollbackTransaction();
+                                return {code: 400, error: "Cannot find dimension name"}
                             }
-                            else{
-                                await queryRunner.commitTransaction();
+                            if (insertPipelineResult[0].dataset_pid == null) {
+                                await queryRunner.rollbackTransaction();
+                                return {code: 400, error: "Cannot find dataset name"}
                             }
-                            return result
                         }
-                    } catch (error) {
-                        await queryRunner.rollbackTransaction();
-                        return { code: 400, error: "Something went wrong" };
-                    } finally {
-                        await queryRunner.release();
+                        else if (PipeStr === 'dimension_to_db') {
+                            if (insertPipelineResult[0].dimension_pid == null) {
+                                await queryRunner.rollbackTransaction();
+                                return {code: 400, error: "Cannot find dimension name"}
+                            }
+                        }
+                        else {
+                            if (insertPipelineResult[0].dataset_pid == null) {
+                                await queryRunner.rollbackTransaction();
+                                return {code: 400, error: "Cannot find dataset name"}
+                            }
+                        }
+                        const result = await this.CreatePipeline(queryRunner, pipelineData?.pipeline_name?.toLowerCase());
+                        if (result.code == 400) {
+                            await queryRunner.rollbackTransaction();
+                        }
+                        else {
+                            await queryRunner.commitTransaction();
+                        }
+                        return result
                     }
-
-
-
-
+                } catch (error) {
+                    await queryRunner.rollbackTransaction();
+                    return {code: 400, error: "Something went wrong"};
+                } finally {
+                    await queryRunner.release();
+                }
                 }
             }
         }
@@ -121,7 +111,6 @@ export class PipelineService {
         try {
             const queryStr = await getPipelineSpec(pipelineName);
             const queryResult = await queryRunner.query(queryStr);
-           
             if (queryResult.length === 1) {
                 const transformer_file = queryResult[0].transformer_file;
                 let nifi_root_pg_id, pg_list, pg_source;
@@ -130,16 +119,15 @@ export class PipelineService {
                 let res = await this.http.get(`${process.env.URL}/nifi-api/process-groups/root`);
                 nifi_root_pg_id = res.data['component']['id'];
                 let resp = await this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`)
-                
+
                 pg_list = resp.data;
                 let counter = 0;
                 let pg_group = pg_list['processGroupFlow']['flow']['processGroups']
                 for (let pg of pg_group) {
-                    
                     if (pg.component.name == processor_group_name) {
                         pg_source = pg;
                         counter = counter + 1;
-                        
+
                         data = {
                             "id": pg_source['component']['id'],
                             "state": "STOPPED",  // RUNNING or STOP
@@ -158,13 +146,13 @@ export class PipelineService {
                     await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'successLogMessage', pg_source['component']['id']);
                     await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'failedLogMessage', pg_source['component']['id']);
                     const generateFlowFileID = await this.getProcessorSourceId(pg_source['component']['id'], 'generateFlowFile');
-                    
+
                     const pythonCodeID = await this.getProcessorSourceId(pg_source['component']['id'], 'pythonCode');
-                   
+
                     const successLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'successLogMessage');
-                   
+
                     const failedLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'failedLogMessage');
-                    
+
                     const success_relationship = ["success"];
                     const python_failure_relationship = ["nonzero status"];
                     const python_success_relationship = ["output stream"];
@@ -243,7 +231,7 @@ export class PipelineService {
                     return 'Failed to create the processor group';
                 }
             } catch (error) {
-                return { code: 400, error: "Error occured during processor group creation" }
+                return {code: 400, error: "Error occured during processor group creation"}
             }
 
         }
@@ -253,11 +241,11 @@ export class PipelineService {
     async addProcessor(processor_name, name, pg_source_id) {
         let url = `${process.env.URL}/nifi-api/flow/process-groups/${pg_source_id}`;
         let result = await this.http.get(url);
-        const pg_ports = result.data
+        const pg_ports = result.data;
         const minRange = -250;
         const maxRange = 250;
-        const x = Math.floor(Math.random() * (maxRange - minRange) + minRange)
-        const y = Math.floor(Math.random() * (maxRange - minRange) + minRange)
+        const x = Math.floor(Math.random() * (maxRange - minRange) + minRange);
+        const y = Math.floor(Math.random() * (maxRange - minRange) + minRange);
         const processors = {
             "revision": {
                 "clientId": "",
@@ -277,7 +265,7 @@ export class PipelineService {
                     "y": y
                 }
             }
-        }
+        };
         try {
             let addProcessUrl = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/processors`;
             let addProcessResult = await this.http.post(addProcessUrl, processors);
@@ -288,7 +276,7 @@ export class PipelineService {
                 return "Failed to create the processor";
             }
         } catch (error) {
-            return { code: 400, error: "Error occured during processor creation" }
+            return {code: 400, error: "Error occured during processor creation"}
         }
 
 
@@ -314,11 +302,8 @@ export class PipelineService {
                 return res.data;
             }
         } catch (error) {
-            return { code: 400, error: "coould not get Processor Group Port" }
+            return {code: 400, error: "coould not get Processor Group Port"}
         }
-
-
-
     }
 
     async connect(sourceId, destinationId, relationship, pg_source_id) {
@@ -345,24 +330,19 @@ export class PipelineService {
                     },
                     "selectedRelationships": relationship
                 }
-            }
-            let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`
+            };
+            let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`;
             try {
                 let result = await this.http.post(url, json_body);
                 if (result) {
-                    console.log(`Successfully connected the processor from ${sourceId} to ${destinationId}`)
                     return `{message:Successfully connected the processor from ${sourceId} to ${destinationId}}`;
                 }
                 else {
-                    console.log(`Failed to connect the processor`)
                     return `{message:Failed connected the processor from ${sourceId} to ${destinationId}}`;
                 }
             } catch (error) {
-                return { code: 400, message: "Errror occured during connection" };
+                return {code: 400, message: "Errror occured during connection"};
             }
-
-
-
         }
     }
 
@@ -461,7 +441,7 @@ export class PipelineService {
                         }
                     }
                     let url = `${process.env.URL}/nifi-api/processors/${processor?.component?.id}`;
-                    
+
                     try {
                         let result = await this.http.put(url, update_processor_property_body);
                         if (result) {
@@ -485,15 +465,4 @@ export class PipelineService {
     async processSleep(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
-
-
-
-
-
-
-
-
-
-
-
 }

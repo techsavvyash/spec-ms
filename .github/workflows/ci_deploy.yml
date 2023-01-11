@@ -1,4 +1,4 @@
-name: Continuous Integration/ Continuous Deployment
+name: Continuous Integration
 on:
   pull_request:
     types:
@@ -17,3 +17,15 @@ jobs:
     - run: npm install --force
     - name: Testing code coverage
       run: npm test --ci --coverage
+    - name: Coverage
+      run: npm run test:cov
+      
+  coverage:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+    - uses: actions/checkout@v1
+    - uses: artiomtr/jest-coverage-report-action@v2.0-rc.1
+      with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 95

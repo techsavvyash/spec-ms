@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { GenericFunction } from '../genericFunction';
-import { DataSource } from 'typeorm';
-import { transformerSchemaData } from '../../../utils/spec-data';
-import { getEventData, insertTransformer } from '../../queries/queries';
-import { HttpCustomService } from '../HttpCustomService';
+import {Injectable} from '@nestjs/common';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {GenericFunction} from '../genericFunction';
+import {DataSource} from 'typeorm';
+import {transformerSchemaData} from '../../../utils/spec-data';
+import {TransformerType, TemplateType} from '../contsant'
+import {HttpService} from '@nestjs/axios';
+import {getdatasetName, getEventData, insertTransformer} from '../../queries/queries';
+import {HttpCustomService} from '../HttpCustomService';
+
 @Injectable()
 export class TransformerService {
     constructor(@InjectDataSource() private dataSource: DataSource, private gnFunction: GenericFunction, private http: HttpCustomService) {
@@ -62,7 +65,6 @@ export class TransformerService {
                 else {
                     return { "code": 400, error: "Invalid event name" };
                 }
-
             }
         } catch (e) {
             console.error('transformer.service.ts.createTransformer: ', e.message);

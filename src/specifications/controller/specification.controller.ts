@@ -5,7 +5,7 @@ import {Response} from 'express';
 import {pipelineDto, Result, specTrasformer} from '../dto/specData.dto';
 import {TransformerService} from '../service/transformer/transformer.service';
 import {DatasetService} from '../service/dataset/dataset.service';
-import { PipelineService } from '../service/pipeline/pipeline.service';
+import {PipelineService} from '../service/pipeline/pipeline.service';
 
 @Controller('spec')
 export class SpecificationController {
@@ -60,7 +60,7 @@ export class SpecificationController {
             else {
                 response.status(200).send({
                     "message": result.message,
-                    "event_name": result?.dataset_name,
+                    "dataset_name": result?.dataset_name,
                     "pid": result.pid
                 });
             }
@@ -86,20 +86,17 @@ export class SpecificationController {
     }
 
     @Post('/pipeline')
-    async createPipeline(@Body() pipelineDto: pipelineDto, @Res()response: Response)
-    {
+    async createPipeline(@Body() pipelineDto: pipelineDto, @Res()response: Response) {
         try {
             const result: Result = await this.pipelineService.createSpecPipeline(pipelineDto)
-            console.log('result',result);
-            if(result?.code == 400)
-            {
+            console.log('result', result);
+            if (result?.code == 400) {
                 response.status(400).send({"message": result.error});
             }
-            else{
-                response.status(200).send({"message":result.message});
+            else {
+                response.status(200).send({"message": result.message});
             }
-        }catch(error)
-        {
+        } catch (error) {
             console.error("create.Pipeline impl :", error)
         }
     }
