@@ -16,7 +16,7 @@ export class DatasetService {
         let dbColumns = [];
         let newObj = this.specService.convertKeysToLowerCase(datasetDTO);
 
-        const isValidSchema: any = await this.specService.ajvValidator(datasetSchemaData, datasetDTO);
+        const isValidSchema: any = await this.specService.ajvValidator(datasetSchemaData, newObj);
         if (isValidSchema?.errors) {
             return {"code": 400, error: isValidSchema.errors}
         } else {
