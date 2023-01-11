@@ -38,7 +38,6 @@ export function createTable(tableName: string, columnNames: string[], dbColPrope
             created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             `;
-    console.log('queries.createTable: ', createQueryStr, columnNames.length, dbColProperties.length);
     if (columnNames.length == dbColProperties.length) {
         for (let i = 0; i < columnNames.length; i++) {
             if (i < columnNames.length - 1) {
@@ -52,7 +51,6 @@ export function createTable(tableName: string, columnNames: string[], dbColPrope
                 createQueryStr += createSubQuery;
             }
         }
-        console.log('queries.createTable: ', createSubQuery);
         return createQueryStr;
     }
 }

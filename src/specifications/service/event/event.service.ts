@@ -69,7 +69,6 @@ export class EventService {
                             }
                         } catch (error) {
                             await queryRunner.rollbackTransaction();
-                            console.error('event.service.createEvent: ', error.message);
                             return {"code": 400, "error": "something went wrong"}
                         }
                         finally {

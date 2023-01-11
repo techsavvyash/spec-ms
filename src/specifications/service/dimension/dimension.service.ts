@@ -24,7 +24,7 @@ export class DimensionService {
                     error: response.error
                 }
             } else {
-                let queryResult:any = checkName('dimension_name', "dimension");
+                let queryResult: any = checkName('dimension_name', "dimension");
                 queryResult = queryResult.replace('$1', `${dimensionDTO?.dimension_name.toLowerCase()}`);
                 const resultDname = await this.dataSource.query(queryResult);
                 if (resultDname?.length > 0) {
@@ -70,8 +70,7 @@ export class DimensionService {
                                     return {"code": 400, "error": "Unable to insert into spec pipeline table"};
 
                                 }
-                            }
-                            else {
+                            } else {
                                 await queryRunner.rollbackTransaction();
                                 return {"code": 400, "error": "Unable to insert into spec table"};
                             }

@@ -116,34 +116,81 @@ describe('TransformerService', () => {
             "file": "test"
         };
         expect(await service.createTransformer(transformerData)).toStrictEqual(result)
-    })
+    });
 
+    it('invalid template name ', async () => {
+        const transformerData = {
+            "event_name": "student_attendence",
+            "dataset_name": "student_attendance_by_class",
+            "template": "EventToCube-AggTemplate", //passing invalid name
+            "transformer_type": "EventToCube-agg"
+        };
 
-    it('invalid template name ' ,async () =>{
-      const transformerData= {
-        "event_name": "student_attendence",
-        "dataset_name": "student_attendance_by_class",
-        "template": "EventToCube-AggTemplate", //passing invalid name
-        "transformer_type":"EventToCube-agg"
-      }
+        let result = {
+            "code": 400, "error": "Invalid template name"
+        };
+        expect(await service.createTransformer(transformerData)).toStrictEqual(result);
+    });
 
-      let result ={
-       "code": 400, "error": "Invalid template name"
-      }
-      expect(await service.createTransformer(transformerData)).toStrictEqual(result);
-    })
+    it('invalid transformer_type name ', async () => {
+        const transformerData = {
+            "event_name": "student_attendence",
+            "dataset_name": "student_attendance_by_class",
+            "template": "EventToCube-AggTemplate.py",
+            "transformer_type": "EventToCfff" //passing invalid name
+        };
 
-    it('invalid transformer_type name ' ,async () =>{
-      const transformerData= {
-        "event_name": "student_attendence",
-        "dataset_name": "student_attendance_by_class",
-        "template": "EventToCube-AggTemplate.py",
-        "transformer_type":"EventToCfff" //passing invalid name
-      }
+        let result = {
+            "code": 400, "error": "Invalid transformer type"
+        };
+        expect(await service.createTransformer(transformerData)).toStrictEqual(result);
+    });
 
-      let result ={
-       "code": 400, "error": "Invalid transformer type"
-      }
-      expect(await service.createTransformer(transformerData)).toStrictEqual(result);
-    })
+    it('Exception', async () => {
+
+        const mockError = {
+            query: jest.fn().mockReturnValueOnce([{data: "data"}])
+                .mockReturnValueOnce([{data: "data"}]).mockReturnValueOnce([{pid: 1}]),
+            post: jest.fn().mockImplementation(() => {
+                throw Error("exception test")
+            })
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DataSource, TransformerService, GenericFunction,
+                {
+                    provide: TransformerService,
+                    useClass: TransformerService
+                },
+                {
+                    provide: DataSource,
+                    useValue: mockError
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                },
+                {
+                    provide: HttpCustomService,
+                    useValue: mockError
+                },
+            ],
+        }).compile();
+        let localService: TransformerService = module.get<TransformerService>(TransformerService);
+        const transformerData = {
+            "event_name": "student_attendence",
+            "dataset_name": "student_attendance_by_class",
+            "template": "EventToCube-AggTemplate.py",
+            "transformer_type": "EventToCube-agg" //passing invalid name
+        };
+
+        let resultOutput = "Error: exception test";
+
+        try {
+            console.log('transformer.service.spec.: ', transformerData);
+            await localService.createTransformer(transformerData);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
 });

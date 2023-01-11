@@ -69,7 +69,6 @@ export class TransformerService {
                 else {
                     return {"code": 400, error: "Invalid transformer type"}
                 }
-
             }
         } catch (e) {
             console.error('transformer.service.ts.createTransformer: ', e.message);
