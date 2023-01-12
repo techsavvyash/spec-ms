@@ -34,6 +34,7 @@ def KeysMaping(InputKeys, Template, Transformer, Response):
                 ToreplaceString = ToreplaceString.replace(replaceStr, str(InputKeys[key]))
             with open(os.path.dirname(os.path.abspath(__file__)) + '/transformers/' + Transformer, 'a') as fs:
                 fs.write(ToreplaceString)
+        print(Transformer,'FileReplaced,,,,,,,,,,,,,,,,,,,,')
         CeatedTransformersList.append({"filename": Transformer})
         return Response(json.dumps({"Message": "Transformer created successfully", "TransformerFiles":CeatedTransformersList,"code":200}))
     else:
@@ -124,7 +125,7 @@ def collect_keys(request, Response):
                                               'IncrementFormat': ','.join(IncrementFormat),
                                               'ReplaceFormat': ','.join(ReplaceFormat),
                                               'UpdateCols': ','.join(UpdateCols * 2),
-                                              'UpdateCol': ','.join(UpdateCols)})
+                                              'UpdateCol': ','.join(UpdateCols),"KeyFile":json.dumps(EventName+'.csv')})
                             TranformerType = TemplateDatasetMaping['template']
                             Template = TranformerType + '.py'
                             if TranformerType in ['EventToCube', 'EventToCubeIncrement']:
@@ -164,7 +165,7 @@ def collect_keys(request, Response):
                                 return Response(json.dumps(
                                     {"Message": "Transformer type is not correct", "TransformerType": TranformerType,
                                      "Dataset": DatasetName}))
-
+                            print(TranformerType,Transformer,':::::::::::::::::::::::')
                             KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
                 else:
                     print('ERROR : No dataset found')

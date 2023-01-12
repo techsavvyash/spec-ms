@@ -56,13 +56,16 @@ def EventSpec(request, Response):
     if len(df_event) == 0:
         return Response(json.dumps({"Message": EventKeys + " is empty"}))
     df_event = df_event.loc[df_event['program'] == Program]
+    print(df_event)
     E_keys = df_event.keys().tolist()
     event_items = df_event.values.tolist()
     for value in event_items:
         event = (dict(zip(E_keys, value)))
         EventName = event['event_name']
+        print(EventName)
         EventColumn = event['event_col'].split(',')
         DataTypes = event['event_datatype'].split(',')
+
         EventDict = dict(zip(EventColumn, DataTypes))
         ColumnsDataType = []
         for event_col in EventColumn:
@@ -74,7 +77,6 @@ def EventSpec(request, Response):
                 pattern = "^[0-9]{" + str(validation_dict[event_col]) + "}$"
                 ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
             else:
-                print(event_col)
                 ColumnsDataType.append({"type": EventDict[event_col].strip(), "shouldnotnull": True})
         InputKeys.update({"EventName": json.dumps(EventName),
                           "EventObject": json.dumps(dict(zip(EventColumn, ColumnsDataType))),
