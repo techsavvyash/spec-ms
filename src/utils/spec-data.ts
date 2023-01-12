@@ -1047,29 +1047,29 @@ export const transformerSchemaData = {
     "ingestion_type": "transformer",
     "input": {
         "type": "object",
+        "shouldnotnull": true,
         "properties": {
             "event_name": {
-                "type": "string"
+                "type": "string",
+                "shouldnotnull": true
             },
-            "dataset_name": {
-                "type": "string"
+            "key_file": {
+                "type": "string",
+                "shouldnotnull": true
             },
-            "template": {
-                "type": "string"
+            "program": {
+                "type": "string",
+                "shouldnotnull": true
             },
-            "transformer_type": {
-                "type": "string"
-            },
+           
         },
         "required": [
             "event_name",
-            "dataset_name",
-            "template",
-            "transformer_type"
+            "key_file",
+            "program",
         ]
     }
 };
-
 export const PipelineSchemaDimensiontoDB ={
     "type": "object",
     "properties": {
