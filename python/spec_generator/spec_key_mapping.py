@@ -45,43 +45,48 @@ def EventSpec(request, Response):
     Validation_items = df_validation.values.tolist()
     Validationcol_list = []
     validation_list = []
-    for item in Validation_items:
-        Validationcol_list.append(item[0])
-        validation_list.append(item[1])
-    validation_dict = (dict(zip(Validationcol_list, validation_list)))
+    try:
+        for item in Validation_items:
+            Validationcol_list.append(item[0])
+            validation_list.append(item[1])
+        validation_dict = (dict(zip(Validationcol_list, validation_list)))
 
-    ########## Reading  Eventtkeys csv file #################
-    EventPath = os.path.dirname(os.path.abspath(__file__)) + "/key_files/" + EventKeys
-    df_event = pd.read_csv(EventPath)
-    if len(df_event) == 0:
-        return Response(json.dumps({"Message": EventKeys + " is empty"}))
-    df_event = df_event.loc[df_event['program'] == Program]
-    print(df_event)
-    E_keys = df_event.keys().tolist()
-    event_items = df_event.values.tolist()
-    for value in event_items:
-        event = (dict(zip(E_keys, value)))
-        EventName = event['event_name']
-        print(EventName)
-        EventColumn = event['event_col'].split(',')
-        DataTypes = event['event_datatype'].split(',')
+        ########## Reading  Eventtkeys csv file #################
+        EventPath = os.path.dirname(os.path.abspath(__file__)) + "/key_files/" + EventKeys
+        df_event = pd.read_csv(EventPath)
+        if len(df_event) == 0:
+            return Response(json.dumps({"Message": EventKeys + " is empty"}))
+        df_event = df_event.loc[df_event['program'] == Program]
+        print(df_event)
+        E_keys = df_event.keys().tolist()
+        event_items = df_event.values.tolist()
+        for value in event_items:
+            event = (dict(zip(E_keys, value)))
+            EventName = event['event_name']
+            print(EventName)
+            EventColumn = event['event_col'].split(',')
+            DataTypes = event['event_datatype'].split(',')
 
-        EventDict = dict(zip(EventColumn, DataTypes))
-        ColumnsDataType = []
-        for event_col in EventColumn:
-            if event_col.casefold() == 'date':
-                ColumnsDataType.append({"type": "string", "shouldnotnull": True, "format": "date"})
-            elif (event_col.casefold() == 'grade') | (event_col.casefold() == 'class'):
-                ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
-            elif event_col in Validationcol_list:
-                pattern = "^[0-9]{" + str(validation_dict[event_col]) + "}$"
-                ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
-            else:
-                ColumnsDataType.append({"type": EventDict[event_col].strip(), "shouldnotnull": True})
-        InputKeys.update({"EventName": json.dumps(EventName),
-                          "EventObject": json.dumps(dict(zip(EventColumn, ColumnsDataType))),
-                          "EventList": json.dumps(EventColumn)})
+            EventDict = dict(zip(EventColumn, DataTypes))
+            ColumnsDataType = []
+            for event_col in EventColumn:
+                if event_col.casefold() == 'date':
+                    ColumnsDataType.append({"type": "string", "shouldnotnull": True, "format": "date"})
+                elif (event_col.casefold() == 'grade') | (event_col.casefold() == 'class'):
+                    ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
+                elif event_col in Validationcol_list:
+                    pattern = "^[0-9]{" + str(validation_dict[event_col]) + "}$"
+                    ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
+                else:
+                    ColumnsDataType.append({"type": EventDict[event_col].strip(), "shouldnotnull": True})
+            InputKeys.update({"EventName": json.dumps(EventName),
+                              "EventObject": json.dumps(dict(zip(EventColumn, ColumnsDataType))),
+                              "EventList": json.dumps(EventColumn)})
+            KeysMaping(Program, InputKeys, Template, 'event_' + EventName, Response)
+    except Exception as error:
+        print(error)
     return KeysMaping(Program, InputKeys, Template, 'event_' + EventName, Response)
+
 
 
 def DimensionSpec(request, Response):

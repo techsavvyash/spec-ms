@@ -2,7 +2,6 @@ import os
 import configparser
 import pandas as pd
 from urllib.parse import quote
-from smart_open import smart_open
 from sqlalchemy import create_engine
 
 
