@@ -94,8 +94,7 @@ def collect_keys(request, Response):
                             if len(date_col_list) != 0:
                                 DatasetDateCasting.append('df_dataset.update(df_dataset[' + json.dumps(
                                     date_col_list) + '].applymap("\'{}\'".format))')
-                                EventDateCasting.append('df_event.update(df_dataset[' + json.dumps(
-                                    date_col_list) + '].applymap("\'{}\'".format))')
+                                EventDateCasting.append('df_events.update(df_events[' + json.dumps(date_col_list) + '].applymap("\'{}\'".format))')
                             for i in UpdateColList:
                                 if i == 'percentage':
                                     ReplaceFormat.append(i + '=EXCLUDED.' + i)
@@ -112,7 +111,7 @@ def collect_keys(request, Response):
                                 Dataset['aggregate']['properties']['function']['items']['properties'].keys())) * len(
                                 col))))
                             InputKeys.update({'AWSKey': '{}', 'AWSSecretKey': '{}', 'BucketName': '{}', 'ObjKey': '{}',
-                                              'Values': '{}','eventDateCasting': ','.join(EventName),
+                                              'Values': '{}','eventDateCasting': ','.join(EventDateCasting),
                                               'datasetDateCasting': ','.join(DatasetDateCasting), 'ValueCols': DatasetItems,
                                               'GroupBy': list(Dataset['group_by']['items']['properties'].keys()),
                                               'AggCols': AggCols,
