@@ -5,7 +5,7 @@ import re
 import pandas as pd
 import psycopg2 as pg
 
-configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/config/config.ini"
+configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/transformers/config.ini"
 print(configuartion_path)
 config = configparser.ConfigParser()
 config.read(configuartion_path);
@@ -20,6 +20,7 @@ CeatedTransformersList = []
 
 
 def KeysMaping(InputKeys, Template, Transformer, Response):
+
     if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/transformers/' + Transformer):
         os.remove(os.path.dirname(os.path.abspath(__file__)) + '/transformers/' + Transformer)
     with open(os.path.dirname(os.path.abspath(__file__)) + '/templates/' + Template, 'r') as fs:
@@ -34,7 +35,7 @@ def KeysMaping(InputKeys, Template, Transformer, Response):
             with open(os.path.dirname(os.path.abspath(__file__)) + '/transformers/' + Transformer, 'a') as fs:
                 fs.write(ToreplaceString)
         CeatedTransformersList.append({"filename": Transformer})
-        return Response(json.dumps({"Message": "Transformer created successfully", "TransformerFiles":CeatedTransformersList}))
+        return Response(json.dumps({"Message": "Transformer created successfully", "TransformerFiles":CeatedTransformersList,"code":200}))
     else:
         print('ERROR : InputKey is Empty')
         return Response(json.dumps({"Message": "InputKey is empty"}))
@@ -164,7 +165,6 @@ def collect_keys(request, Response):
                                     {"Message": "Transformer type is not correct", "TransformerType": TranformerType,
                                      "Dataset": DatasetName}))
 
-                            print(TranformerType,Transformer,":::::::::::::::::::::::::::::::")
                             KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
                 else:
                     print('ERROR : No dataset found')
@@ -181,4 +181,4 @@ def collect_keys(request, Response):
         return Response(
             json.dumps({"Message": "Transformer not created ", "transformerFiles": Transformer, "code": 400}))
 
-    return Response(json.dumps({"Message": "Transformer created successfully", "TransformerFiles":CeatedTransformersList,"code":200}))
+    return KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
