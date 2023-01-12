@@ -21,7 +21,7 @@ cur = con.connect()
 
 def filterTransformer(valueCols={ValueCols}):
     df_dataset  = pd.read_sql('select * from {Table}', con=con)                                     ### reading dataset from database
-    {DateCasting}
+    {datasetDateCasting}
     df_dimension=pd.read_sql('select {DimensionCols} from {DimensionTable}',con=con)                ### reading DimensionDataset from Database
     df_dimension_merge = df_dataset.merge(df_dimension, on={MergeOnCol}, how='inner')                 ### mapping dataset with dimension
 

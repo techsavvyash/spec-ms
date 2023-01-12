@@ -57,16 +57,13 @@ def EventSpec(request, Response):
         if len(df_event) == 0:
             return Response(json.dumps({"Message": EventKeys + " is empty"}))
         df_event = df_event.loc[df_event['program'] == Program]
-        print(df_event)
         E_keys = df_event.keys().tolist()
         event_items = df_event.values.tolist()
         for value in event_items:
             event = (dict(zip(E_keys, value)))
             EventName = event['event_name']
-            print(EventName)
-            EventColumn = event['event_col'].split(',')
-            DataTypes = event['event_datatype'].split(',')
-
+            EventColumn = [x.strip() for x in event['event_col'].split(',')]
+            DataTypes = [x.strip() for x in event['event_datatype'].split(',')]
             EventDict = dict(zip(EventColumn, DataTypes))
             ColumnsDataType = []
             for event_col in EventColumn:
@@ -119,8 +116,8 @@ def DimensionSpec(request, Response):
     for value in Dim_items:
         event = (dict(zip(Dim_keys, value)))
         DimensionName = event['dimension_name']
-        DimensionColumn = event['dimension_col'].split(',')
-        DataTypes = event['dimension_datatype'].split(',')
+        DimensionColumn = [x.strip() for x in event['dimension_col'].split(',')]
+        DataTypes = [x.strip() for x in event['dimension_datatype'].split(',')]
         DimensionDict = dict(zip(DimensionColumn, DataTypes))
         ColumnsDataType = []
         for dimension_col in DimensionColumn:
@@ -166,8 +163,8 @@ def DatasetSpec(request, Response):
         for value in Dataset_items:
             dataset = (dict(zip(D_keys, value)))
             DatasetName = dataset['dataset_name']
-
             Template = dataset['template']
+            print(Template)
             if dataset['template'] in ['CubeToCube', 'CubeToCubeIncrement', 'CubeToCubePer', 'CubeToCubePerIncrement',
                                        'E&CToCubePer', 'E&CToCubePerIncrement']:
                 Template = 'CubeToCube'
@@ -180,21 +177,21 @@ def DatasetSpec(request, Response):
             else:
                 return Response(
                     json.dumps({"Message": "Template name is not correct", "Template": Template, "Dataset": DatasetName}))
-            DimensionCol = dataset['dimension_col'].split(',')
-            DimensionTable = dataset['dimension_table'].split(',')
-            MergeOnCol = dataset['merge_on_col'].split(',')
-            DatasetColumn = dataset['dataset_col'].split(',')
-            DataTypes = dataset['dataset_datatype'].split(',')
+            DimensionCol = [x.strip() for x in dataset['dimension_col'].split(',')]
+            DimensionTable = [x.strip() for x in dataset['dimension_table'].split(',')]
+            MergeOnCol = [x.strip() for x in dataset['merge_on_col'].split(',')]
+            DatasetColumn = [x.strip() for x in dataset['dataset_col'].split(',')]
+            DataTypes = [x.strip() for x in dataset['dataset_datatype'].split(',')]
             DatasetDict = dict(zip(DatasetColumn, DataTypes))
-            GroupByCol = dataset['group_by_col'].split(',')
-            AggFunction = dataset['agg_function'].split(',')
-            TargetTable = dataset['target_table'].split(',')
-            UpdateCol = dataset['update_col'].split(',')
-            AggCol = dataset['agg_col'].split(',')
-            AggColTable = dataset['agg_col_table'].split(',')
-            FilterCol = str(dataset['filter_col']).split(',')
-            FilterType = str(dataset['filter_type']).strip('{}').split(',')
-            Filter = str(dataset['filter']).split(',')
+            GroupByCol = [x.strip() for x in dataset['group_by_col'].split(',')]
+            AggFunction = [x.strip() for x in dataset['agg_function'].split(',')]
+            TargetTable = [x.strip() for x in dataset['target_table'].split(',')]
+            UpdateCol = [x.strip() for x in dataset['update_col'].split(',')]
+            AggCol = [x.strip() for x in dataset['agg_col'].split(',')]
+            AggColTable = [x.strip() for x in dataset['agg_col_table'].split(',')]
+            FilterCol = [x.strip() for x in str(dataset['filter_col']).split(',')]
+            FilterType = [x.strip() for x in str(dataset['filter_type']).strip('{}').split(',')]
+            Filter = [x.strip() for x in str(dataset['filter']).split(',')]
             ColumnsDataType = []
             for datasetcol in DatasetColumn:
                 if datasetcol.casefold() == 'date':

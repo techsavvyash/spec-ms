@@ -28,8 +28,9 @@ def aggTransformer(valueCols={ValueCols}):
     # path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
     # df_events = pd.read_csv(smart_open(path))
     df_events = pd.read_csv(os.path.dirname(os.path.abspath(__file__)) + "/events/" + {KeyFile})
+    {eventDateCasting}
     df_dataset=pd.read_sql('select * from {Table};',con=con)
-    {DateCasting}
+    {datasetDateCasting}
     df_dimension = pd.read_sql('select {DimensionCols} from {DimensionTable}', con=con)
     df_dimension_merge = df_events.merge(df_dimension, on={MergeOnCol}, how='inner')
     df_agg = df_dimension_merge.groupby({GroupBy}, as_index=False).agg({AggCols})
