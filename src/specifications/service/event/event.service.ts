@@ -15,7 +15,7 @@ export class EventService {
         const queryRunner :any = this.dataSource.createQueryRunner();
         let newObj = this.specService.convertKeysToLowerCase(eventDTO);
 
-        const isValidSchema: any = await this.specService.ajvValidator(eventSchemaData, eventDTO);
+        const isValidSchema: any = await this.specService.ajvValidator(eventSchemaData, newObj);
         if (isValidSchema.errors) {
             return {"code": 400, error: isValidSchema.errors}
         } else {
