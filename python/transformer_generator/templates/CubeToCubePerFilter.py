@@ -4,7 +4,7 @@ import configparser
 from urllib.parse import quote
 from sqlalchemy import create_engine
 
-configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/config.ini"
+configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/config/config.ini"
 print(configuartion_path)
 config = configparser.ConfigParser()
 config.read(configuartion_path);

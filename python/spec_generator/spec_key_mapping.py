@@ -155,72 +155,75 @@ def DatasetSpec(request, Response):
     df_dataset = df_dataset.loc[df_dataset['program'] == Program]
     D_keys = df_dataset.keys().tolist()
     Dataset_items = df_dataset.values.tolist()
-    for value in Dataset_items:
-        dataset = (dict(zip(D_keys, value)))
-        DatasetName = dataset['dataset_name']
+    try:
+        for value in Dataset_items:
+            dataset = (dict(zip(D_keys, value)))
+            DatasetName = dataset['dataset_name']
 
-        Template = dataset['template']
-        if dataset['template'] in ['CubeToCube', 'CubeToCubeIncrement', 'CubeToCubePer', 'CubeToCubePerIncrement',
-                                   'E&CToCubePer', 'E&CToCubePerIncrement']:
-            Template = 'CubeToCube'
-        elif dataset['template'] in ['EventToCube', 'EventToCubeIncrement', 'EventToCubePer',
-                                     'EventToCubePerIncrement']:
-            Template = 'EventToCube'
-        elif dataset['template'] in ['CubeToCubePerFilter', 'CubeToCubePerFilterIncrement', 'CubeToCubeFilter',
-                                     'CubeToCubeFilterIncrement']:
-            Template = 'CubeToCubeFilter'
-        else:
-            return Response(
-                json.dumps({"Message": "Template name is not correct", "Template": Template, "Dataset": DatasetName}))
-        DimensionCol = dataset['dimension_col'].split(',')
-        DimensionTable = dataset['dimension_table'].split(',')
-        MergeOnCol = dataset['merge_on_col'].split(',')
-        DatasetColumn = dataset['dataset_col'].split(',')
-        DataTypes = dataset['dataset_datatype'].split(',')
-        DatasetDict = dict(zip(DatasetColumn, DataTypes))
-        GroupByCol = dataset['group_by_col'].split(',')
-        AggFunction = dataset['agg_function'].split(',')
-        TargetTable = dataset['target_table'].split(',')
-        UpdateCol = dataset['update_col'].split(',')
-        AggCol = dataset['agg_col'].split(',')
-        AggColTable = dataset['agg_col_table'].split(',')
-        FilterCol = str(dataset['filter_col']).split(',')
-        FilterType = str(dataset['filter_type']).strip('{}').split(',')
-        Filter = str(dataset['filter']).split(',')
-        ColumnsDataType = []
-        for datasetcol in DatasetColumn:
-            if datasetcol.casefold() == 'date':
-                ColumnsDataType.append({"type": "string", "shouldnotnull": True, "format": "date"})
-            elif (datasetcol.casefold() == 'grade') | (datasetcol.casefold() == 'class'):
-                ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
-            elif datasetcol in Validationcol_list:
-                pattern = "^[0-9]{" + str(validation_dict[datasetcol]) + "}$"
-                ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
+            Template = dataset['template']
+            if dataset['template'] in ['CubeToCube', 'CubeToCubeIncrement', 'CubeToCubePer', 'CubeToCubePerIncrement',
+                                       'E&CToCubePer', 'E&CToCubePerIncrement']:
+                Template = 'CubeToCube'
+            elif dataset['template'] in ['EventToCube', 'EventToCubeIncrement', 'EventToCubePer',
+                                         'EventToCubePerIncrement']:
+                Template = 'EventToCube'
+            elif dataset['template'] in ['CubeToCubePerFilter', 'CubeToCubePerFilterIncrement', 'CubeToCubeFilter',
+                                         'CubeToCubeFilterIncrement']:
+                Template = 'CubeToCubeFilter'
             else:
-                ColumnsDataType.append({"type": DatasetDict[datasetcol].strip(), "shouldnotnull": True})
-        InputKeys.update(
-            {"DatasetName": DatasetName, "DimensionTable": json.dumps(dict(zip(DimensionTable, [{"type": "string"}]))),
-             "DimensionCol": json.dumps(dict(zip(DimensionCol, ([{"type": "string"}]) * len(DimensionCol)))),
-             "MergeOnCol": json.dumps(dict(zip(MergeOnCol, [{"type": "string"}]))),
-             "DatasetObject": json.dumps(dict(zip(DatasetColumn, ColumnsDataType))),
-             "DatasetList": json.dumps(DatasetColumn), "GroupByList": json.dumps(GroupByCol),
-             "GroupByObject": json.dumps(dict(zip(GroupByCol, ([{"type": "string"}]) * len(GroupByCol)))),
-             "AggFunction": json.dumps(dict(zip(AggFunction, ([{"type": "string"}]) * len(AggFunction)))),
-             "AggCol": json.dumps(dict(zip(AggCol, ([{"type": "string"}]) * len(AggCol)))),
-             "TargetTable": json.dumps(dict(zip(TargetTable, [{"type": "string"}]))),
-             "UpdateCol": json.dumps(dict(zip(UpdateCol, ([{"type": "number"}]) * len(UpdateCol))))})
-        if Template == "EventToCube":
-            InputKeys.update(InputKeys)
-            KeysMaping(Program, InputKeys, Template, DatasetName, Response)
-        elif Template == "CubeToCube":
-            InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}])))})
-            KeysMaping(Program, InputKeys, Template, DatasetName, Response)
-        elif Template == "CubeToCubeFilter":
-            InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}]))),
-                              "FilterCol": json.dumps(dict(zip(FilterCol, [{"type": "string"}]))),
-                              "FilterType": json.dumps(dict(zip(FilterType, [{"type": "string"}]))),
-                              "Filter": json.dumps(dict(zip(Filter, [{"type": "string"}])))})
-        else:
-            print("ERROR: Template name is not correct")
-            return Response(json.dumps({"Message": "Template name is not correct", "Template": Template}))
+                return Response(
+                    json.dumps({"Message": "Template name is not correct", "Template": Template, "Dataset": DatasetName}))
+            DimensionCol = dataset['dimension_col'].split(',')
+            DimensionTable = dataset['dimension_table'].split(',')
+            MergeOnCol = dataset['merge_on_col'].split(',')
+            DatasetColumn = dataset['dataset_col'].split(',')
+            DataTypes = dataset['dataset_datatype'].split(',')
+            DatasetDict = dict(zip(DatasetColumn, DataTypes))
+            GroupByCol = dataset['group_by_col'].split(',')
+            AggFunction = dataset['agg_function'].split(',')
+            TargetTable = dataset['target_table'].split(',')
+            UpdateCol = dataset['update_col'].split(',')
+            AggCol = dataset['agg_col'].split(',')
+            AggColTable = dataset['agg_col_table'].split(',')
+            FilterCol = str(dataset['filter_col']).split(',')
+            FilterType = str(dataset['filter_type']).strip('{}').split(',')
+            Filter = str(dataset['filter']).split(',')
+            ColumnsDataType = []
+            for datasetcol in DatasetColumn:
+                if datasetcol.casefold() == 'date':
+                    ColumnsDataType.append({"type": "string", "shouldnotnull": True, "format": "date"})
+                elif (datasetcol.casefold() == 'grade') | (datasetcol.casefold() == 'class'):
+                    ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
+                elif datasetcol in Validationcol_list:
+                    pattern = "^[0-9]{" + str(validation_dict[datasetcol]) + "}$"
+                    ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
+                else:
+                    ColumnsDataType.append({"type": DatasetDict[datasetcol].strip(), "shouldnotnull": True})
+            InputKeys.update(
+                {"DatasetName": DatasetName, "DimensionTable": json.dumps(dict(zip(DimensionTable, [{"type": "string"}]))),
+                 "DimensionCol": json.dumps(dict(zip(DimensionCol, ([{"type": "string"}]) * len(DimensionCol)))),
+                 "MergeOnCol": json.dumps(dict(zip(MergeOnCol, [{"type": "string"}]))),
+                 "DatasetObject": json.dumps(dict(zip(DatasetColumn, ColumnsDataType))),
+                 "DatasetList": json.dumps(DatasetColumn), "GroupByList": json.dumps(GroupByCol),
+                 "GroupByObject": json.dumps(dict(zip(GroupByCol, ([{"type": "string"}]) * len(GroupByCol)))),
+                 "AggFunction": json.dumps(dict(zip(AggFunction, ([{"type": "string"}]) * len(AggFunction)))),
+                 "AggCol": json.dumps(dict(zip(AggCol, ([{"type": "string"}]) * len(AggCol)))),
+                 "TargetTable": json.dumps(dict(zip(TargetTable, [{"type": "string"}]))),
+                 "UpdateCol": json.dumps(dict(zip(UpdateCol, ([{"type": "number"}]) * len(UpdateCol))))})
+            if Template == "EventToCube":
+                InputKeys.update(InputKeys)
+                KeysMaping(Program, InputKeys, Template, DatasetName, Response)
+            elif Template == "CubeToCube":
+                InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}])))})
+                KeysMaping(Program, InputKeys, Template, DatasetName, Response)
+            elif Template == "CubeToCubeFilter":
+                InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}]))),
+                                  "FilterCol": json.dumps(dict(zip(FilterCol, [{"type": "string"}]))),
+                                  "FilterType": json.dumps(dict(zip(FilterType, [{"type": "string"}]))),
+                                  "Filter": json.dumps(dict(zip(Filter, [{"type": "string"}])))})
+            else:
+                print("ERROR: Template name is not correct")
+                return Response(json.dumps({"Message": "Template name is not correct", "Template": Template}))
+    except Exception as error:
+        print(error)
     return KeysMaping(Program, InputKeys, Template, DatasetName, Response)

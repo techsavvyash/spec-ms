@@ -6,7 +6,7 @@ from smart_open import smart_open
 from sqlalchemy import create_engine
 
 
-configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/config.ini"
+configuartion_path = os.path.dirname(os.path.abspath(__file__)) + "/config/config.ini"
 print(configuartion_path)
 config = configparser.ConfigParser()
 config.read(configuartion_path);
