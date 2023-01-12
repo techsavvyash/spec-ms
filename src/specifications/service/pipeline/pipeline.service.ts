@@ -13,7 +13,7 @@ import {checkName, getPipelineSpec, insertIntoSpecPipeline} from '../../queries/
 
 // PipelineSchemaDimension
 @Injectable()
-export class PipelineService {
+export class PipelineService { 
 
     constructor(@InjectDataSource() private dataSource: DataSource, private specService: GenericFunction, private http: HttpCustomService) {
     }
