@@ -1,12 +1,10 @@
-import {Injectable} from '@nestjs/common';
-import {InjectDataSource} from '@nestjs/typeorm';
-import {GenericFunction} from '../genericFunction';
-import {DataSource} from 'typeorm';
-import {transformerSchemaData} from '../../../utils/spec-data';
-import {TransformerType, TemplateType} from '../contsant'
-import {HttpService} from '@nestjs/axios';
-import {getdatasetName, getEventData, insertTransformer} from '../../queries/queries';
-import {HttpCustomService} from '../HttpCustomService';
+import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { GenericFunction } from '../genericFunction';
+import { DataSource } from 'typeorm';
+import { transformerSchemaData } from '../../../utils/spec-data';
+import { getdatasetName, getEventData, insertTransformer } from '../../queries/queries';
+import { HttpCustomService } from '../HttpCustomService';
 
 @Injectable()
 export class TransformerService {
@@ -25,26 +23,31 @@ export class TransformerService {
             } else {
                 const queryResult = await this.dataSource.query(getEventData(eventName));
                 if (queryResult?.length === 1) {
+                    console.log("djsbfjb")
                     await queryRunner.connect();
-                    const data = {
+                    const apiData = {
                         "event": eventName,
                         "key_file": keyFileName,
                         "program": programName
                     };
-                    const apiGenerator: any = await this.generatorAPI(data);
+                    const apiGenerator: any = await this.generatorAPI(apiData);
 
                     if (apiGenerator.data.code === 200) {
-                        await queryRunner.startTransaction(); 
+                        await queryRunner.startTransaction();
                         try {
-                            const transResult: any = await queryRunner.query(insertTransformer(apiGenerator.data.TransformerFile));
-                            if (transResult[0].pid) {
+                            const pidData = []
+                            const data = apiGenerator.data.TransformerFile.map(async (val) =>{
+                                const transResult: any = await queryRunner.query(insertTransformer(val.filename));
+                                let resObj = {pid:transResult[0].pid,filename:val.filename}
+                                pidData.push(resObj)
+                            });
+                            if (pidData.length > 0) {
                                 await queryRunner.commitTransaction();
                                 return {
                                     "code": 200,
                                     "message": apiGenerator.data.Message,
-                                    "pid": transResult[0].pid,
-                                    "file": apiGenerator.data.TransformerFile
-                                } 
+                                    "responce": {pidData},
+                                }
                             }
                             else {
                                 await queryRunner.rollbackTransaction();
@@ -57,7 +60,7 @@ export class TransformerService {
                         finally {
                             await queryRunner.release();
                         }
-                    }  
+                    }
                     else {
                         return { "code": 400, "error": apiGenerator.data.Message }
                     }
@@ -73,7 +76,7 @@ export class TransformerService {
 
     async generatorAPI(APIdata) {
         let url = `${process.env.FLASKAPI}/api/generator`;
-      
+
         try {
             const result: any = await this.http.post(url, APIdata);
             if (result) {
@@ -86,4 +89,4 @@ export class TransformerService {
         }
 
     }
-}
+} 

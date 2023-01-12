@@ -1047,19 +1047,19 @@ export const transformerSchemaData = {
     "ingestion_type": "transformer",
     "input": {
         "type": "object",
-        "shouldNotNull": true,
+        "shouldnotnull": true,
         "properties": {
             "event_name": {
                 "type": "string",
-                "shouldNotNull": true
+                "shouldnotnull": true
             },
             "key_file": {
                 "type": "string",
-                "shouldNotNull": true
+                "shouldnotnull": true
             },
             "program": {
                 "type": "string",
-                "shouldNotNull": true
+                "shouldnotnull": true
             },
            
         },
