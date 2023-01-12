@@ -13,6 +13,7 @@ export function insertSchema(columnNames: string[], tableName: string) {
     return queryStr;
 }
 
+
 export function insertPipeline(columnNames: string[], tableName: string, columnValues: any[]) {
     let queryStr;
     if (columnNames.length > 1) {
