@@ -13,7 +13,7 @@ export class DimensionService {
         const queryRunner = this.dataSource.createQueryRunner();
         let dbColumns = [];
         let newObj = this.specService.convertKeysToLowerCase(dimensionDTO);
-        const isValidSchema: any = await this.specService.ajvValidator(dimensionSchemaData, dimensionDTO);
+        const isValidSchema: any = await this.specService.ajvValidator(dimensionSchemaData, newObj);
         if (isValidSchema?.errors) {
             return {"code": 400, error: isValidSchema.errors}
         } else {
