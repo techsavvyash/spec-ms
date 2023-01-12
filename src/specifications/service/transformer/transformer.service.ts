@@ -75,7 +75,7 @@ export class TransformerService {
     }
 
     async generatorAPI(APIdata) {
-        let url = `${process.env.FLASKAPI}/api/generator`;
+        let url = `${process.env.URL}/api/generator`;
 
         try {
             const result: any = await this.http.post(url, APIdata);
