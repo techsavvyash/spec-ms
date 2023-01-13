@@ -26,7 +26,7 @@ def aggTransformer(valueCols={ValueCols}):
     df_dimension_merge = df_dataset.merge(df_dimension, on={MergeOnCol}, how='inner')
 
     df_agg = df_dimension_merge.groupby({GroupBy}, as_index=False).agg({AggCols})
-    df_agg['percentage'] = ((df_agg['{NumeratorCol}'] / df_agg[ ['{DenominatorCol}']]) * 100)  ### Calculating Percentage
+    df_agg['percentage'] = ((df_agg['{NumeratorCol}'] / df_agg['{DenominatorCol}']) * 100)  ### Calculating Percentage
     col_list = df_agg.columns.to_list()
     df_snap = df_agg[col_list]
     df_snap.columns = valueCols

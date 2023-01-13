@@ -31,7 +31,10 @@ def filterTransformer(valueCols={ValueCols}):
     df_filter = df_dimension_merge.loc[df_dataset{FilterCol}{FilterType}{Filter}]  ### applying filter
     df_filter = df_filter.groupby({GroupBy}, as_index=False).agg({AggCols})  ### aggregation after filter
     df_merge = df_filter.merge(df_total, on={GroupBy}, how='inner')  ### merging aggregated DataFrames
-    df_merge['percentage'] = ((df_merge['{NumeratorCol}'] / df_merge[['{DenominatorCol}']]) * 100)  ### Calculating Percentage
+    df_merge_col_list=df_merge.columns.to_list()
+    numerator = df_merge_col_list[-2]
+    denominator = df_merge_col_list[-1]
+    df_merge['percentage'] = ((df_merge[numerator] / df_merge[denominator]) * 100)  ### Calculating Percentage
     col_list = df_merge.columns.to_list()
     df_snap = df_merge[col_list]
     df_snap.columns = valueCols

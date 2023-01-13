@@ -106,7 +106,7 @@ def collect_keys(request, Response):
                             else:
                                 UpdateColList.append(NumeratorCol)
                             if not (DenominatorCol.lower()).startswith(('sum_', 'count_')):
-                                UpdateColList.append(fun[0]+ ',' + DenominatorCol)
+                                UpdateColList.append(fun[0]+ '_' + DenominatorCol)
                                 UpdateColList.append("percentage")
                             else:
                                 UpdateColList.append(DenominatorCol)
