@@ -26,9 +26,9 @@ con=create_engine(engine %quote(password))
 cur = con.connect()
 
 def aggTransformer(valueCols={ValueCols}):
-    path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
+    # path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
     df_events = pd.read_csv(smart_open(path))
-    {DateCasting}
+    {EventCasting}
     col_list = df_events.columns
     df_snap = df_events[col_list]
     df_snap.columns = valueCols

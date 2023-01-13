@@ -1,9 +1,11 @@
 import json
 import os
 import re
+from datetime import date
+
 import pandas as pd
-
-
+todays_date = date.today()
+CeatedSpecList=[]
 def KeysMaping(Program, InputKeys, template, SpecFile, Response):
     template = template + '.json'
     SpecFile = SpecFile + '.json'
@@ -23,7 +25,8 @@ def KeysMaping(Program, InputKeys, template, SpecFile, Response):
                 ToreplaceString = ToreplaceString.replace(replaceStr, str(InputKeys[key]))
             with open(os.path.dirname(os.path.abspath(__file__)) + '/' + Program + '/' + SpecFile, 'a') as fs:
                 fs.write(ToreplaceString)
-        return Response(json.dumps({"Message": "Spec created successfully", "SpecFile": SpecFile, "code": 200}))
+        CeatedSpecList.append({"filename": SpecFile})
+        return Response(json.dumps({"Message": "Spec created successfully", "SpecFiles":CeatedSpecList, "code": 200}))
     else:
         print('ERROR : InputKey is empty')
         return Response(json.dumps({"Message": "InputKey is empty"}))
@@ -71,9 +74,12 @@ def EventSpec(request, Response):
                     ColumnsDataType.append({"type": "string", "shouldnotnull": True, "format": "date"})
                 elif (event_col.casefold() == 'grade') | (event_col.casefold() == 'class'):
                     ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
+                elif event_col.casefold() in ['year','academic_year']:
+                    ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum":((todays_date.year)-5), "maximum":int(todays_date.year)})
                 elif event_col in Validationcol_list:
-                    pattern = "^[0-9]{" + str(validation_dict[event_col]) + "}$"
-                    ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
+                    min = int(str(validation_dict[event_col]).split(',')[0])
+                    max = int(str(validation_dict[event_col]).split(',')[1])
+                    ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": min, "maximum": max})
                 else:
                     ColumnsDataType.append({"type": EventDict[event_col].strip(), "shouldnotnull": True})
             InputKeys.update({"EventName": json.dumps(EventName),
@@ -124,9 +130,10 @@ def DimensionSpec(request, Response):
             if (dimension_col.casefold() == 'grade') | (dimension_col.casefold() == 'class'):
                 ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
             elif dimension_col in Validationcol_list:
-                pattern = "^[0-9]{" + str(validation_dict[dimension_col]) + "}$"
-                ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
-            elif (dimension_col not in Validationcol_list) & (dimension_col != 'grade'):
+                min = int(str(validation_dict[dimension_col]).split(',')[0])
+                max = int(str(validation_dict[dimension_col]).split(',')[1])
+                ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": min, "maximum": max})
+            else:
                 ColumnsDataType.append({"type": DimensionDict[dimension_col].strip(), "shouldnotnull": True})
         InputKeys.update({"DimensionName": json.dumps(DimensionName),
                           "DimensionObject": json.dumps(dict(zip(DimensionColumn, ColumnsDataType))),
@@ -164,7 +171,6 @@ def DatasetSpec(request, Response):
             dataset = (dict(zip(D_keys, value)))
             DatasetName = dataset['dataset_name']
             Template = dataset['template']
-            print(Template)
             if dataset['template'] in ['CubeToCube', 'CubeToCubeIncrement', 'CubeToCubePer', 'CubeToCubePerIncrement',
                                        'E&CToCubePer', 'E&CToCubePerIncrement']:
                 Template = 'CubeToCube'
@@ -175,8 +181,7 @@ def DatasetSpec(request, Response):
                                          'CubeToCubeFilterIncrement']:
                 Template = 'CubeToCubeFilter'
             else:
-                return Response(
-                    json.dumps({"Message": "Template name is not correct", "Template": Template, "Dataset": DatasetName}))
+                return Response(json.dumps({"Message": "Template name is not correct", "Template": Template, "Dataset": DatasetName}))
             DimensionCol = [x.strip() for x in dataset['dimension_col'].split(',')]
             DimensionTable = [x.strip() for x in dataset['dimension_table'].split(',')]
             MergeOnCol = [x.strip() for x in dataset['merge_on_col'].split(',')]
@@ -192,6 +197,8 @@ def DatasetSpec(request, Response):
             FilterCol = [x.strip() for x in str(dataset['filter_col']).split(',')]
             FilterType = [x.strip() for x in str(dataset['filter_type']).strip('{}').split(',')]
             Filter = [x.strip() for x in str(dataset['filter']).split(',')]
+            Numerator=[x.strip() for x in str(dataset['numerator']).split(',')]
+            Denominator=[x.strip() for x in str(dataset['denominator']).split(',')]
             ColumnsDataType = []
             for datasetcol in DatasetColumn:
                 if datasetcol.casefold() == 'date':
@@ -199,8 +206,9 @@ def DatasetSpec(request, Response):
                 elif (datasetcol.casefold() == 'grade') | (datasetcol.casefold() == 'class'):
                     ColumnsDataType.append({"type": "number", "shouldnotnull": True, "minimum": 1, "maximum": 12})
                 elif datasetcol in Validationcol_list:
-                    pattern = "^[0-9]{" + str(validation_dict[datasetcol]) + "}$"
-                    ColumnsDataType.append({"type": "string", "shouldnotnull": True, "pattern": pattern})
+                    min = int(str(validation_dict[datasetcol]).split(',')[0])
+                    max =int(str(validation_dict[datasetcol]).split(',')[1])
+                    ColumnsDataType.append({"type": "number", "shouldnotnull": True,"minimum":min,"maximum":max})
                 else:
                     ColumnsDataType.append({"type": DatasetDict[datasetcol].strip(), "shouldnotnull": True})
             InputKeys.update(
@@ -213,13 +221,13 @@ def DatasetSpec(request, Response):
                  "AggFunction": json.dumps(dict(zip(AggFunction, ([{"type": "string"}]) * len(AggFunction)))),
                  "AggCol": json.dumps(dict(zip(AggCol, ([{"type": "string"}]) * len(AggCol)))),
                  "TargetTable": json.dumps(dict(zip(TargetTable, [{"type": "string"}]))),
-                 "UpdateCol": json.dumps(dict(zip(UpdateCol, ([{"type": "number"}]) * len(UpdateCol))))})
+                 "UpdateCol": json.dumps(dict(zip(UpdateCol, ([{"type": "number"}]) * len(UpdateCol)))),
+                 "NumeratorCol":json.dumps(dict(zip(Numerator,([{"type":"number"}])))),
+                  "DenominatorCol":json.dumps(dict(zip(Denominator,([{"type":"number"}]))))})
             if Template == "EventToCube":
                 InputKeys.update(InputKeys)
-                KeysMaping(Program, InputKeys, Template, DatasetName, Response)
             elif Template == "CubeToCube":
                 InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}])))})
-                KeysMaping(Program, InputKeys, Template, DatasetName, Response)
             elif Template == "CubeToCubeFilter":
                 InputKeys.update({"AggColTable": json.dumps(dict(zip(AggColTable, [{"type": "string"}]))),
                                   "FilterCol": json.dumps(dict(zip(FilterCol, [{"type": "string"}]))),
@@ -228,6 +236,7 @@ def DatasetSpec(request, Response):
             else:
                 print("ERROR: Template name is not correct")
                 return Response(json.dumps({"Message": "Template name is not correct", "Template": Template}))
+            KeysMaping(Program, InputKeys, Template, DatasetName, Response)
     except Exception as error:
         print(error)
     return KeysMaping(Program, InputKeys, Template, DatasetName, Response)

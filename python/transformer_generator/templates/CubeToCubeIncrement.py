@@ -21,7 +21,7 @@ cur = con.connect()
 
 def aggTransformer(valueCols={ValueCols}):
     df_dataset = pd.read_sql('select * from {Table};',con=con)
-    {datasetDateCasting}
+    {DatasetCasting}
     df_dimension = pd.read_sql('select {DimensionCols} from {DimensionTable}', con=con)
     df_dimension_merge = df_dataset.merge(df_dimension, on={MergeOnCol}, how='inner')
 
