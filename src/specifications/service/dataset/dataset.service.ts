@@ -53,11 +53,13 @@ export class DatasetService {
                                 if (insertPipelineResult[0].pid) {
                                     let columnProperties = [];
                                     let columnNames = [];
+                                    let uniqueColumns;
                                     columnNames.push(Object.keys(values?.properties?.items?.items?.properties));
                                     columnProperties.push(Object.values(values?.properties?.items?.items?.properties));
+                                    uniqueColumns =values?.properties?.group_by?.items?.required; 
                                     dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
                                     let tbName: string = newObj?.dataset_name;
-                                    let createQuery = createTable(tbName, columnNames[0], dbColumns);
+                                    let createQuery = createTable(tbName, columnNames[0], dbColumns,uniqueColumns);
                                     await queryRunner.query(createQuery);
                                     await queryRunner.commitTransaction();
                                     return {
