@@ -4,7 +4,7 @@ from transformer_keys_mapping import collect_keys
 
 app = Flask(__name__)
 
-@app.route('/api/generator',methods=['POST'])
+@app.route('/generator',methods=['POST'])
 def TransformerGenerator():
     try:
          return collect_keys(request,Response)
