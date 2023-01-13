@@ -7,7 +7,7 @@ import {TransformerService} from '../service/transformer/transformer.service';
 import {DatasetService} from '../service/dataset/dataset.service';
 import {PipelineService} from '../service/pipeline/pipeline.service';
 
-@Controller('spec')
+@Controller('/api/spec')
 export class SpecificationController {
     constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService) {
     }
