@@ -1009,9 +1009,7 @@ export const datasetSchemaData = {
                                         }
                                     },
                                     "required": [
-                                        "items",
-                                        "group_by",
-                                        "aggregate"
+                                        "items"
                                     ]
                                 }
                             },
