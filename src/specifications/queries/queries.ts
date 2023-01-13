@@ -31,11 +31,11 @@ export function createSchema() {
     return queryStr;
 }
 
-export function createTable(tableName: string, columnNames: string[], dbColProperties: string[]) {
+export function createTable(tableName: string, columnNames: string[], dbColProperties: string[], uniqueColumns?: string[]) {
     let createSubQuery = '';
     let createQueryStr = `CREATE TABLE IF NOT EXISTS ingestion.${tableName} (pid  INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             is_deleted BOOLEAN   DEFAULT FALSE,
-            event_by   INT NOT NULL,
+            event_by   INT NOT NULL DEFAULT 1,
             created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             `;
@@ -48,10 +48,18 @@ export function createTable(tableName: string, columnNames: string[], dbColPrope
             }
             else {
                 createSubQuery = '';
-                createSubQuery += columnNames[i] + ' ' + dbColProperties[i] + ');';
+                createSubQuery += columnNames[i] + ' ' + dbColProperties[i] 
+                if(uniqueColumns?.length>0)
+                {
+                    createSubQuery += ', UNIQUE('+ [...uniqueColumns] +'));' 
+                }
+                else{
+                    createSubQuery += ');';
+                }
                 createQueryStr += createSubQuery;
             }
         }
+        console.log("create Query string is:", createQueryStr);
         return createQueryStr;
     }
 }
