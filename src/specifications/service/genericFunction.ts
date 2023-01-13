@@ -50,6 +50,12 @@ export class GenericFunction {
             else if (element.type == "json") {
                 dbColumns[index] = 'jsonb';
             }
+            else if(element.type === 'float') {
+                dbColumns[index] = 'NUMERIC';
+            }
+            else if(element.type === 'boolean') {
+                dbColumns[index] = 'BOOLEAN';
+            }
             else if (element.type == 'date') {
                 dbColumns[index] = 'TIMESTAMP WITH TIME ZONE';
             }
