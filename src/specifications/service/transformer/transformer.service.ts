@@ -73,7 +73,7 @@ export class TransformerService {
     }
 
     async generatorAPI(APIdata) {
-        let url = `${process.env.URL}/api/generator`;
+        let url = `${process.env.URL}/generator`;
         try {
             const result: any = await this.http.post(url, APIdata);
             if (result) {
