@@ -56,12 +56,15 @@ def collect_keys(request, Response):
             return Response(json.dumps({"Message": KeyFile + " is empty"}))
         df = df.loc[df['program'] == Program]
         df = df.loc[df['event_name'] == EventName]
+
         Datasetkeys = df.keys().tolist()
         DatasetItems = df.values.tolist()
         for value in DatasetItems:
             TemplateDatasetMaping = (dict(zip(Datasetkeys, value)))
             DatasetName = TemplateDatasetMaping['dataset_name']
             Transformer = DatasetName + '.py'
+            TranformerType = TemplateDatasetMaping['template']
+            Template = TranformerType + '.py'
             con = pg.connect(database=database, user=user, password=password, host=host, port=port)
             cur = con.cursor()
             EventQueryString = ''' SELECT event_data FROM spec.event WHERE event_name='{}';'''.format(EventName)
@@ -132,8 +135,7 @@ def collect_keys(request, Response):
                                               'ReplaceFormat': ','.join(ReplaceFormat),
                                               'UpdateCols': ','.join(UpdateCols * 2),
                                               'UpdateCol': ','.join(UpdateCols),"KeyFile":json.dumps(EventName+'.csv')})
-                            TranformerType = TemplateDatasetMaping['template']
-                            Template = TranformerType + '.py'
+                            print(Template,'::::::::::::Template::::::::::::')
                             if TranformerType in ['EventToCube', 'EventToCubeIncrement']:
                                 InputKeys.update(InputKeys)
                             elif TranformerType in ['EventToCubePer', 'EventToCubePerIncrement']:
@@ -156,8 +158,8 @@ def collect_keys(request, Response):
                                      'DimensionTable': list(Dimensions['table']['properties'].keys())[0],'NumeratorCol':NumeratorCol,'DenominatorCol':DenominatorCol,
                                     'QueryDenominator': PercentageIncrement[1],'QueryNumerator': PercentageIncrement[0]})
                             else:
-                                return Response(json.dumps({"Message": "Transformer type is not correct", "TransformerType": TranformerType,
-                                     "Dataset": DatasetName}))
+                                return Response(json.dumps({"Message": "Transformer type is not correct", "TransformerType": TranformerType,"Dataset": DatasetName}))
+                            print(Transformer,':::::::::::Transformer:::::::::::::::')
                             KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
                 else:
                     print('ERROR : No dataset found')
@@ -172,5 +174,4 @@ def collect_keys(request, Response):
     except Exception as error:
         print(error)
         return Response(json.dumps({"Message": "Transformer not created ", "transformerFiles": Transformer, "code": 400}))
-
     return KeysMaping(InputKeys, Template, Program + '_' + Transformer, Response)
