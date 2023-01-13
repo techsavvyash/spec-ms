@@ -2,7 +2,6 @@ import os
 import configparser
 import pandas as pd
 from urllib.parse import quote
-from smart_open import smart_open
 from sqlalchemy import create_engine
 
 
@@ -29,9 +28,9 @@ def aggTransformer(valueCols={ValueCols}):
     # path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
     # df_events = pd.read_csv(smart_open(path))
     df_events = pd.read_csv(os.path.dirname(os.path.abspath(__file__)) + "/events/" + {KeyFile})
+    {eventDateCasting}
     df_dimension = pd.read_sql('select {DimensionCols} from {DimensionTable}', con=con)
     df_dimension_merge = df_events.merge(df_dimension, on={MergeOnCol}, how='inner')
-
     df_agg = df_dimension_merge.groupby({GroupBy}, as_index=False).agg({AggCols})
     df_agg['percentage'] = ((df_agg['{PercNumerator}'] / df_agg['{PercDenominator}']) * 100)  ### Calculating Percentage
     col_list = df_agg.columns.to_list()
