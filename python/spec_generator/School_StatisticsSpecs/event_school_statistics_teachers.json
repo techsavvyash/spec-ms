@@ -1,0 +1,24 @@
+{
+    "ingestion_type": "event",
+    "event_name": "school_statistics_teachers",
+    "input": {
+        "type": "object",
+        "properties": {
+            "event_name": {
+                "type": "string"
+            },
+            "event": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties":  {"academic_year": {"type": "number", "shouldnotnull": true, "minimum": 2018, "maximum": 2023}, "school_id": {"type": "number", "shouldnotnull": true, "minimum": 1000000000, "maximum": 9999999999}, "grade": {"type": "number", "shouldnotnull": true, "minimum": 1, "maximum": 12}, "total_teachers": {"type": "number", "shouldnotnull": true}, "students_enrolled": {"type": "number", "shouldnotnull": true}},
+                    "required":  ["academic_year", "school_id", "grade", "total_teachers", "students_enrolled"]
+                }
+            }
+        },
+        "required": [
+            "event_name",
+            "event"
+        ]
+    }
+}

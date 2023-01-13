@@ -1,0 +1,24 @@
+{
+    "ingestion_type": "event",
+    "event_name": "teachers_attendance",
+    "input": {
+        "type": "object",
+        "properties": {
+            "event_name": {
+                "type": "string"
+            },
+            "event": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties":  {"date": {"type": "string", "shouldnotnull": true, "format": "date"}, "school_id": {"type": "number", "shouldnotnull": true, "minimum": 1000000000, "maximum": 9999999999}, "grade": {"type": "number", "shouldnotnull": true, "minimum": 1, "maximum": 12}, "total_teachers": {"type": "number", "shouldnotnull": true}, "teachers_attendance_marked": {"type": "number", "shouldnotnull": true}, "teachers_marked_present": {"type": "number", "shouldnotnull": true}},
+                    "required":  ["date", "school_id", "grade", "total_teachers", "teachers_attendance_marked", "teachers_marked_present"]
+                }
+            }
+        },
+        "required": [
+            "event_name",
+            "event"
+        ]
+    }
+}

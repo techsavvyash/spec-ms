@@ -1,0 +1,24 @@
+{
+    "ingestion_type": "dimension",
+    "dimension_name": "school_details",
+    "input": {
+        "type": "object",
+        "properties": {
+            "dimension_name": {
+                "type": "string"
+            },
+            "dimension": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {"grade": {"type": "number", "shouldnotnull": true, "minimum": 1, "maximum": 12}, "school_id": {"type": "number", "shouldnotnull": true, "minimum": 1000000000, "maximum": 9999999999}, "school_name": {"type": "string", "shouldnotnull": true}, "school_type": {"type": "string", "shouldnotnull": true}, "school_category": {"type": "string", "shouldnotnull": true}, "cluster_id": {"type": "number", "shouldnotnull": true, "minimum": 100000000, "maximum": 999999999}, "cluster_name": {"type": "string", "shouldnotnull": true}, "block_id": {"type": "number", "shouldnotnull": true, "minimum": 10000, "maximum": 99999}, "block_name": {"type": "string", "shouldnotnull": true}, "district_id": {"type": "number", "shouldnotnull": true, "minimum": 100, "maximum": 999}, "district_name": {"type": "string", "shouldnotnull": true}, "state_id": {"type": "number", "shouldnotnull": true, "minimum": 1, "maximum": 99}, "state_name": {"type": "string", "shouldnotnull": true}},
+                    "required":  ["grade", "school_id", "school_name", "school_type", "school_category", "cluster_id", "cluster_name", "block_id", "block_name", "district_id", "district_name", "state_id", "state_name"]
+                }
+            }
+        },
+        "required": [
+            "dimension_name",
+            "dimension"
+        ]
+    }
+}
