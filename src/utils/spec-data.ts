@@ -29,7 +29,7 @@ export const dimensionSchemaData = {
                             "properties": {
                                 "type": {
                                     "type": "string",
-                                    "enum": ["string", "number", "boolean"],
+                                    "enum": ["string", "number", "boolean","float"],
                                     "shouldnotnull": true
                                 }
                             },
@@ -62,7 +62,7 @@ export const dimensionSchemaData = {
                                                     "properties": {
                                                         "type": {
                                                             "type": "string",
-                                                            "enum": ["string", "number", "boolean"],
+                                                            "enum": ["string", "number", "boolean","float"],
                                                             "shouldnotnull": true
                                                         }
                                                     },
@@ -142,7 +142,7 @@ export const eventSchemaData = {
                             "properties": {
                                 "type": {
                                     "type": "string",
-                                    "enum": ["string", "number", "boolean"],
+                                    "enum": ["string", "number", "boolean","float"],
                                     "shouldnotnull": true
                                 }
                             },
@@ -175,7 +175,7 @@ export const eventSchemaData = {
                                                     "properties": {
                                                         "type": {
                                                             "type": "string",
-                                                            "enum": ["string", "number", "boolean"],
+                                                            "enum": ["string", "number", "boolean","float"],
                                                             "shouldnotnull": true
                                                         }
                                                     },
@@ -259,7 +259,8 @@ export const datasetSchemaData = {
                                     "enum": [
                                         "string",
                                         "number",
-                                        "boolean"
+                                        "boolean",
+                                        "float"
                                     ],
                                     "shouldnotnull": true
                                 }
@@ -299,7 +300,8 @@ export const datasetSchemaData = {
                                                                     "enum": [
                                                                         "string",
                                                                         "number",
-                                                                        "boolean"
+                                                                        "boolean",
+                                                                        "float"
                                                                     ],
                                                                     "shouldnotnull": true
                                                                 }
@@ -347,7 +349,8 @@ export const datasetSchemaData = {
                                                                             "enum": [
                                                                                 "string",
                                                                                 "number",
-                                                                                "boolean"
+                                                                                "boolean",
+                                                                                "float"
                                                                             ],
                                                                             "shouldnotnull": true
                                                                         }
@@ -392,7 +395,8 @@ export const datasetSchemaData = {
                                                                     "enum": [
                                                                         "string",
                                                                         "number",
-                                                                        "boolean"
+                                                                        "boolean",
+                                                                        "float"
                                                                     ],
                                                                     "shouldnotnull": true
                                                                 }
@@ -466,7 +470,8 @@ export const datasetSchemaData = {
                                                                             "enum": [
                                                                                 "string",
                                                                                 "number",
-                                                                                "boolean"
+                                                                                "boolean",
+                                                                                "float"
                                                                             ],
                                                                             "shouldnotnull": true
                                                                         }
@@ -520,7 +525,8 @@ export const datasetSchemaData = {
                                                                             "enum": [
                                                                                 "string",
                                                                                 "number",
-                                                                                "boolean"
+                                                                                "boolean",
+                                                                                "float"
                                                                             ],
                                                                             "shouldnotnull": true
                                                                         }
@@ -587,7 +593,8 @@ export const datasetSchemaData = {
                                                                                             "enum": [
                                                                                                 "string",
                                                                                                 "number",
-                                                                                                "boolean"
+                                                                                                "boolean",
+                                                                                                "float"
                                                                                             ],
                                                                                             "shouldnotnull": true
                                                                                         }
@@ -632,7 +639,8 @@ export const datasetSchemaData = {
                                                                                     "enum": [
                                                                                         "string",
                                                                                         "number",
-                                                                                        "boolean"
+                                                                                        "boolean",
+                                                                                        "float"
                                                                                     ],
                                                                                     "shouldnotnull": true
                                                                                 }
@@ -680,7 +688,8 @@ export const datasetSchemaData = {
                                                                                             "enum": [
                                                                                                 "string",
                                                                                                 "number",
-                                                                                                "boolean"
+                                                                                                "boolean",
+                                                                                                "float"
                                                                                             ],
                                                                                             "shouldnotnull": true
                                                                                         }
@@ -756,7 +765,8 @@ export const datasetSchemaData = {
                                                                                                                     "enum": [
                                                                                                                         "string",
                                                                                                                         "number",
-                                                                                                                        "boolean"
+                                                                                                                        "boolean",
+                                                                                                                        "float"
                                                                                                                     ],
                                                                                                                     "shouldnotnull": true
                                                                                                                 }
@@ -801,7 +811,8 @@ export const datasetSchemaData = {
                                                                                                             "enum": [
                                                                                                                 "string",
                                                                                                                 "number",
-                                                                                                                "boolean"
+                                                                                                                "boolean",
+                                                                                                                "float"
                                                                                                             ],
                                                                                                             "shouldnotnull": true
                                                                                                         }
@@ -880,7 +891,8 @@ export const datasetSchemaData = {
                                                                                                             "enum": [
                                                                                                                 "string",
                                                                                                                 "number",
-                                                                                                                "boolean"
+                                                                                                                "boolean",
+                                                                                                                "float"
                                                                                                             ],
                                                                                                             "shouldnotnull": true
                                                                                                         }
@@ -918,7 +930,8 @@ export const datasetSchemaData = {
                                                                                                             "enum": [
                                                                                                                 "string",
                                                                                                                 "number",
-                                                                                                                "boolean"
+                                                                                                                "boolean",
+                                                                                                                "float"
                                                                                                             ],
                                                                                                             "shouldnotnull": true
                                                                                                         }
@@ -957,7 +970,8 @@ export const datasetSchemaData = {
                                                                                                             "enum": [
                                                                                                                 "string",
                                                                                                                 "number",
-                                                                                                                "boolean"
+                                                                                                                "boolean",
+                                                                                                                "float"
                                                                                                             ],
                                                                                                             "shouldnotnull": true
                                                                                                         }
