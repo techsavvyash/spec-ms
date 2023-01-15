@@ -21,7 +21,7 @@ cur = con.connect()
 
 def filterTransformer(valueCols={ValueCols}):
     df_dataset  = pd.read_sql('select * from {Table}', con=con)                                     ### reading dataset from database
-    {datasetDateCasting}
+    {DatasetCasting}
     df_dimension=pd.read_sql('select {DimensionCols} from {DimensionTable}',con=con)                ### reading DimensionDataset from Database
     df_dimension_merge = df_dataset.merge(df_dimension, on={MergeOnCol}, how='inner')                 ### mapping dataset with dimension
 
@@ -30,9 +30,10 @@ def filterTransformer(valueCols={ValueCols}):
     df_filter = df_dimension_merge.loc[df_dataset{FilterCol}{FilterType}{Filter}]                 ### applying filter
     df_filter= df_filter.groupby({GroupBy}, as_index=False).agg({AggCols})                    ### aggregation after filter
     df_merge = df_filter.merge(df_total, on={GroupBy}, how='inner')                       ### merging aggregated DataFrames
-
-    col_list = df_merge.columns.to_list()
-    df_merge['percentage'] = ((df_merge[col_list[-2]] / df_merge[col_list[-1]]) * 100)  ### Calculating Percentage
+    df_merge_col_list = df_merge.columns.to_list()
+    numerator=df_merge_col_list[-2]
+    denominator = df_merge_col_list[-1]
+    df_merge['percentage'] = ((df_merge[numerator] / df_merge[denominator]) * 100)  ### Calculating Percentage
 
     col_list = df_merge.columns.to_list()
     df_snap = df_merge[col_list]

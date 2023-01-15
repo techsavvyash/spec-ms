@@ -60,7 +60,7 @@ export class TransformerService {
                                 return {
                                     "code": 200,
                                     "message": apiGenerator.data.Message,
-                                    "responce": {pidData},
+                                    "response": pidData,
                                 }
                             }
                             else {

@@ -23,6 +23,5 @@ def SpecGenerator():
         return  Response(json.dumps({"Message": "Given Input Is Not Correct"}))
 
 
-
 if (__name__ == "__main__"):
     app.run(debug=True,port=3002)

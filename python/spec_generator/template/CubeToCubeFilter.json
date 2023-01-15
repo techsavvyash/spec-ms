@@ -59,7 +59,14 @@
                             "target_table": {
                                 "type": "object",
                                 "properties": <TargetTable>
-                            },
+                            },"numerator_col":{
+                                  "type": "object",
+                                  "properties":<NumeratorCol>
+                              },
+                            "denominator_col":{
+                                  "type": "object",
+                                  "properties":<DenominatorCol>
+                              },
                             "update_cols": {
                                 "type": "array",
                                 "items": {
