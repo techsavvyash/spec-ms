@@ -172,10 +172,9 @@ def collect_keys(request, Response):
                                     UpdateCols.append('row["' + i + '"]')
                                     IncrementFormat.append(i + '=main_table.' + i + '::numeric+{}::numeric')
                                     PercentageIncrement.append('main_table.' + i + '::numeric+{}::numeric')
-                            col = list(
-                                Dataset['aggregate']['properties']['columns']['items']['properties']['column']['items'][
-                                    'properties'].keys())
-                            AggCols = (dict(zip(col, (fun * len(col)))))
+                            # col = list(Dataset['aggregate']['properties']['columns']['items']['properties']['column']['items']['properties'].keys())
+                            agg_col=[NumeratorCol,DenominatorCol]
+                            AggCols = (dict(zip(agg_col, (fun * len(agg_col)))))
                             InputKeys.update({'AWSKey': '{}', 'AWSSecretKey': '{}', 'BucketName': '{}', 'ObjKey': '{}',
                                               'Values': '{}', 'EventCasting': ','.join(EventCasting),
                                               'DatasetCasting': ','.join(DatasetCasting), 'ValueCols': DatasetArray,
