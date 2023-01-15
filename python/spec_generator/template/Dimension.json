@@ -14,8 +14,13 @@
                     "properties": <DimensionObject>,
                     "required":  <DimensionList>
                 }
+            },
+           "target_table":
+            {
+                "type": "object",
+                    "properties": <TargetTable>
             }
-        },
+      },
         "required": [
             "dimension_name",
             "dimension"

@@ -27,9 +27,9 @@ def aggTransformer(valueCols={ValueCols}):
     df_agg = df_dimension_merge.groupby({GroupBy}, as_index=False).agg({AggCols})
     col_list = df_agg.columns.to_list()
     df_snap = df_agg[col_list]
-    df_snap.columns = valueCols
     try:
          for index,row in df_snap.iterrows():
+            print(row)
             values = []
             for i in  valueCols:
               values.append(row[i])
