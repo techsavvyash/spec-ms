@@ -70,9 +70,9 @@ describe('TransformerService', () => {
                 {
                     "instancePath": "",
                     "keyword": "required",
-                    "message": "must have required property 'event_name'",
+                    "message": "must have required property 'ingestion_name'",
                     "params": {
-                        "missingProperty": "event_name",
+                        "missingProperty": "ingestion_name",
                     },
                     "schemaPath": "#/required",
                 },
