@@ -3,7 +3,7 @@ import {InjectDataSource} from '@nestjs/typeorm';
 import {GenericFunction} from '../genericFunction';
 import {DataSource} from 'typeorm';
 import {transformerSchemaData} from '../../../utils/spec-data';
-import {getdatasetName, getEventData, insertTransformer} from '../../queries/queries';
+import {checkName, getdatasetName, getEventData, insertTransformer} from '../../queries/queries';
 import {HttpCustomService} from '../HttpCustomService';
 
 @Injectable()
@@ -14,21 +14,37 @@ export class TransformerService {
     async createTransformer(inputData) {
         const queryRunner: any = this.dataSource.createQueryRunner();
         try {
-            const eventName = inputData.event_name;
-            const keyFileName = inputData.key_file;
-            const programName = inputData.program;
+            const ingestionName = inputData.ingestion_name;
+            const keyFileName = inputData?.key_file;
+            const programName = inputData?.program;
+            const operation = inputData.operation;
             const isValidSchema: any = await this.gnFunction.ajvValidator(transformerSchemaData.input, inputData);
             if (isValidSchema.errors) {
                 return {"code": 400, error: isValidSchema.errors}
             } else {
-                const queryResult = await this.dataSource.query(getEventData(eventName));
+                let apiData;
+                let queryResult;
+                if(operation === 'dimension')
+                {
+                    let checkDimensionName = checkName('dimension_name','dimension');
+                    checkDimensionName = checkDimensionName.replace('$1',`${ingestionName}`);
+                    queryResult  = await this.dataSource.query(checkDimensionName);
+                }
+                else if(operation === 'dataset')
+                {
+                    let checkEventName = checkName('event_name', "event");
+                    checkEventName = checkEventName.replace('$1',`${ingestionName}`)
+                    queryResult = await this.dataSource.query(checkEventName);
+                }
                 if (queryResult?.length === 1) {
                     await queryRunner.connect();
-                    const apiData = {
-                        "event": eventName,
-                        "key_file": keyFileName,
-                        "program": programName
-                    };
+                         apiData = {
+                            "ingestion_name": ingestionName,
+                            "key_file": keyFileName,
+                            "program": programName,
+                            "operation": operation
+                        };
+                   
                     const apiGenerator: any = await this.generatorAPI(apiData);
 
                     if (apiGenerator.data.code === 200) {
@@ -64,7 +80,7 @@ export class TransformerService {
                     }
                 }
                 else {
-                    return {"code": 400, error: "Invalid event name"};
+                    return {"code": 400, error: `Invalid ${operation} name`};
                 }
             }
         } catch (e) {
