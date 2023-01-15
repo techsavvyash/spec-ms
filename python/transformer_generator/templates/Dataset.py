@@ -2,7 +2,6 @@ import os
 import configparser
 import pandas as pd
 from urllib.parse import quote
-from smart_open import smart_open
 from sqlalchemy import create_engine
 
 
@@ -16,34 +15,29 @@ host = config['CREDs']['host']
 user = config['CREDs']['user']
 password = config['CREDs']['password']
 database = config['CREDs']['database']
-aws_key = config['CREDs']['AWS_ACCESS_KEY']
-aws_secret=config['CREDs']['AWS_SECRET_ACCESS_KEY']
-bucket_name=config['CREDs']['AWS_BUCKET_NAME']
-object_key=config['CREDs']['AWS_OBJ_KEY']
+
 
 engine='postgresql://'+user+':%s@'+host+':'+port+'/'+database
 con=create_engine(engine %quote(password))
 cur = con.connect()
 
-def aggTransformer(valueCols={ValueCols}):
-    # path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
-    df_events = pd.read_csv(smart_open(path))
-    {EventCasting}
-    col_list = df_events.columns
-    df_snap = df_events[col_list]
-    df_snap.columns = valueCols
+def Datainsert(valueCols={ValueCols}):
+    df_dataset=pd.read_csv(os.path.dirname(os.path.abspath(__file__)) + "/events/" + {KeyFile})
+    {DatasetCasting}
+    col_list = df_dataset.columns
+    df_snap = df_dataset[col_list]
     try:
          for index,row in df_snap.iterrows():
             values = []
-            for i in valueCols:
+            for i in col_list:
               values.append(row[i])
-            query = ''' INSERT INTO {TargetTable}({InputCols}) VALUES ({Values}) ON CONFLICT ({ConflictCols}) DO UPDATE SET {ReplaceFormat};'''\
+            query = ''' INSERT INTO {TargetTable}({InputCols}) VALUES ({Values});'''\
             .format(','.join(map(str,values)))
             cur.execute(query)
     except Exception as error:
         print(error)
 
-aggTransformer()
+Datainsert()
 
 
 
