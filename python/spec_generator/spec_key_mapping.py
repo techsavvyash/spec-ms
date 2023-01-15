@@ -124,6 +124,8 @@ def DimensionSpec(request, Response):
         DimensionName = event['dimension_name']
         DimensionColumn = [x.strip() for x in event['dimension_col'].split(',')]
         DataTypes = [x.strip() for x in event['dimension_datatype'].split(',')]
+        TargetTable=[x.strip() for x in event['target_table'].split(',')]
+        print(TargetTable)
         DimensionDict = dict(zip(DimensionColumn, DataTypes))
         ColumnsDataType = []
         for dimension_col in DimensionColumn:
@@ -137,7 +139,8 @@ def DimensionSpec(request, Response):
                 ColumnsDataType.append({"type": DimensionDict[dimension_col].strip(), "shouldnotnull": True})
         InputKeys.update({"DimensionName": json.dumps(DimensionName),
                           "DimensionObject": json.dumps(dict(zip(DimensionColumn, ColumnsDataType))),
-                          "DimensionList": json.dumps(DimensionColumn)})
+                          "DimensionList": json.dumps(DimensionColumn),
+                          "TargetTable":json.dumps(dict(zip(TargetTable, [{"type": "string","shouldnotnull": True}])))})
     return KeysMaping(Program, InputKeys, Template, 'dimension_' + DimensionName, Response)
 
 
