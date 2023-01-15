@@ -88,8 +88,7 @@ export const dimensionSchemaData = {
                             "additionalProperties": false
                         }
                     },
-                    "required": ["dimension_name", "dimension"],
-                    "additionalProperties": false
+                    "required": ["dimension_name", "dimension"]
                 },
                 "required": {
                     "type": "array",
@@ -1061,7 +1060,7 @@ export const transformerSchemaData = {
         "type": "object",
         "shouldnotnull": true,
         "properties": {
-            "event_name": {
+            "ingestion_name": {
                 "type": "string",
                 "shouldnotnull": true
             },
@@ -1071,12 +1070,11 @@ export const transformerSchemaData = {
             },
             "program": {
                 "type": "string",
-                "shouldnotnull": true
             },
            
         },
         "required": [
-            "event_name",
+            "ingestion_name",
             "key_file",
             "program",
         ]
