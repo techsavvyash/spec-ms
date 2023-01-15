@@ -28,7 +28,7 @@ export class TransformerService {
                 {
                     let checkDimensionName = checkName('dimension_name','dimension');
                     checkDimensionName = checkDimensionName.replace('$1',`${ingestionName}`);
-                    queryResult  = this.dataSource.query(checkDimensionName);
+                    queryResult  = await this.dataSource.query(checkDimensionName);
                 }
                 else if(operation === 'dataset')
                 {
