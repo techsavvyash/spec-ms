@@ -1,10 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import Ajv from "ajv";
-import Ajv2019 from "ajv/dist/2019"
-
-const ajv = new Ajv2019()
+import Ajv2019 from "ajv/dist/2019";
+import addFormats from "ajv-formats"
+const ajv = new Ajv2019();
+addFormats(ajv);
 ajv.addKeyword({
-    keyword: 'shouldNotNull',
+    keyword: 'shouldnotnull',
     validate: (schema, data) => {
         if (schema) {
             if (typeof data === 'object') return typeof data === 'object' && Object.keys(data).length > 0
@@ -48,6 +49,12 @@ export class GenericFunction {
             }
             else if (element.type == "json") {
                 dbColumns[index] = 'jsonb';
+            }
+            else if(element.type === 'float') {
+                dbColumns[index] = 'NUMERIC';
+            }
+            else if(element.type === 'boolean') {
+                dbColumns[index] = 'BOOLEAN';
             }
             else if (element.type == 'date') {
                 dbColumns[index] = 'TIMESTAMP WITH TIME ZONE';

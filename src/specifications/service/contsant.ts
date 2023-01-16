@@ -1,2 +1,0 @@
-export const TransformerType: string[] = ["EventToCube-agg","CubeToCube-agg","CubeToCube-filter"];
-export const TemplateType: string[] = ["EventToCube-AggTemplate.py","CubeToCube-AggTemplate.py","CubeToCube-filterTemplate.py","EventToCube-Agg.py"];

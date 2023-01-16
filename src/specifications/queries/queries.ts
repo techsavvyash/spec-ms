@@ -1,5 +1,5 @@
 export function checkName(coulmnName: string, tableName: string) {
-    const querStr = `SELECT ${coulmnName} FROM spec.${tableName} WHERE ${coulmnName} = '$1'`;
+    const querStr = `SELECT ${coulmnName}, pid FROM spec.${tableName} WHERE ${coulmnName} = '$1'`;
     return querStr
 }
 
@@ -13,9 +13,16 @@ export function insertSchema(columnNames: string[], tableName: string) {
     return queryStr;
 }
 
+
 export function insertPipeline(columnNames: string[], tableName: string, columnValues: any[]) {
-    const queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}, ${columnNames[1]}) VALUES ('${columnValues[0]}',${columnValues[1]}) RETURNING pid`;
-    console.log('queries.insertPipeline: ', queryStr);
+    let queryStr;
+    if (columnNames.length > 1) {
+        queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}, ${columnNames[1]}) VALUES ('${columnValues[0]}',${columnValues[1]}) RETURNING pid`;
+    }
+    else {
+        queryStr = `INSERT INTO spec.${tableName}(${columnNames[0]}) VALUES ('${columnValues[0]}') RETURNING pid`;
+
+    }
     return queryStr;
 }
 
@@ -24,15 +31,14 @@ export function createSchema() {
     return queryStr;
 }
 
-export function createTable(tableName: string, columnNames: string[], dbColProperties: string[]) {
+export function createTable(tableName: string, columnNames: string[], dbColProperties: string[], uniqueColumns?: string[]) {
     let createSubQuery = '';
     let createQueryStr = `CREATE TABLE IF NOT EXISTS ingestion.${tableName} (pid  INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             is_deleted BOOLEAN   DEFAULT FALSE,
-            event_by   INT NOT NULL,
+            event_by   INT NOT NULL DEFAULT 1,
             created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             `;
-    console.log('queries.createTable: ', createQueryStr, columnNames.length, dbColProperties.length);
     if (columnNames.length == dbColProperties.length) {
         for (let i = 0; i < columnNames.length; i++) {
             if (i < columnNames.length - 1) {
@@ -42,11 +48,18 @@ export function createTable(tableName: string, columnNames: string[], dbColPrope
             }
             else {
                 createSubQuery = '';
-                createSubQuery += columnNames[i] + ' ' + dbColProperties[i] + ');';
+                createSubQuery += columnNames[i] + ' ' + dbColProperties[i] 
+                if(uniqueColumns?.length>0)
+                {
+                    createSubQuery += ', UNIQUE('+ [...uniqueColumns] +'));' 
+                }
+                else{
+                    createSubQuery += ');';
+                }
                 createQueryStr += createSubQuery;
             }
         }
-        console.log('queries.createTable: ', createSubQuery);
+        console.log("create Query string is:", createQueryStr);
         return createQueryStr;
     }
 }
@@ -66,4 +79,34 @@ export function getEventData(eventName: string) {
 export function getdatasetName(datasetName: string) {
     const queryStr = `SELECT dataset_name FROM spec.dataset where dataset_name='${datasetName}'`;
     return queryStr;
+}
+
+export function getPipelineSpec(pipelineName) {
+    const queryStr = `SELECT transformer_file, event_name, dataset_name
+    FROM spec.pipeline
+    LEFT JOIN spec.event ON event.pid = pipeline.event_pid
+    LEFT JOIN spec.dataset ON dataset.pid  = pipeline.dataset_pid
+    LEFT JOIN spec.transformer ON transformer.pid = pipeline.transformer_pid
+    WHERE pipeline_name = '${pipelineName}'`;
+    return queryStr;
+}
+
+
+export function insertIntoSpecPipeline(pipeline_name?: string ,dataset_name?: string,dimension_name?: string,event_name?: string, transformer_name?: string ) {
+    const queryStr = `INSERT INTO spec.pipeline (event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name)
+    VALUES ((SELECT pid
+             FROM spec.event
+             WHERE event_name = '${event_name}'),
+            (SELECT pid
+             FROM spec.dataset
+             WHERE dataset_name = '${dataset_name}'),
+            (SELECT pid
+             FROM spec.dimension
+             WHERE dimension_name = '${dimension_name}'),
+            (SELECT pid
+             FROM spec.transformer
+             WHERE transformer_file = '${transformer_name}'),
+            '${pipeline_name}'
+    ) RETURNING *`
+    return queryStr
 }

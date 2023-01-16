@@ -23,4 +23,6 @@ export class HttpCustomService{
     get<T>(url: string): Promise<AxiosResponse<T>> {
         return lastValueFrom(this.httpService.get<T>(url));
     }
+
+    
 }

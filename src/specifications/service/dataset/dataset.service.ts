@@ -13,10 +13,10 @@ export class DatasetService {
 
     async createDataset(datasetDTO) {
         const queryRunner = this.dataSource.createQueryRunner();
-        let dbColumns = [];    
+        let dbColumns = [];
         let newObj = this.specService.convertKeysToLowerCase(datasetDTO);
 
-        const isValidSchema: any = await this.specService.ajvValidator(datasetSchemaData, datasetDTO);
+        const isValidSchema: any = await this.specService.ajvValidator(datasetSchemaData, newObj);
         if (isValidSchema?.errors) {
             return {"code": 400, error: isValidSchema.errors}
         } else {
@@ -29,7 +29,7 @@ export class DatasetService {
             } else {
                 let queryResult = checkName('dataset_name', "dataset");
                 queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name.toLowerCase()}`);
-                const resultDname:any = await this.dataSource.query(queryResult);
+                const resultDname: any = await this.dataSource.query(queryResult);
                 if (resultDname?.length > 0) {
                     return {"code": 400, "error": "Dataset name already exists"};
                 }
@@ -37,7 +37,7 @@ export class DatasetService {
                     await queryRunner.connect();
                     let values = newObj?.input?.properties?.dataset;
                     let duplicacyQuery = checkDuplicacy(['dataset_name', 'dataset_data'], 'dataset', ['dataset_data', "'input'->'properties'->'dataset'"], JSON.stringify(values));
-                    const result:any = await this.dataSource.query(duplicacyQuery);
+                    const result: any = await this.dataSource.query(duplicacyQuery);
                     if (result?.length == 0) { //If there is no record in the DB then insert the first schema
                         await queryRunner.startTransaction();
                         try {
@@ -53,11 +53,13 @@ export class DatasetService {
                                 if (insertPipelineResult[0].pid) {
                                     let columnProperties = [];
                                     let columnNames = [];
+                                    let uniqueColumns;
                                     columnNames.push(Object.keys(values?.properties?.items?.items?.properties));
                                     columnProperties.push(Object.values(values?.properties?.items?.items?.properties));
+                                    uniqueColumns =values?.properties?.group_by?.items?.required; 
                                     dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
                                     let tbName: string = newObj?.dataset_name;
-                                    let createQuery = createTable(tbName, columnNames[0], dbColumns);
+                                    let createQuery = createTable(tbName, columnNames[0], dbColumns,uniqueColumns);
                                     await queryRunner.query(createQuery);
                                     await queryRunner.commitTransaction();
                                     return {
@@ -66,6 +68,9 @@ export class DatasetService {
                                         "dataset_name": datasetDTO.dataset_name,
                                         "pid": insertResult[0].pid
                                     };
+                                } else {
+                                    await queryRunner.rollbackTransaction();
+                                    return {"code": 400, "error": "Unable to insert into spec pipeline table"};
                                 }
                             } else {
                                 await queryRunner.rollbackTransaction();

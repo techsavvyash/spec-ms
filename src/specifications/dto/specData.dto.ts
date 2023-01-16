@@ -32,3 +32,15 @@ export class datasetResponse {
     code: number;
     error?: string;
 }
+
+export class pipelineDto{
+    pipeline_name: string;
+    pipeline_type: string;
+    pipeline: object[];
+}
+
+export class Result{
+    code: number;
+    message?: string;
+    error?: string;
+}
