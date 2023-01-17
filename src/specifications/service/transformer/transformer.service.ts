@@ -1,10 +1,10 @@
-import {Injectable} from '@nestjs/common';
-import {InjectDataSource} from '@nestjs/typeorm';
-import {GenericFunction} from '../genericFunction';
-import {DataSource} from 'typeorm';
-import {transformerSchemaData} from '../../../utils/spec-data';
-import {checkName, getdatasetName, getEventData, insertTransformer} from '../../queries/queries';
-import {HttpCustomService} from '../HttpCustomService';
+import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { GenericFunction } from '../genericFunction';
+import { DataSource } from 'typeorm';
+import { transformerSchemaData } from '../../../utils/spec-data';
+import { checkName, getdatasetName, getEventData, insertTransformer } from '../../queries/queries';
+import { HttpCustomService } from '../HttpCustomService';
 
 @Injectable()
 export class TransformerService {
@@ -20,31 +20,33 @@ export class TransformerService {
             const operation = inputData.operation;
             const isValidSchema: any = await this.gnFunction.ajvValidator(transformerSchemaData.input, inputData);
             if (isValidSchema.errors) {
-                return {"code": 400, error: isValidSchema.errors}
+                return { "code": 400, error: isValidSchema.errors }
             } else {
                 let apiData;
                 let queryResult;
-                if(operation === 'dimension')
-                {
-                    let checkDimensionName = checkName('dimension_name','dimension');
-                    checkDimensionName = checkDimensionName.replace('$1',`${ingestionName}`);
-                    queryResult  = await this.dataSource.query(checkDimensionName);
-                }
-                else if(operation === 'dataset')
-                {
-                    let checkEventName = checkName('event_name', "event");
-                    checkEventName = checkEventName.replace('$1',`${ingestionName}`)
-                    queryResult = await this.dataSource.query(checkEventName);
+                switch (operation) {
+                    case 'dimension':
+                        let checkDimensionName = checkName('dimension_name', 'dimension');
+                        checkDimensionName = checkDimensionName.replace('$1', `${ingestionName}`);
+                        queryResult = await this.dataSource.query(checkDimensionName);
+                        break;
+                    case 'dataset':
+                        let checkEventName = checkName('event_name', "event");
+                        checkEventName = checkEventName.replace('$1', `${ingestionName}`)
+                        queryResult = await this.dataSource.query(checkEventName);
+                        break;
+                    default:
+                        return { code: 400, error: "Invalid operation type" }
                 }
                 if (queryResult?.length === 1) {
                     await queryRunner.connect();
-                         apiData = {
-                            "ingestion_name": ingestionName,
-                            "key_file": keyFileName,
-                            "program": programName,
-                            "operation": operation
-                        };
-                   
+                    apiData = {
+                        "ingestion_name": ingestionName,
+                        "key_file": keyFileName,
+                        "program": programName,
+                        "operation": operation
+                    };
+
                     const apiGenerator: any = await this.generatorAPI(apiData);
 
                     if (apiGenerator.data.code === 200) {
@@ -53,7 +55,7 @@ export class TransformerService {
                             let pidData = [];
                             for (let generator of apiGenerator.data.TransformerFiles) {
                                 const transResult: any = await queryRunner.query(insertTransformer(generator.filename));
-                                pidData.push({pid: transResult[0].pid, filename: generator.filename})
+                                pidData.push({ pid: transResult[0].pid, filename: generator.filename })
                             }
                             if (pidData.length > 0) {
                                 await queryRunner.commitTransaction();
@@ -65,7 +67,7 @@ export class TransformerService {
                             }
                             else {
                                 await queryRunner.rollbackTransaction();
-                                return {"code": 400, "error": "unable to create a transformer"}
+                                return { "code": 400, "error": "unable to create a transformer" }
                             }
                         } catch (error) {
                             await queryRunner.rollbackTransaction();
@@ -76,11 +78,11 @@ export class TransformerService {
                         }
                     }
                     else {
-                        return {"code": 400, "error": apiGenerator.data.Message}
+                        return { "code": 400, "error": apiGenerator.data.Message }
                     }
                 }
                 else {
-                    return {"code": 400, error: `Invalid ${operation} name`};
+                    return { "code": 400, error: `Invalid ${operation} name` };
                 }
             }
         } catch (e) {
@@ -97,7 +99,7 @@ export class TransformerService {
             }
         } catch (error) {
             console.error('transformer.service.ts.generatorAPI: ', error.message);
-            return {"code": 400, "error": "Error occured during creating transformer"}
+            return { "code": 400, "error": "Error occured during creating transformer" }
         }
 
     }
