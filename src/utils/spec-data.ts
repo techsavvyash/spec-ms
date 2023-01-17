@@ -1070,6 +1070,12 @@ export const transformerSchemaData = {
             },
             "program": {
                 "type": "string",
+                "shouldnotnull": true
+            },
+            "operation": {
+                "type": "string",
+                "shouldnotnull": true
+
             },
            
         },
@@ -1077,6 +1083,7 @@ export const transformerSchemaData = {
             "ingestion_name",
             "key_file",
             "program",
+            "operation"
         ]
     }
 };
