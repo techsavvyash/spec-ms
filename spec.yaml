@@ -288,6 +288,7 @@ paths:
                 "properties": {
                     "table": {
                         "type": "object",
+                        "shouldnotnull": true,
                         "properties": {
                             "ingestion.school_details": {
                                 "type": "string"
