@@ -26,9 +26,11 @@ export function insertPipeline(columnNames: string[], tableName: string, columnV
     return queryStr;
 }
 
-export function createSchema() {
-    const queryStr = "CREATE SCHEMA IF NOT EXISTS ingestion";
-    return queryStr;
+export function checkDatasetDuplicacy(conditionData)
+{
+    let queryStr = `SELECT dataset_name,dataset_data FROM spec.dataset WHERE 
+    (dataset_data->'input'->'properties'->'dataset'->'properties'->'items'->'items'->'properties') ::jsonb = ('${conditionData}') ::jsonb`
+    return queryStr
 }
 
 export function createTable(tableName: string, columnNames: string[], dbColProperties: string[], uniqueColumns?: string[]) {

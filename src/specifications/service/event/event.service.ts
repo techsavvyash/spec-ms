@@ -46,7 +46,7 @@ export class EventService {
                             const insertResult = await queryRunner.query(insertQuery);                          
                             if (insertResult[0].pid) {
                                 let event_pid = insertResult[0].pid;
-                                const pipeline_name = eventDTO.event_name.toLowerCase() + 'pipeline';
+                                const pipeline_name = eventDTO.event_name.toLowerCase() + '_pipeline';
                                 let insertPipeLineQuery = insertPipeline(['pipeline_name', 'event_pid'], 'pipeline', [pipeline_name, event_pid]);
                                 const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                                 if (insertPipelineResult[0].pid) {
