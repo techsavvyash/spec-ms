@@ -29,7 +29,7 @@ export const dimensionSchemaData = {
                             "properties": {
                                 "type": {
                                     "type": "string",
-                                    "enum": ["string", "number", "boolean","float"],
+                                    "enum": ["string", "number", "boolean","integer"],
                                     "shouldnotnull": true
                                 }
                             },
@@ -62,7 +62,7 @@ export const dimensionSchemaData = {
                                                     "properties": {
                                                         "type": {
                                                             "type": "string",
-                                                            "enum": ["string", "number", "boolean","float"],
+                                                            "enum": ["string", "number", "boolean","integer"],
                                                             "shouldnotnull": true
                                                         }
                                                     },
@@ -141,7 +141,7 @@ export const eventSchemaData = {
                             "properties": {
                                 "type": {
                                     "type": "string",
-                                    "enum": ["string", "number", "boolean","float"],
+                                    "enum": ["string", "number", "boolean","integer"],
                                     "shouldnotnull": true
                                 }
                             },
@@ -174,7 +174,7 @@ export const eventSchemaData = {
                                                     "properties": {
                                                         "type": {
                                                             "type": "string",
-                                                            "enum": ["string", "number", "boolean","float"],
+                                                            "enum": ["string", "number", "boolean","integer"],
                                                             "shouldnotnull": true
                                                         }
                                                     },
@@ -223,837 +223,6 @@ export const eventSchemaData = {
     "additionalProperties": false
 };
 
-export const datasetSchemaData = {
-    "type": "object",
-    "properties": {
-        "ingestion_type": {
-            "type": "string",
-            "pattern": "dataset",
-            "shouldnotnull": true
-        },
-        "dataset_name": {
-            "type": "string",
-            "shouldnotnull": true
-        },
-        "input": {
-            "type": "object",
-            "shouldnotnull": true,
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "pattern": "object",
-                    "shouldnotnull": true
-                },
-                "properties": {
-                    "type": "object",
-                    "shouldnotnull": true,
-                    "properties": {
-                        "dataset_name": {
-                            "type": "object",
-                            "shouldnotnull": true,
-                            "properties": {
-                                "type": {
-                                    "type": "string",
-                                    "pattern": "string",
-                                    "enum": [
-                                        "string",
-                                        "number",
-                                        "boolean",
-                                        "float"
-                                    ],
-                                    "shouldnotnull": true
-                                }
-                            }
-                        },
-                        "dimensions": {
-                            "type": "object",
-                            "shouldnotnull": true,
-                            "properties": {
-                                "type": {
-                                    "type": "string",
-                                    "pattern": "object",
-                                    "shouldnotnull": true
-                                },
-                                "properties": {
-                                    "type": "object",
-                                    "shouldnotnull": true,
-                                    "properties": {
-                                        "table": {
-                                            "type": "object",
-                                            "shouldnotnull": true,
-                                            "properties": {
-                                                "type": {
-                                                    "type": "string",
-                                                    "pattern": "object",
-                                                    "shouldnotnull": true
-                                                },
-                                                "properties": {
-                                                    "type": "object",
-                                                    "shouldnotnull": true,
-                                                    "patternProperties": {
-                                                        "^[a-zA-Z_]*$": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "enum": [
-                                                                        "string",
-                                                                        "number",
-                                                                        "boolean",
-                                                                        "float"
-                                                                    ],
-                                                                    "shouldnotnull": true
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type"
-                                                            ],
-                                                            "shouldnotnull": true
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            "required": [
-                                                "type",
-                                                "properties"
-                                            ]
-                                        },
-                                        "column": {
-                                            "type": "object",
-                                            "shouldnotnull": true,
-                                            "properties": {
-                                                "type": {
-                                                    "type": "string",
-                                                    "pattern": "array",
-                                                    "shouldnotnull": true
-                                                },
-                                                "items": {
-                                                    "type": "object",
-                                                    "shouldnotnull": true,
-                                                    "properties": {
-                                                        "type": {
-                                                            "type": "string",
-                                                            "pattern": "object",
-                                                            "shouldnotnull": true
-                                                        },
-                                                        "properties": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "patternProperties": {
-                                                                "^[a-zA-Z_]*$": {
-                                                                    "type": "object",
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "enum": [
-                                                                                "string",
-                                                                                "number",
-                                                                                "boolean",
-                                                                                "float"
-                                                                            ],
-                                                                            "shouldnotnull": true
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type"
-                                                                    ],
-                                                                    "shouldnotnull": true
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    "required": [
-                                                        "type",
-                                                        "properties"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "type",
-                                                "items"
-                                            ]
-                                        },
-                                        "merge_on_col": {
-                                            "type": "object",
-                                            "shouldnotnull": true,
-                                            "properties": {
-                                                "type": {
-                                                    "type": "string",
-                                                    "pattern": "object",
-                                                    "shouldnotnull": true
-                                                },
-                                                "properties": {
-                                                    "type": "object",
-                                                    "shouldnotnull": true,
-                                                    "patternProperties": {
-                                                        "^[a-zA-Z_]*$": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "enum": [
-                                                                        "string",
-                                                                        "number",
-                                                                        "boolean",
-                                                                        "float"
-                                                                    ],
-                                                                    "shouldnotnull": true
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type"
-                                                            ],
-                                                            "shouldnotnull": true
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            "required": [
-                                                "type",
-                                                "properties"
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "table",
-                                        "column",
-                                        "merge_on_col"
-                                    ]
-                                }
-                            },
-                            "required": [
-                                "type",
-                                "properties"
-                            ]
-                        },
-                        "dataset": {
-                            "type": "object",
-                            "shouldnotnull": true,
-                            "properties": {
-                                "type": {
-                                    "type": "string",
-                                    "pattern": "object",
-                                    "shouldnotnull": true
-                                },
-                                "properties": {
-                                    "type": "object",
-                                    "shouldnotnull": true,
-                                    "properties": {
-                                        "items": {
-                                            "type": "object",
-                                            "shouldnotnull": true,
-                                            "properties": {
-                                                "type": {
-                                                    "type": "string",
-                                                    "pattern": "array",
-                                                    "shouldnotnull": true
-                                                },
-                                                "items": {
-                                                    "type": "object",
-                                                    "shouldnotnull": true,
-                                                    "properties": {
-                                                        "type": {
-                                                            "type": "string",
-                                                            "pattern": "object",
-                                                            "shouldnotnull": true
-                                                        },
-                                                        "properties": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "patternProperties": {
-                                                                "^[a-zA-Z_]*$": {
-                                                                    "type": "object",
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "enum": [
-                                                                                "string",
-                                                                                "number",
-                                                                                "boolean",
-                                                                                "float"
-                                                                            ],
-                                                                            "shouldnotnull": true
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type"
-                                                                    ],
-                                                                    "shouldnotnull": true
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    "required": [
-                                                        "type",
-                                                        "properties"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "type",
-                                                "items"
-                                            ]
-                                        },
-                                        "group_by": {
-                                            "type": "object",
-                                            "shouldnotnull": true,
-                                            "properties": {
-                                                "type": {
-                                                    "type": "string",
-                                                    "pattern": "array",
-                                                    "shouldnotnull": true
-                                                },
-                                                "items": {
-                                                    "type": "object",
-                                                    "shouldnotnull": true,
-                                                    "properties": {
-                                                        "type": {
-                                                            "type": "string",
-                                                            "pattern": "object",
-                                                            "shouldnotnull": true
-                                                        },
-                                                        "properties": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "patternProperties": {
-                                                                "^[a-zA-Z_]*$": {
-                                                                    "type": "object",
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "enum": [
-                                                                                "string",
-                                                                                "number",
-                                                                                "boolean",
-                                                                                "float"
-                                                                            ],
-                                                                            "shouldnotnull": true
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type"
-                                                                    ],
-                                                                    "shouldnotnull": true
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    "required": [
-                                                        "type",
-                                                        "properties"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "type",
-                                                "items"
-                                            ]
-                                        },
-                                        "aggregate": {
-                                            "type": "object",
-                                            "shouldnotnull": true,
-                                            "properties": {
-                                                "type": {
-                                                    "type": "string",
-                                                    "pattern": "object",
-                                                    "shouldnotnull": true
-                                                },
-                                                "properties": {
-                                                    "type": "object",
-                                                    "shouldnotnull": true,
-                                                    "properties": {
-                                                        "function": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "pattern": "array",
-                                                                    "shouldnotnull": true
-                                                                },
-                                                                "items": {
-                                                                    "type": "object",
-                                                                    "shouldnotnull": true,
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "pattern": "object",
-                                                                            "shouldnotnull": true
-                                                                        },
-                                                                        "properties": {
-                                                                            "type": "object",
-                                                                            "shouldnotnull": true,
-                                                                            "patternProperties": {
-                                                                                "^[a-zA-Z_]*$": {
-                                                                                    "type": "object",
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "enum": [
-                                                                                                "string",
-                                                                                                "number",
-                                                                                                "boolean",
-                                                                                                "float"
-                                                                                            ],
-                                                                                            "shouldnotnull": true
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type"
-                                                                                    ],
-                                                                                    "shouldnotnull": true
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type",
-                                                                        "properties"
-                                                                    ]
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type",
-                                                                "items"
-                                                            ]
-                                                        },
-                                                        "target_table": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "pattern": "object",
-                                                                    "shouldnotnull": true
-                                                                },
-                                                                "properties": {
-                                                                    "type": "object",
-                                                                    "shouldnotnull": true,
-                                                                    "patternProperties": {
-                                                                        "^[a-zA-Z_]*$": {
-                                                                            "type": "object",
-                                                                            "properties": {
-                                                                                "type": {
-                                                                                    "type": "string",
-                                                                                    "enum": [
-                                                                                        "string",
-                                                                                        "number",
-                                                                                        "boolean",
-                                                                                        "float"
-                                                                                    ],
-                                                                                    "shouldnotnull": true
-                                                                                }
-                                                                            },
-                                                                            "required": [
-                                                                                "type"
-                                                                            ],
-                                                                            "shouldnotnull": true
-                                                                        }
-                                                                    }
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type",
-                                                                "properties"
-                                                            ]
-                                                        },
-                                                        "update_cols": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "pattern": "array",
-                                                                    "shouldnotnull": true
-                                                                },
-                                                                "items": {
-                                                                    "type": "object",
-                                                                    "shouldnotnull": true,
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "pattern": "object",
-                                                                            "shouldnotnull": true
-                                                                        },
-                                                                        "properties": {
-                                                                            "type": "object",
-                                                                            "shouldnotnull": true,
-                                                                            "patternProperties": {
-                                                                                "^[a-zA-Z_]*$": {
-                                                                                    "type": "object",
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "enum": [
-                                                                                                "string",
-                                                                                                "number",
-                                                                                                "boolean",
-                                                                                                "float"
-                                                                                            ],
-                                                                                            "shouldnotnull": true
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type"
-                                                                                    ],
-                                                                                    "shouldnotnull": true
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type",
-                                                                        "properties"
-                                                                    ]
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type",
-                                                                "items"
-                                                            ]
-                                                        },
-                                                        "columns": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "pattern": "array",
-                                                                    "shouldnotnull": true
-                                                                },
-                                                                "items": {
-                                                                    "type": "object",
-                                                                    "shouldnotnull": true,
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "pattern": "object",
-                                                                            "shouldnotnull": true
-                                                                        },
-                                                                        "properties": {
-                                                                            "type": "object",
-                                                                            "shouldnotnull": true,
-                                                                            "properties": {
-                                                                                "column": {
-                                                                                    "type": "object",
-                                                                                    "shouldnotnull": true,
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "pattern": "array",
-                                                                                            "shouldnotnull": true
-                                                                                        },
-                                                                                        "items": {
-                                                                                            "type": "object",
-                                                                                            "shouldnotnull": true,
-                                                                                            "properties": {
-                                                                                                "type": {
-                                                                                                    "type": "string",
-                                                                                                    "pattern": "object",
-                                                                                                    "shouldnotnull": true
-                                                                                                },
-                                                                                                "properties": {
-                                                                                                    "type": "object",
-                                                                                                    "shouldnotnull": true,
-                                                                                                    "patternProperties": {
-                                                                                                        "^[a-zA-Z_]*$": {
-                                                                                                            "type": "object",
-                                                                                                            "properties": {
-                                                                                                                "type": {
-                                                                                                                    "type": "string",
-                                                                                                                    "enum": [
-                                                                                                                        "string",
-                                                                                                                        "number",
-                                                                                                                        "boolean",
-                                                                                                                        "float"
-                                                                                                                    ],
-                                                                                                                    "shouldnotnull": true
-                                                                                                                }
-                                                                                                            },
-                                                                                                            "required": [
-                                                                                                                "type"
-                                                                                                            ],
-                                                                                                            "shouldnotnull": true
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                            },
-                                                                                            "required": [
-                                                                                                "type",
-                                                                                                "properties"
-                                                                                            ]
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type",
-                                                                                        "items"
-                                                                                    ]
-                                                                                },
-                                                                                "table": {
-                                                                                    "type": "object",
-                                                                                    "shouldnotnull": true,
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "pattern": "object",
-                                                                                            "shouldnotnull": true
-                                                                                        },
-                                                                                        "properties": {
-                                                                                            "type": "object",
-                                                                                            "shouldnotnull": true,
-                                                                                            "patternProperties": {
-                                                                                                "^[a-zA-Z_]*$": {
-                                                                                                    "type": "object",
-                                                                                                    "properties": {
-                                                                                                        "type": {
-                                                                                                            "type": "string",
-                                                                                                            "enum": [
-                                                                                                                "string",
-                                                                                                                "number",
-                                                                                                                "boolean",
-                                                                                                                "float"
-                                                                                                            ],
-                                                                                                            "shouldnotnull": true
-                                                                                                        }
-                                                                                                    },
-                                                                                                    "required": [
-                                                                                                        "type"
-                                                                                                    ],
-                                                                                                    "shouldnotnull": true
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type",
-                                                                                        "properties"
-                                                                                    ]
-                                                                                }
-                                                                            },
-                                                                            "required": [
-                                                                                "column"
-                                                                            ]
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type",
-                                                                        "properties"
-                                                                    ]
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type",
-                                                                "items"
-                                                            ]
-                                                        },
-                                                        "filters": {
-                                                            "type": "object",
-                                                            "shouldnotnull": true,
-                                                            "properties": {
-                                                                "type": {
-                                                                    "type": "string",
-                                                                    "pattern": "array",
-                                                                    "shouldnotnull": true
-                                                                },
-                                                                "items": {
-                                                                    "type": "object",
-                                                                    "shouldnotnull": true,
-                                                                    "properties": {
-                                                                        "type": {
-                                                                            "type": "string",
-                                                                            "pattern": "object",
-                                                                            "shouldnotnull": true
-                                                                        },
-                                                                        "properties": {
-                                                                            "type": "object",
-                                                                            "shouldnotnull": true,
-                                                                            "properties": {
-                                                                                "column": {
-                                                                                    "type": "object",
-                                                                                    "shouldnotnull": true,
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "pattern": "object",
-                                                                                            "shouldnotnull": true
-                                                                                        },
-                                                                                        "properties": {
-                                                                                            "type": "object",
-                                                                                            "shouldnotnull": true,
-                                                                                            "patternProperties": {
-                                                                                                "^[a-zA-Z_]*$": {
-                                                                                                    "type": "object",
-                                                                                                    "shouldnotnull": true,
-                                                                                                    "properties": {
-                                                                                                        "type": {
-                                                                                                            "type": "string",
-                                                                                                            "enum": [
-                                                                                                                "string",
-                                                                                                                "number",
-                                                                                                                "boolean",
-                                                                                                                "float"
-                                                                                                            ],
-                                                                                                            "shouldnotnull": true
-                                                                                                        }
-                                                                                                    },
-                                                                                                    "required": [
-                                                                                                        "type"
-                                                                                                    ]
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type",
-                                                                                        "properties"
-                                                                                    ]
-                                                                                },
-                                                                                "filter": {
-                                                                                    "type": "object",
-                                                                                    "shouldnotnull": true,
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "pattern": "object",
-                                                                                            "shouldnotnull": true
-                                                                                        },
-                                                                                        "properties": {
-                                                                                            "type": "object",
-                                                                                            "shouldnotnull": true,
-                                                                                            "patternProperties": {
-                                                                                                "^[a-zA-Z_]*$": {
-                                                                                                    "type": "object",
-                                                                                                    "properties": {
-                                                                                                        "type": {
-                                                                                                            "type": "string",
-                                                                                                            "enum": [
-                                                                                                                "string",
-                                                                                                                "number",
-                                                                                                                "boolean",
-                                                                                                                "float"
-                                                                                                            ],
-                                                                                                            "shouldnotnull": true
-                                                                                                        }
-                                                                                                    },
-                                                                                                    "required": [
-                                                                                                        "type"
-                                                                                                    ],
-                                                                                                    "shouldnotnull": true
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type",
-                                                                                        "properties"
-                                                                                    ]
-                                                                                },
-                                                                                "filter_type": {
-                                                                                    "type": "object",
-                                                                                    "shouldnotnull": true,
-                                                                                    "properties": {
-                                                                                        "type": {
-                                                                                            "type": "string",
-                                                                                            "pattern": "object",
-                                                                                            "shouldnotnull": true
-                                                                                        },
-                                                                                        "properties": {
-                                                                                            "type": "object",
-                                                                                            "shouldnotnull": true,
-                                                                                            "patternProperties": {
-                                                                                                "^[a-zA-Z_]*$": {
-                                                                                                    "type": "object",
-                                                                                                    "properties": {
-                                                                                                        "type": {
-                                                                                                            "type": "string",
-                                                                                                            "enum": [
-                                                                                                                "string",
-                                                                                                                "number",
-                                                                                                                "boolean",
-                                                                                                                "float"
-                                                                                                            ],
-                                                                                                            "shouldnotnull": true
-                                                                                                        }
-                                                                                                    },
-                                                                                                    "required": [
-                                                                                                        "type"
-                                                                                                    ],
-                                                                                                    "shouldnotnull": true
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "required": [
-                                                                                        "type",
-                                                                                        "properties"
-                                                                                    ]
-                                                                                }
-                                                                            },
-                                                                            "required": [
-                                                                                "column",
-                                                                                "filter",
-                                                                                "filter_type"
-                                                                            ]
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "type",
-                                                                        "properties"
-                                                                    ]
-                                                                }
-                                                            },
-                                                            "required": [
-                                                                "type",
-                                                                "items"
-                                                            ]
-                                                        }
-                                                    },
-                                                    "required": [
-                                                        "function",
-                                                        "target_table",
-                                                        "columns"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "type",
-                                                "properties"
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "items"
-                                    ]
-                                }
-                            },
-                            "required": [
-                                "type",
-                                "properties"
-                            ]
-                        }
-                    },
-                    "required": [
-                        "dataset_name",
-                        "dimensions",
-                        "dataset"
-                    ]
-                }
-            },
-            "required": [
-                "type",
-                "properties"
-            ],
-            "additionalProperties": true
-        }
-    },
-    "required": [
-        "ingestion_type",
-        "dataset_name",
-        "input"
-    ],
-    "additionalProperties": false
-};
-
 export const transformerSchemaData = {
     "ingestion_type": "transformer",
     "input": {
@@ -1070,6 +239,12 @@ export const transformerSchemaData = {
             },
             "program": {
                 "type": "string",
+                "shouldnotnull": true
+            },
+            "operation": {
+                "type": "string",
+                "shouldnotnull": true
+
             },
            
         },
@@ -1077,6 +252,7 @@ export const transformerSchemaData = {
             "ingestion_name",
             "key_file",
             "program",
+            "operation"
         ]
     }
 };
@@ -1192,3 +368,322 @@ export const PipelineSchemaIngesttoDB = {
     "required":["pipeline_name","pipeline_type","pipeline"]
 
 }
+
+export const datasetSchemaData = {
+    
+        "type": "object",
+        "properties": {
+            "ingestion_type": {
+                "type": "string",
+                "pattern": "dataset",
+                "shouldnotnull": true
+            },
+            "dataset_name": {
+                "type": "string",
+                "shouldnotnull": true
+            },
+            "input": {
+                "type": "object",
+                "shouldnotnull": true,
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "pattern": "object",
+                        "shouldnotnull": true
+                    },
+                    "properties": {
+                        "type": "object",
+                        "shouldnotnull": true,
+                        "properties": {
+                            "dataset_name": {
+                                "type": "object",
+                                "shouldnotnull": true,
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "pattern": "string",
+                                        "enum": [
+                                            "string",
+                                            "number",
+                                            "boolean",
+                                            "integer"
+                                        ],
+                                        "shouldnotnull": true
+                                    }
+                                }
+                            },
+                            "dimensions": {
+                                "type": "object",
+                                "shouldnotnull": true,
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "pattern": "object",
+                                        "shouldnotnull": true
+                                    },
+                                    "properties": {
+                                        "type": "object",
+                                        "shouldnotnull": true,
+                                        "properties": {
+                                            "table": {
+                                                "type": "string",
+                                                "shouldnotnull": true
+                                            },
+                                            "column": {
+                                                "type": "array",
+                                                "shouldnotnull": true,
+                                                "items": {
+                                                    "type": "string",
+                                                    "shouldnotnull": true
+                                                }
+                                            },
+                                            "merge_on_col": {
+                                                "type": "string",
+                                                "shouldnotnull": true
+                                            }
+                                        },
+                                        "required": [
+                                            "table",
+                                            "column",
+                                            "merge_on_col"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "type",
+                                    "properties"
+                                ]
+                            },
+                            "dataset": {
+                                "type": "object",
+                                "shouldnotnull": true,
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "pattern": "object",
+                                        "shouldnotnull": true
+                                    },
+                                    "properties": {
+                                        "type": "object",
+                                        "shouldnotnull": true,
+                                        "properties": {
+                                            "items": {
+                                                "type": "object",
+                                                "shouldnotnull": true,
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "pattern": "array",
+                                                        "shouldnotnull": true
+                                                    },
+                                                    "items": {
+                                                        "type": "object",
+                                                        "shouldnotnull": true,
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string",
+                                                                "pattern": "object",
+                                                                "shouldnotnull": true
+                                                            },
+                                                            "properties": {
+                                                                "type": "object",
+                                                                "shouldnotnull": true,
+                                                                "patternProperties": {
+                                                                    "^[a-zA-Z_]*$": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string",
+                                                                                "enum": [
+                                                                                    "string",
+                                                                                    "number",
+                                                                                    "boolean",
+                                                                                    "integer"
+                                                                                ],
+                                                                                "shouldnotnull": true
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "type"
+                                                                        ],
+                                                                        "shouldnotnull": true
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "type",
+                                                            "properties"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "type",
+                                                    "items"
+                                                ]
+                                            },
+                                            "group_by": {
+                                                "type": "array",
+                                                "shouldnotnull": true,
+                                                "items": {
+                                                    "type": "string",
+                                                    "shouldnotnull": true
+                                                }
+                                            },
+                                            "aggregate": {
+                                                "type": "object",
+                                                "shouldnotnull": true,
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "pattern": "object",
+                                                        "shouldnotnull": true
+                                                    },
+                                                    "properties": {
+                                                        "type": "object",
+                                                        "shouldnotnull": true,
+                                                        "properties": {
+                                                            "function": {
+                                                                "type": "array",
+                                                                "shouldnotnull": true,
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "shouldnotnull": true
+                                                                }
+                                                            },
+                                                            "target_table": {
+                                                                "type": "string",
+                                                                "shouldnotnull": true
+                                                            },
+                                                            "numerator_col": {
+                                                                "type": "string",
+                                                                "shouldnotnull": true
+                                                            },
+                                                            "denominator_col": {
+                                                                "type": "string",
+                                                                "shouldnotnull": true
+                                                            },
+                                                            "update_cols": {
+                                                                "type": "array",
+                                                                "shouldnotnull": true,
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "shouldnotnull": true
+                                                                }
+                                                            },
+                                                            "columns": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "type": "string",
+                                                                        "pattern": "array",
+                                                                        "shouldnotnull": true
+                                                                    },
+                                                                    "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string",
+                                                                                "shouldnotnull": true
+                                                                            },
+                                                                            "properties": {
+                                                                                "type": "object",
+                                                                                "shouldnotnull": true,
+                                                                                "properties": {
+                                                                                    "column": {
+                                                                                        "type": "array",
+                                                                                        "shouldnotnull": true,
+                                                                                        "items": {
+                                                                                            "type": "string",
+                                                                                            "shouldnotnull": true
+                                                                                        }
+                                                                                    },
+                                                                                    "table": {
+                                                                                        "type": "string",
+                                                                                        "shouldnotnull": true
+                                                                                    }
+                                                                                },
+                                                                                "required": [
+                                                                                    "column"
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "filters": {
+                                                                "type": "object",
+                                                                "shouldnotnull": true,
+                                                                "properties": {
+                                                                    "type": {
+                                                                        "type": "string",
+                                                                        "shouldnotnull": true
+                                                                    },
+                                                                    "properties": {
+                                                                        "type": "object",
+                                                                        "shouldnotnull": true,
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string",
+                                                                                "pattern": "object",
+                                                                                "shouldnotnull": true
+                                                                            },
+                                                                            "filter_col": {
+                                                                                "type": "string",
+                                                                                "shouldnotnull": true
+                                                                            },
+                                                                            "filter_type": {
+                                                                                "type": "string",
+                                                                                "shouldnotnull": true
+                                                                            },
+                                                                            "filter": {
+                                                                                "type": "string",
+                                                                                "shouldnotnull": true
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "filter_col",
+                                                                            "filter_type",
+                                                                            "filter"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "type",
+                                                                    "properties"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "function",
+                                                            "target_table",
+                                                            "columns"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "required": [
+                                            "items"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "required": [
+                            "dataset_name",
+                            "dimensions",
+                            "dataset"
+                        ]
+                    }
+                }
+            }
+        },
+        "required": [
+            "ingestion_type",
+            "dataset_name",
+            "input"
+        ],
+        "additionalProperties": false
+    
+    };

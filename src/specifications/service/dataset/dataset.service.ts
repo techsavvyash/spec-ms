@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {InjectDataSource} from '@nestjs/typeorm';
-import {checkDuplicacy, checkName, createTable, insertPipeline, insertSchema} from '../../queries/queries';
+import {checkDatasetDuplicacy, checkName,createTable, insertPipeline, insertSchema} from '../../queries/queries';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
 import {datasetSchemaData} from "../../../utils/spec-data";
@@ -35,8 +35,8 @@ export class DatasetService {
                 }
                 else {
                     await queryRunner.connect();
-                    let values = newObj?.input?.properties?.dataset;
-                    let duplicacyQuery = checkDuplicacy(['dataset_name', 'dataset_data'], 'dataset', ['dataset_data', "'input'->'properties'->'dataset'"], JSON.stringify(values));
+                    let values = newObj?.input?.properties?.dataset?.properties?.items?.items?.properties;
+                    let duplicacyQuery = checkDatasetDuplicacy(JSON.stringify(values));
                     const result: any = await this.dataSource.query(duplicacyQuery);
                     if (result?.length == 0) { //If there is no record in the DB then insert the first schema
                         await queryRunner.startTransaction();
@@ -47,15 +47,15 @@ export class DatasetService {
                             const insertResult = await queryRunner.query(insertQuery);
                             if (insertResult[0].pid) {
                                 let dataset_pid = insertResult[0].pid;
-                                const pipeline_name = datasetDTO.dataset_name.toLowerCase() + 'pipeline';
+                                const pipeline_name = datasetDTO.dataset_name.toLowerCase() + '_pipeline';
                                 let insertPipeLineQuery = insertPipeline(['pipeline_name', 'dataset_pid'], 'pipeline', [pipeline_name, dataset_pid]);
                                 const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                                 if (insertPipelineResult[0].pid) {
                                     let columnProperties = [];
                                     let columnNames = [];
                                     let uniqueColumns;
-                                    columnNames.push(Object.keys(values?.properties?.items?.items?.properties));
-                                    columnProperties.push(Object.values(values?.properties?.items?.items?.properties));
+                                    columnNames.push(Object.keys(values));
+                                    columnProperties.push(Object.values(values));
                                     uniqueColumns =values?.properties?.group_by?.items?.required; 
                                     dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
                                     let tbName: string = newObj?.dataset_name;

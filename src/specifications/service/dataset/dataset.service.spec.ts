@@ -2,11 +2,10 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {DatasetService} from './dataset.service';
 import {DataSource} from 'typeorm';
 import {GenericFunction} from '../genericFunction';
-import {async} from 'rxjs';
 
 let inputData = {
     "ingestion_type": "dataset",
-    "dataset_name": "student_attendance_by_class",
+    "dataset_name": "students_attendance_compliance_by_school",
     "input": {
         "type": "object",
         "properties": {
@@ -16,33 +15,11 @@ let inputData = {
             "dimensions": {
                 "type": "object",
                 "properties": {
-                    "table": {
-                        "type": "object",
-                        "properties": {
-                            "ingestion.student_attendance": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "column": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "school_id": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "merge_on_col": {
-                        "type": "object",
-                        "properties": {
-                            "school_id": {
-                                "type": "string"
-                            }
-                        }
-                    }
+                    "table": "ingestion.school_details",
+                    "column": [
+                        "school_id","werwer"
+                    ],
+                    "merge_on_col": "school_id"
                 }
             },
             "dataset": {
@@ -55,149 +32,97 @@ let inputData = {
                             "properties": {
                                 "date": {
                                     "type": "string",
-                                    "shouldNotNull": true,
+                                    "shouldnotnull": true,
                                     "format": "date"
                                 },
                                 "school_id": {
-                                    "type": "number",
-                                    "shouldNotNull": true,
-                                    "pattern": "^[0-9]{10}$"
+                                    "type": "integer",
+                                    "shouldnotnull": true,
+                                    "minimum": 1000000000,
+                                    "maximum": 9999999999
                                 },
-                                "grade": {
-                                    "type": "number",
-                                    "shouldNotNull": true,
-                                    "minimum": 1,
-                                    "maximum": 12
+                                "sum_students_attendance_marked": {
+                                    "type": "integer",
+                                    "shouldnotnull": true
                                 },
-                                "count": {
-                                    "type": "number",
-                                    "shouldNotNull": true
-                                },
-                                "sum": {
-                                    "type": "number",
-                                    "shouldNotNull": true
+                                "sum_total_students": {
+                                    "type": "integer",
+                                    "shouldnotnull": true
                                 },
                                 "percentage": {
                                     "type": "number",
-                                    "shouldNotNull": true
+                                    "shouldnotnull": true
                                 }
                             },
                             "required": [
                                 "date",
                                 "school_id",
-                                "grade",
-                                "count",
-                                "sum",
+                                "sum_students_attendance_marked",
+                                "sum_total_students",
                                 "percentage"
                             ]
                         }
                     },
-                    "group_by": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "date": {
-                                    "type": "string"
-                                },
-                                "school_id": {
-                                    "type": "string"
-                                },
-                                "grade": {
-                                    "type": "number"
-                                }
-                            },
-                            "required": [
-                                "date",
-                                "school_id",
-                                "grade"
-                            ]
-                        }
-                    },
+                    "group_by": [
+                        "date",
+                        "school_id"
+                    ],
                     "aggregate": {
                         "type": "object",
                         "properties": {
-                            "function": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "sum": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "target_table": {
-                                "type": "object",
-                                "properties": {
-                                    "ingestion.student_attendance_by_class": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "update_cols": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "sum": {
-                                            "type": "number"
-                                        },
-                                        "count": {
-                                            "type": "number"
-                                        },
-                                        "percentage": {
-                                            "type": "number"
-                                        }
-                                    }
-                                }
-                            },
+                            "function": [
+                                "sum"
+                            ],
+                            "target_table": "ingestion.students_attendance_compliance_by_school",
+                            "numerator_col": "students_attendance_marked",
+                            "denominator_col": "total_students",
+                            "update_cols": [
+                                "sum_students_attendance_marked",
+                                "sum_total_students",
+                                "percentage"
+                            ],
                             "columns": {
                                 "type": "array",
                                 "items": {
                                     "type": "object",
                                     "properties": {
-                                        "column": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "students_attendance_marked": {
-                                                        "type": "string"
-                                                    },
-                                                    "total_students": {
-                                                        "type": "string"
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        "column": [
+                                            "students_attendance_marked",
+                                            "total_students"
+                                        ],
+                                        "table": "ingestion.students_attendance_compliance_by_school"
                                     }
                                 }
-                            }
-                        },
-                        "required": [
-                            "function",
-                            "target_table",
-                            "columns",
-                            "update_cols"
-                        ]
-                    }
-                },
-                "required": [
-                    "items",
-                    "group_by",
-                    "aggregate"
-                ]
-            }
-        },
-        "required": [
-            "dataset_name",
-            "dimensions",
-            "dataset"
-        ]
+                            },
+                            "filters": {
+                                "type": "object",
+                                "properties": {
+                                    "filter_col": "percentage",
+                                    "filter_type": "=",
+                                    "filter": "50"
+                                }
+                            },
+                            "required": [
+                                "function",
+                                "targetTable",
+                                "update_cols",
+                                "columns",
+                                "filters"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "items"
+                    ]
+                }
+            },
+            "required": [
+                "dataset_name",
+                "dataset"
+            ]
+        }
     }
-};
+}
 
 
 describe('DatasetService', () => {
@@ -243,7 +168,7 @@ describe('DatasetService', () => {
     it('validation', async () => {
         let dimensionData = {
             // "ingestion_type": "dataset",
-            "dataset_name": "student_attendance_by_class",
+            "dataset_name": "students_attendance_compliance_by_school",
             "input": {
                 "type": "object",
                 "properties": {
@@ -253,36 +178,11 @@ describe('DatasetService', () => {
                     "dimensions": {
                         "type": "object",
                         "properties": {
-                            "table": {
-                                "type": "object",
-                                "properties": {
-                                    "ingestion.student_attendance": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "column": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "school_id": {
-                                            "type": "string"
-                                        },
-                                        "cluster_id": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "merge_On_Col": {
-                                "type": "object",
-                                "properties": {
-                                    "school_id": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                            "table": "ingestion.school_details",
+                            "column": [
+                                "school_id","werwer"
+                            ],
+                            "merge_on_col": "school_id"
                         }
                     },
                     "dataset": {
@@ -294,137 +194,98 @@ describe('DatasetService', () => {
                                     "type": "object",
                                     "properties": {
                                         "date": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "shouldnotnull": true,
+                                            "format": "date"
                                         },
                                         "school_id": {
-                                            "type": "string"
+                                            "type": "integer",
+                                            "shouldnotnull": true,
+                                            "minimum": 1000000000,
+                                            "maximum": 9999999999
                                         },
-                                        "grade": {
-                                            "type": "string"
+                                        "sum_students_attendance_marked": {
+                                            "type": "integer",
+                                            "shouldnotnull": true
                                         },
-                                        "count": {
-                                            "type": "number"
-                                        },
-                                        "sum": {
-                                            "type": "number"
+                                        "sum_total_students": {
+                                            "type": "integer",
+                                            "shouldnotnull": true
                                         },
                                         "percentage": {
-                                            "type": "number"
+                                            "type": "number",
+                                            "shouldnotnull": true
                                         }
                                     },
                                     "required": [
                                         "date",
                                         "school_id",
-                                        "grade",
-                                        "count",
-                                        "sum",
+                                        "sum_students_attendance_marked",
+                                        "sum_total_students",
                                         "percentage"
                                     ]
                                 }
                             },
-                            "groupBy": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "date": {
-                                            "type": "string"
-                                        },
-                                        "school_id": {
-                                            "type": "string"
-                                        },
-                                        "grade": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "date",
-                                        "school_id",
-                                        "grade"
-                                    ]
-                                }
-                            },
+                            "group_by": [
+                                "date",
+                                "school_id"
+                            ],
                             "aggregate": {
                                 "type": "object",
                                 "properties": {
-                                    "function": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "targetTable": {
-                                        "type": "object",
-                                        "properties": {
-                                            "ingestion.student_attendance_by_class": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "updateCols": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "number"
-                                                },
-                                                "count": {
-                                                    "type": "number"
-                                                },
-                                                "percentage": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    },
+                                    "function": [
+                                        "sum"
+                                    ],
+                                    "target_table": "ingestion.students_attendance_compliance_by_school",
+                                    "numerator_col": "students_attendance_marked",
+                                    "denominator_col": "total_students",
+                                    "update_cols": [
+                                        "sum_students_attendance_marked",
+                                        "sum_total_students",
+                                        "percentage"
+                                    ],
                                     "columns": {
                                         "type": "array",
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                                                "column": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "students_attendance_marked": {
-                                                                "type": "string"
-                                                            },
-                                                            "total_students": {
-                                                                "type": "string"
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                "column": [
+                                                    "students_attendance_marked",
+                                                    "total_students"
+                                                ],
+                                                "table": "ingestion.students_attendance_compliance_by_school"
                                             }
                                         }
-                                    }
-                                },
-                                "required": [
-                                    "function",
-                                    "targetTable",
-                                    "columns"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "items"
-                        ]
-                    }
-                },
-                "required": [
-                    "dataset_name",
-                    "dimensions",
-                    "dataset"
-                ]
+                                    },
+                                    "filters": {
+                                        "type": "object",
+                                        "properties": {
+                                            "filter_col": "percentage",
+                                            "filter_type": "=",
+                                            "filter": "50"
+                                        }
+                                    },
+                                    "required": [
+                                        "function",
+                                        "targetTable",
+                                        "update_cols",
+                                        "columns",
+                                        "filters"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "items"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "dataset_name",
+                        "dataset"
+                    ]
+                }
             }
-        };
+        }
         let resultData = {
             "code": 400, "error": [
                 {
@@ -444,7 +305,7 @@ describe('DatasetService', () => {
     it('invalid request body', async () => {
         let inputData = {
             "ingestion_type": "dataset",
-            "dataset_name": "student_attendance_by_classs",
+            "dataset_name": "students_attendance_compliance_by_school",
             "input": {
                 "type": "object",
                 "properties": {
@@ -454,33 +315,11 @@ describe('DatasetService', () => {
                     "dimensions": {
                         "type": "object",
                         "properties": {
-                            "table": {
-                                "type": "object",
-                                "properties": {
-                                    "ingestion.student_attendance": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "column": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "school_id": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "merge_on_col": {
-                                "type": "object",
-                                "properties": {
-                                    "school_id": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                            "table": "ingestion.school_details",
+                            "column": [
+                                "school_id","werwer"
+                            ],
+                            "merge_on_col": "school_id"
                         }
                     },
                     "dataset": {
@@ -493,147 +332,92 @@ describe('DatasetService', () => {
                                     "properties": {
                                         "date": {
                                             "type": "string",
-                                            "shouldNotNull": true,
+                                            "shouldnotnull": true,
                                             "format": "date"
                                         },
                                         "school_id": {
-                                            "type": "number",
-                                            "shouldNotNull": true,
-                                            "pattern": "^[0-9]{10}$"
+                                            "type": "integer",
+                                            "shouldnotnull": true,
+                                            "minimum": 1000000000,
+                                            "maximum": 9999999999
                                         },
-                                        "grade": {
-                                            "type": "number",
-                                            "shouldNotNull": true,
-                                            "minimum": 1,
-                                            "maximum": 12
+                                        "sum_students_attendance_marked": {
+                                            "type": "integer",
+                                            "shouldnotnull": true
                                         },
-                                        // "count": {
-                                        //   "type": "number",
-                                        //   "shouldNotNull": true
-                                        // },
-                                        "sum": {
-                                            "type": "number",
-                                            "shouldNotNull": true
-                                        },
-                                        "percentage": {
-                                            "type": "number",
-                                            "shouldNotNull": true
+                                        "sum_total_students": {
+                                            "type": "integer",
+                                            "shouldnotnull": true
                                         }
+                                       
                                     },
                                     "required": [
                                         "date",
                                         "school_id",
-                                        "grade",
-                                        "count",
-                                        "sum",
+                                        "sum_students_attendance_marked",
+                                        "sum_total_students",
                                         "percentage"
                                     ]
                                 }
                             },
-                            "group_by": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "date": {
-                                            "type": "string"
-                                        },
-                                        "school_id": {
-                                            "type": "string"
-                                        },
-                                        "grade": {
-                                            "type": "number"
-                                        }
-                                    },
-                                    "required": [
-                                        "date",
-                                        "school_id",
-                                        "grade"
-                                    ]
-                                }
-                            },
+                            "group_by": [
+                                "date",
+                                "school_id"
+                            ],
                             "aggregate": {
                                 "type": "object",
                                 "properties": {
-                                    "function": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "target_table": {
-                                        "type": "object",
-                                        "properties": {
-                                            "ingestion.student_attendance_by_class": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "update_cols": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "number"
-                                                },
-                                                "count": {
-                                                    "type": "number"
-                                                },
-                                                "percentage": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    },
+                                    "function": [
+                                        "sum"
+                                    ],
+                                    "target_table": "ingestion.students_attendance_compliance_by_school",
+                                    "numerator_col": "students_attendance_marked",
+                                    "denominator_col": "total_students",
+                                    "update_cols": [
+                                        "sum_students_attendance_marked",
+                                        "sum_total_students",
+                                        "percentage"
+                                    ],
                                     "columns": {
                                         "type": "array",
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                                                "column": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "students_attendance_marked": {
-                                                                "type": "string"
-                                                            },
-                                                            "total_students": {
-                                                                "type": "string"
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                "column": [
+                                                    "students_attendance_marked",
+                                                    "total_students"
+                                                ],
+                                                "table": "ingestion.students_attendance_compliance_by_school"
                                             }
                                         }
-                                    }
-                                },
-                                "required": [
-                                    "function",
-                                    "target_table",
-                                    "columns",
-                                    "update_cols"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "items",
-                            "group_by",
-                            "aggregate"
-                        ]
-                    }
-                },
-                "required": [
-                    "dataset_name",
-                    "dimensions",
-                    "dataset"
-                ]
+                                    },
+                                    "filters": {
+                                        "type": "object",
+                                        "properties": {
+                                            "filter_col": "percentage",
+                                            "filter_type": "=",
+                                            "filter": "50"
+                                        }
+                                    },
+                                    "required": [
+                                        "function",
+                                        "targetTable",
+                                        "update_cols",
+                                        "columns",
+                                        "filters"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "items"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "dataset_name",
+                        "dataset"
+                    ]
+                }
             }
         }
         let result = {
@@ -646,7 +430,7 @@ describe('DatasetService', () => {
     it('Dataset Name already exists', async () => {
         let inputData = {
             "ingestion_type": "dataset",
-            "dataset_name": "student_attendance_by_class",
+            "dataset_name": "students_attendance_compliance_by_school",
             "input": {
                 "type": "object",
                 "properties": {
@@ -656,33 +440,11 @@ describe('DatasetService', () => {
                     "dimensions": {
                         "type": "object",
                         "properties": {
-                            "table": {
-                                "type": "object",
-                                "properties": {
-                                    "ingestion.student_attendance": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "column": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "school_id": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "merge_on_col": {
-                                "type": "object",
-                                "properties": {
-                                    "school_id": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                            "table": "ingestion.school_details",
+                            "column": [
+                                "school_id","werwer"
+                            ],
+                            "merge_on_col": "school_id"
                         }
                     },
                     "dataset": {
@@ -695,147 +457,95 @@ describe('DatasetService', () => {
                                     "properties": {
                                         "date": {
                                             "type": "string",
-                                            "shouldNotNull": true,
+                                            "shouldnotnull": true,
                                             "format": "date"
                                         },
                                         "school_id": {
-                                            "type": "number",
-                                            "shouldNotNull": true,
-                                            "pattern": "^[0-9]{10}$"
+                                            "type": "integer",
+                                            "shouldnotnull": true,
+                                            "minimum": 1000000000,
+                                            "maximum": 9999999999
                                         },
-                                        "grade": {
-                                            "type": "number",
-                                            "shouldNotNull": true,
-                                            "minimum": 1,
-                                            "maximum": 12
+                                        "sum_students_attendance_marked": {
+                                            "type": "integer",
+                                            "shouldnotnull": true
                                         },
-                                        "count": {
-                                            "type": "number",
-                                            "shouldNotNull": true
-                                        },
-                                        "sum": {
-                                            "type": "number",
-                                            "shouldNotNull": true
+                                        "sum_total_students": {
+                                            "type": "integer",
+                                            "shouldnotnull": true
                                         },
                                         "percentage": {
                                             "type": "number",
-                                            "shouldNotNull": true
+                                            "shouldnotnull": true
                                         }
                                     },
                                     "required": [
                                         "date",
                                         "school_id",
-                                        "grade",
-                                        "count",
-                                        "sum",
+                                        "sum_students_attendance_marked",
+                                        "sum_total_students",
                                         "percentage"
                                     ]
                                 }
                             },
-                            "group_by": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "date": {
-                                            "type": "string"
-                                        },
-                                        "school_id": {
-                                            "type": "string"
-                                        },
-                                        "grade": {
-                                            "type": "number"
-                                        }
-                                    },
-                                    "required": [
-                                        "date",
-                                        "school_id",
-                                        "grade"
-                                    ]
-                                }
-                            },
+                            "group_by": [
+                                "date",
+                                "school_id"
+                            ],
                             "aggregate": {
                                 "type": "object",
                                 "properties": {
-                                    "function": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "target_table": {
-                                        "type": "object",
-                                        "properties": {
-                                            "ingestion.student_attendance_by_class": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "update_cols": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "number"
-                                                },
-                                                "count": {
-                                                    "type": "number"
-                                                },
-                                                "percentage": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    },
+                                    "function": [
+                                        "sum"
+                                    ],
+                                    "target_table": "ingestion.students_attendance_compliance_by_school",
+                                    "numerator_col": "students_attendance_marked",
+                                    "denominator_col": "total_students",
+                                    "update_cols": [
+                                        "sum_students_attendance_marked",
+                                        "sum_total_students",
+                                        "percentage"
+                                    ],
                                     "columns": {
                                         "type": "array",
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                                                "column": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "students_attendance_marked": {
-                                                                "type": "string"
-                                                            },
-                                                            "total_students": {
-                                                                "type": "string"
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                "column": [
+                                                    "students_attendance_marked",
+                                                    "total_students"
+                                                ],
+                                                "table": "ingestion.students_attendance_compliance_by_school"
                                             }
                                         }
-                                    }
-                                },
-                                "required": [
-                                    "function",
-                                    "target_table",
-                                    "columns",
-                                    "update_cols"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "items",
-                            "group_by",
-                            "aggregate"
-                        ]
-                    }
-                },
-                "required": [
-                    "dataset_name",
-                    "dimensions",
-                    "dataset"
-                ]
+                                    },
+                                    "filters": {
+                                        "type": "object",
+                                        "properties": {
+                                            "filter_col": "percentage",
+                                            "filter_type": "=",
+                                            "filter": "50"
+                                        }
+                                    },
+                                    "required": [
+                                        "function",
+                                        "targetTable",
+                                        "update_cols",
+                                        "columns",
+                                        "filters"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "items"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "dataset_name",
+                        "dataset"
+                    ]
+                }
             }
         }
 
@@ -850,194 +560,124 @@ describe('DatasetService', () => {
             "ingestion_type": "dataset",
             "dataset_name": "student_attendance_by_class",
             "input": {
-                "type": "object",
-                "properties": {
-                    "dataset_name": {
-                        "type": "string"
-                    },
-                    "dimensions": {
-                        "type": "object",
-                        "properties": {
-                            "table": {
-                                "type": "object",
-                                "properties": {
-                                    "ingestion.student_attendance": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "column": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "school_id": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "merge_on_col": {
-                                "type": "object",
-                                "properties": {
-                                    "school_id": {
-                                        "type": "string"
-                                    }
-                                }
+                "ingestion_type": "dataset",
+                "dataset_name": "students_attendance_compliance_by_school",
+                "input": {
+                    "type": "object",
+                    "properties": {
+                        "dataset_name": {
+                            "type": "string"
+                        },
+                        "dimensions": {
+                            "type": "object",
+                            "properties": {
+                                "table": "ingestion.school_details",
+                                "column": [
+                                    "school_id","werwer"
+                                ],
+                                "merge_on_col": "school_id"
                             }
-                        }
-                    },
-                    "dataset": {
-                        "type": "object",
-                        "properties": {
-                            "items": {
-                                "type": "array",
+                        },
+                        "dataset": {
+                            "type": "object",
+                            "properties": {
                                 "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "date": {
-                                            "type": "string",
-                                            "shouldNotNull": true,
-                                            "format": "date"
-                                        },
-                                        "school_id": {
-                                            "type": "number",
-                                            "shouldNotNull": true,
-                                            "pattern": "^[0-9]{10}$"
-                                        },
-                                        "grade": {
-                                            "type": "number",
-                                            "shouldNotNull": true,
-                                            "minimum": 1,
-                                            "maximum": 12
-                                        },
-                                        "count": {
-                                            "type": "number",
-                                            "shouldNotNull": true
-                                        },
-                                        "sum": {
-                                            "type": "number",
-                                            "shouldNotNull": true
-                                        },
-                                        "percentage": {
-                                            "type": "number",
-                                            "shouldNotNull": true
-                                        }
-                                    },
-                                    "required": [
-                                        "date",
-                                        "school_id",
-                                        "grade",
-                                        "count",
-                                        "sum",
-                                        "percentage"
-                                    ]
-                                }
-                            },
-                            "group_by": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "date": {
-                                            "type": "string"
-                                        },
-                                        "school_id": {
-                                            "type": "string"
-                                        },
-                                        "grade": {
-                                            "type": "number"
-                                        }
-                                    },
-                                    "required": [
-                                        "date",
-                                        "school_id",
-                                        "grade"
-                                    ]
-                                }
-                            },
-                            "aggregate": {
-                                "type": "object",
-                                "properties": {
-                                    "function": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "target_table": {
+                                    "type": "array",
+                                    "items": {
                                         "type": "object",
                                         "properties": {
-                                            "ingestion.student_attendance_by_class": {
-                                                "type": "string"
+                                            "date": {
+                                                "type": "string",
+                                                "shouldnotnull": true,
+                                                "format": "date"
+                                            },
+                                            "school_id": {
+                                                "type": "integer",
+                                                "shouldnotnull": true,
+                                                "minimum": 1000000000,
+                                                "maximum": 9999999999
+                                            },
+                                            "sum_students_attendance_marked": {
+                                                "type": "integer",
+                                                "shouldnotnull": true
+                                            },
+                                            "sum_total_students": {
+                                                "type": "integer",
+                                                "shouldnotnull": true
+                                            },
+                                            "percentage": {
+                                                "type": "number",
+                                                "shouldnotnull": true
                                             }
-                                        }
-                                    },
-                                    "update_cols": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "sum": {
-                                                    "type": "number"
-                                                },
-                                                "count": {
-                                                    "type": "number"
-                                                },
-                                                "percentage": {
-                                                    "type": "number"
+                                        },
+                                        "required": [
+                                            "date",
+                                            "school_id",
+                                            "sum_students_attendance_marked",
+                                            "sum_total_students",
+                                            "percentage"
+                                        ]
+                                    }
+                                },
+                                "group_by": [
+                                    "date",
+                                    "school_id"
+                                ],
+                                "aggregate": {
+                                    "type": "object",
+                                    "properties": {
+                                        "function": [
+                                            "sum"
+                                        ],
+                                        "target_table": "ingestion.students_attendance_compliance_by_school",
+                                        "numerator_col": "students_attendance_marked",
+                                        "denominator_col": "total_students",
+                                        "update_cols": [
+                                            "sum_students_attendance_marked",
+                                            "sum_total_students",
+                                            "percentage"
+                                        ],
+                                        "columns": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "column": [
+                                                        "students_attendance_marked",
+                                                        "total_students"
+                                                    ],
+                                                    "table": "ingestion.students_attendance_compliance_by_school"
                                                 }
                                             }
-                                        }
-                                    },
-                                    "columns": {
-                                        "type": "array",
-                                        "items": {
+                                        },
+                                        "filters": {
                                             "type": "object",
                                             "properties": {
-                                                "column": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "students_attendance_marked": {
-                                                                "type": "string"
-                                                            },
-                                                            "total_students": {
-                                                                "type": "string"
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                "filter_col": "percentage",
+                                                "filter_type": "=",
+                                                "filter": "50"
                                             }
-                                        }
+                                        },
+                                        "required": [
+                                            "function",
+                                            "targetTable",
+                                            "update_cols",
+                                            "columns",
+                                            "filters"
+                                        ]
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "columns",
-                                    "update_cols"
+                                    "items"
                                 ]
                             }
                         },
                         "required": [
-                            "items",
-                            "group_by",
-                            "aggregate"
+                            "dataset_name",
+                            "dataset"
                         ]
                     }
-                },
-                "required": [
-                    "dataset_name",
-                    "dimensions",
-                    "dataset"
-                ]
+                }
             }
         }
         let result = {
@@ -1051,7 +691,7 @@ describe('DatasetService', () => {
         let result = {
             "code": 200,
             "message": "Dataset spec created successfully",
-            "dataset_name": "student_attendance_by_class",
+            "dataset_name": "students_attendance_compliance_by_school",
             "pid": 1
         };
         expect(await service.createDataset(inputData)).toStrictEqual(result)
