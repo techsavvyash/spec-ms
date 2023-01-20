@@ -126,6 +126,7 @@ def collect_keys(request, Response):
                 if cur.rowcount == 1:
                     for records in cur.fetchall():
                         for record in list(records):
+                            print(record)
                             Dataset = record['input']['properties']['dataset']['properties']
                             DatasetObject = list(Dataset['items']['items']['properties'].keys())
                             DatasetArray=Dataset['items']['items']['required']
@@ -206,7 +207,7 @@ def collect_keys(request, Response):
                                     {"Message": "Transformer type is not correct", "TransformerType": TranformerType,
                                      "Dataset": DatasetName}))
                             print(Transformer, ':::::::::::Transformer:::::::::::::::')
-                            KeysMapping(InputKeys, Template, Program + '_' + Transformer, Response)
+                            KeysMapping(InputKeys, Template,Transformer, Response)
                 else:
                     print('ERROR : No dataset found')
                     return Response(json.dumps({"Message": "No dataset found " + DatasetName}))

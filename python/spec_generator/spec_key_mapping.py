@@ -208,7 +208,6 @@ def DatasetSpec(request, Response):
         for value in DatasetValue:
             dataset = (dict(zip(DatasetColList, value)))
             DatasetName = dataset['dataset_name']
-            print(DatasetName)
             TransformerTemplate = dataset['transformer_template']
             SpecTemplate=None
             ### checking template name and
@@ -244,6 +243,8 @@ def DatasetSpec(request, Response):
             Numerator = [x.strip() for x in str(dataset['numerator']).split(',')]
             Denominator = [x.strip() for x in str(dataset['denominator']).split(',')]
             ColumnsDataType = []
+            if len(DatasetColumn)!=len(DataTypes):
+                return Response(json.dumps({'Message':'Length of dataset columns and datatypes are not matching '+DatasetName}))
             for datasetcol in DatasetColumn:
                 if datasetcol.casefold() == 'date':
                     ColumnsDataType.append({"type": "string", "shouldnotnull": True, "format": "date"})
