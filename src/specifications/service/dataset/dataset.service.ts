@@ -28,7 +28,7 @@ export class DatasetService {
                 }
             } else {
                 let queryResult = checkName('dataset_name', "dataset");
-                queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name.toLowerCase()}`);
+                queryResult = queryResult.replace('$1', `${datasetDTO?.dataset_name}`);
                 const resultDname: any = await this.dataSource.query(queryResult);
                 if (resultDname?.length > 0) {
                     return {"code": 400, "error": "Dataset name already exists"};
@@ -42,7 +42,7 @@ export class DatasetService {
                         await queryRunner.startTransaction();
                         try {
                             let insertQuery = insertSchema(['dataset_name', 'dataset_data'], 'dataset');
-                            insertQuery = insertQuery.replace('$1', `'${datasetDTO.dataset_name.toLowerCase()}'`);
+                            insertQuery = insertQuery.replace('$1', `'${datasetDTO.dataset_name}'`);
                             insertQuery = insertQuery.replace('$2', `'${JSON.stringify(newObj)}'`);
                             const insertResult = await queryRunner.query(insertQuery);
                             if (insertResult[0].pid) {
