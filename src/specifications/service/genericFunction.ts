@@ -41,22 +41,22 @@ export class GenericFunction {
     getDbColumnNames(columnProperties) {
         let dbColumns = []
         columnProperties.forEach((element, index) => {
-            if (element.type == "string") {
+            if (element?.type == "string") {
                 dbColumns[index] = 'VARCHAR'
             }
-            else if (element.type == "number") {
+            else if (element?.type == "integer") {
                 dbColumns[index] = 'INT';
             }
-            else if (element.type == "json") {
+            else if (element?.type == "json") {
                 dbColumns[index] = 'jsonb';
             }
-            else if(element.type === 'float') {
+            else if(element?.type === 'number') {
                 dbColumns[index] = 'NUMERIC';
             }
-            else if(element.type === 'boolean') {
+            else if(element?.type === 'boolean') {
                 dbColumns[index] = 'BOOLEAN';
             }
-            else if (element.type == 'date') {
+            else if (element?.type == 'date') {
                 dbColumns[index] = 'TIMESTAMP WITH TIME ZONE';
             }
         });
