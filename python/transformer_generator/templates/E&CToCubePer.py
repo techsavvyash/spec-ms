@@ -15,18 +15,13 @@ host = config['CREDs']['db_host']
 user = config['CREDs']['db_user']
 password = config['CREDs']['db_password']
 database = config['CREDs']['Database']
-# aws_key = config['CREDs']['AWS_ACCESS_KEY']
-# aws_secret=config['CREDs']['AWS_SECRET_ACCESS_KEY']
-# bucket_name=config['CREDs']['AWS_BUCKET_NAME']
-# object_key=config['CREDs']['AWS_OBJ_KEY']
+
 
 engine='postgresql://'+user+':%s@'+host+':'+port+'/'+database
 con=create_engine(engine %quote(password))
 cur = con.connect()
 
 def aggTransformer(valueCols={ValueCols}):
-    # path = 's3://{AWSKey}:{AWSSecretKey}@{BucketName}/{ObjKey}'.format(aws_key, aws_secret, bucket_name, object_key)
-    # df_events = pd.read_csv(smart_open(path))
     df_events = pd.read_csv(os.path.dirname(os.path.abspath(__file__)) + "/events/" + {KeyFile})
     df_dataset=pd.read_sql('select * from {Table};',con=con)
     df_dimension = pd.read_sql('select {DimensionCols} from {DimensionTable}', con=con)
