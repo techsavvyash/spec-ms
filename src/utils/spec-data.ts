@@ -85,7 +85,6 @@ export const dimensionSchemaData = {
                                 }
                             },
                             "required": ["type", "items"],
-                            "additionalProperties": false
                         }
                     },
                     "required": ["dimension_name", "dimension"]
@@ -197,7 +196,6 @@ export const eventSchemaData = {
                                 }
                             },
                             "required": ["type", "items"],
-                            "additionalProperties": false
                         }
                     },
                     "required": ["event_name", "event"],
