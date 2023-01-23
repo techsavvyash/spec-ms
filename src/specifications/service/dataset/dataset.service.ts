@@ -56,7 +56,7 @@ export class DatasetService {
                                     let uniqueColumns;
                                     columnNames.push(Object.keys(values));
                                     columnProperties.push(Object.values(values));
-                                    uniqueColumns =values?.properties?.group_by?.items?.required; 
+                                    uniqueColumns = newObj?.input?.properties?.dataset?.properties?.group_by; 
                                     dbColumns = this.specService.getDbColumnNames(columnProperties[0]);
                                     let tbName: string = newObj?.dataset_name;
                                     let createQuery = createTable(tbName, columnNames[0], dbColumns,uniqueColumns);
