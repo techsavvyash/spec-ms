@@ -107,7 +107,7 @@ export class PipelineService {
         }
     
 
-    async CreatePipeline(queryRunner, pipelineName) {
+    async CreatePipeline(queryRunner, pipelineName, schedulePeriod = undefined) {
         try {
             const queryStr = await getPipelineSpec(pipelineName);
             const queryResult = await queryRunner.query(queryStr);
@@ -160,10 +160,10 @@ export class PipelineService {
                     await this.connect(generateFlowFileID, pythonCodeID, success_relationship, pg_source['component']['id']);
                     await this.connect(pythonCodeID, successLogMessageID, python_success_relationship, pg_source['component']['id']);
                     await this.connect(pythonCodeID, failedLogMessageID, python_failure_relationship, pg_source['component']['id']);
-                    await this.updateProcessorProperty(pg_source['component']['id'], 'pythonCode', transformer_file);
-                    await this.updateProcessorProperty(pg_source['component']['id'], 'generateFlowFile', transformer_file);
-                    await this.updateProcessorProperty(pg_source['component']['id'], 'successLogMessage', transformer_file);
-                    await this.updateProcessorProperty(pg_source['component']['id'], 'failedLogMessage', transformer_file);
+                    await this.updateProcessorProperty(pg_source['component']['id'], 'pythonCode', transformer_file, schedulePeriod);
+                    await this.updateProcessorProperty(pg_source['component']['id'], 'generateFlowFile', transformer_file, schedulePeriod);
+                    await this.updateProcessorProperty(pg_source['component']['id'], 'successLogMessage', transformer_file, schedulePeriod);
+                    await this.updateProcessorProperty(pg_source['component']['id'], 'failedLogMessage', transformer_file, schedulePeriod);
                     return {
                         code: 200,
                         message: "Processor group running successfully"
@@ -346,30 +346,60 @@ export class PipelineService {
         }
     }
 
-    async updateProcessorProperty(pg_source_id, processor_name, transformer_file) {
+    async updateProcessorProperty(pg_source_id, processor_name, transformer_file, schedulePeriod) {
         const pg_ports = await this.getProcessorGroupPorts(pg_source_id);
         if (pg_ports) {
             for (let processor of pg_ports['processGroupFlow']['flow']['processors']) {
                 if (processor.component.name == processor_name) {
                     let update_processor_property_body;
                     if (processor_name == 'generateFlowFile') {
-                        update_processor_property_body = {
-                            "component": {
-                                "id": processor.component.id,
-                                "name": processor.component.name,
-                                "config": {
-                                    "autoTerminatedRelationships": [
-                                        "original"
-                                    ],
-                                    "schedulingPeriod": "1 day"
-                                }
-                            },
-                            "revision": {
-                                "clientId": "",
-                                "version": processor.revision.version
-                            },
-                            "disconnectedNodeAcknowledged": "False"
+                        if(schedulePeriod !== undefined) {
+                            console.log('in Schedule')
+                            update_processor_property_body = {
+                                "component": {
+                                    "id": processor['component']['id'],
+                                    "name": processor['component']['name'],
+                                    "config": {
+                                        "concurrentlySchedulableTaskCount": "1",
+                                        "schedulingPeriod": schedulePeriod,
+                                        "executionNode": "ALL",
+                                        "penaltyDuration": "30 sec",
+                                        "yieldDuration": "1 sec",
+                                        "bulletinLevel": "WARN",
+                                        "schedulingStrategy": "CRON_DRIVEN",
+                                        "comments": "",
+                                        "runDurationMillis": 0,
+                                        "autoTerminatedRelationships": []
+                                    },
+                                    "state": "STOPPED"
+                                },
+                                "revision": {
+                                    "clientId": "",
+                                    "version": processor['revision']['version']
+                                },
+                                "disconnectedNodeAcknowledged": false
+                            }
                         }
+                        else {
+                            update_processor_property_body = {
+                                "component": {
+                                    "id": processor.component.id,
+                                    "name": processor.component.name,
+                                    "config": {
+                                        "autoTerminatedRelationships": [
+                                            "original"
+                                        ],
+                                        "schedulingPeriod": "1 day"
+                                    }
+                                },
+                                "revision": {
+                                    "clientId": "",
+                                    "version": processor.revision.version
+                                },
+                                "disconnectedNodeAcknowledged": "False"
+                            }
+                        }
+                        
                     }
                     if (processor_name == 'failedLogMessage') {
                         update_processor_property_body = {
@@ -443,6 +473,7 @@ export class PipelineService {
                     let url = `${process.env.URL}/nifi-api/processors/${processor?.component?.id}`;
 
                     try {
+                        console.log(update_processor_property_body)
                         let result = await this.http.put(url, update_processor_property_body);
                         if (result) {
                             return `{message:Successfully updated the properties in the ${processor_name}}`;
