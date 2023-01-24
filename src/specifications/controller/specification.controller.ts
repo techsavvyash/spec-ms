@@ -2,14 +2,15 @@ import {EventService} from './../service/event/event.service';
 import {DimensionService} from './../service/dimension/dimension.service';
 import {Body, Controller, Post, Res} from '@nestjs/common';
 import {Response} from 'express';
-import {pipelineDto, Result, specTrasformer} from '../dto/specData.dto';
+import {pipelineDto, Result, specTrasformer, scheduleDto} from '../dto/specData.dto';
 import {TransformerService} from '../service/transformer/transformer.service';
 import {DatasetService} from '../service/dataset/dataset.service';
 import {PipelineService} from '../service/pipeline/pipeline.service';
+import { ScheduleService } from '../service/schedule/schedule/schedule.service';
 
 @Controller('spec')
 export class SpecificationController {
-    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService) {
+    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService, private scheduleService: ScheduleService) {
     }
 
     @Post('/dimension')
@@ -100,4 +101,20 @@ export class SpecificationController {
             console.error("create.Pipeline impl :", error)
         }
     }
+    @Post('/schedule')
+    async schedulePipeline(@Body() scheduleDto: scheduleDto, @Res()response: Response) {
+        try {
+            const result: Result = await this.scheduleService.schedulePipeline(scheduleDto)
+            console.log('result', result);
+            if (result?.code == 400) {
+                response.status(400).send({"message": result.error});
+            }
+            else {
+                response.status(200).send({"message": result?.message});
+            }
+        } catch (error) {
+            console.error("schedule.Pipeline impl :", error)
+        }
+    }
+
 }
