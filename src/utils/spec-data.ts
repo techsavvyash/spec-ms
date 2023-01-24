@@ -696,5 +696,9 @@ export const scheduleSchema = {
             "type": "string",
             "shouldnotnull": true
         }
-    }
+    },
+    "required": [
+        "pipeline_name",
+        "scheduled_at",
+    ],
 }

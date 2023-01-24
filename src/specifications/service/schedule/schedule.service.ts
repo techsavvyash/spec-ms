@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { scheduleDto } from '../../../dto/specData.dto';
-import { checkName } from '../../../queries/queries';
-import { scheduleSchema } from '../../../../utils/spec-data';
+import { scheduleDto } from '../../dto/specData.dto';
+import { checkName } from '../../queries/queries';
+import { scheduleSchema } from '../../../utils/spec-data';
 import { DataSource } from 'typeorm';
-import { GenericFunction } from '../../genericFunction';
-import { HttpCustomService } from '../../HttpCustomService';
-import { PipelineService } from '../../pipeline/pipeline.service'
+import { GenericFunction } from '../genericFunction';
+import { HttpCustomService } from '../HttpCustomService';
+import { PipelineService } from '../pipeline/pipeline.service'
 var cronValidator = require('cron-expression-validator');
 
 @Injectable()

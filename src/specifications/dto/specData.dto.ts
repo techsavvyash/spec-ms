@@ -46,6 +46,6 @@ export class Result{
 }
 
 export class scheduleDto{
-    pipeline_name: string;
-    scheduled_at: string;
+    pipeline_name?: string;
+    scheduled_at?: string;
 }

@@ -10,7 +10,7 @@ import { TransformerService } from './service/transformer/transformer.service';
 import { DatasetService } from './service/dataset/dataset.service';
 import { HttpModule } from '@nestjs/axios';
 import { PipelineService } from './service/pipeline/pipeline.service';
-import { ScheduleService } from './service/schedule/schedule/schedule.service';
+import { ScheduleService } from './service/schedule/schedule.service';
 
 @Module({
   imports: [HttpModule],
