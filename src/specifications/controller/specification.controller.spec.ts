@@ -5,7 +5,7 @@ import { DimensionService } from '../service/dimension/dimension.service';
 import { EventService } from '../service/event/event.service';
 import { TransformerService } from '../service/transformer/transformer.service';
 import { SpecificationController } from './specification.controller';
-import { ScheduleService } from '../service/schedule/schedule/schedule.service';
+import { ScheduleService } from '../service/schedule/schedule.service';
 
 describe('SpecificationController', () => {
   let controller: SpecificationController;
