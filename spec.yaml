@@ -838,7 +838,7 @@ paths:
                 example: "school_details"
       responses:
         200:
-          description: "Processor Group Running Successfully"
+          description: "Get the file status"
           schema:
             type: "object"
             properties:
