@@ -44,3 +44,8 @@ export class Result{
     message?: string;
     error?: string;
 }
+
+export class scheduleDto{
+    pipeline_name?: string;
+    scheduled_at?: string;
+}

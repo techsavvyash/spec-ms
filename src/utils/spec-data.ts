@@ -685,3 +685,20 @@ export const datasetSchemaData = {
         "additionalProperties": false
     
     };
+export const scheduleSchema = {
+    "type": "object",
+    "properties": {
+        "pipeline_name": {
+            "type": "string",
+            "shouldnotnull": true
+        },
+        "scheduled_at": {
+            "type": "string",
+            "shouldnotnull": true
+        }
+    },
+    "required": [
+        "pipeline_name",
+        "scheduled_at",
+    ],
+}

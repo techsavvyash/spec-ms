@@ -54,5 +54,18 @@ CREATE TABLE IF NOT EXISTS spec.pipeline (
   transformer_pid INT REFERENCES spec.transformer (pid)
 );
 
-
+CREATE TABLE IF NOT EXISTS ingestion.file_tracker( 
+pid INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+is_deleted      BOOLEAN   DEFAULT FALSE,
+event_by        INT NOT NULL DEFAULT 1,
+created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+filename   VARCHAR NOT NULL,
+ingestion_type VARCHAR NOT NULL,
+ingestion_name VARCHAR NOT NULL,
+file_status VARCHAR NOT NULL,
+filesize NUMERIC NOT NULL,
+processed_count INT,
+    UNIQUE(filename)
+);
 

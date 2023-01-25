@@ -817,6 +817,43 @@ paths:
           description: "Something went wrong"
           schema:
             $ref: "#/definitions/generic_error"
+  /ingestion/file-status:
+    get:
+      tags:
+        - "ingestion"
+      summary: "Get the status of file"
+      description: "Get the status of file"
+      operationId: "getFileStatus"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              filename:
+                type: "string"
+                example: "school_details"
+      responses:
+        200:
+          description: "Get the file status"
+          schema:
+            type: "object"
+            properties:
+             response:
+                type: "array"
+                items:
+                  type: "object"
+                  properties: 
+                    file_status: 
+                      type: "string"
+                      example: school
+        400:
+          description: "Something went wrong"
+          schema:
+            $ref: "#/definitions/generic_error" 
 
 definitions:
   generic_error:
