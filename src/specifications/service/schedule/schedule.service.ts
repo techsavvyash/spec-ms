@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { scheduleDto } from '../../dto/specData.dto';
-import { checkName } from '../../queries/queries';
+import { checkName, checkRecordExists, insertIntoSchedule, updateSchedule } from '../../queries/queries';
 import { scheduleSchema } from '../../../utils/spec-data';
 import { DataSource } from 'typeorm';
 import { GenericFunction } from '../genericFunction';
@@ -31,11 +31,53 @@ export class ScheduleService {
                 queryResult = queryResult.replace('$1', `${scheduleData?.pipeline_name?.toLowerCase()}`);
                 const resultPipeName = await queryRunner.query(queryResult);
                 if (resultPipeName.length === 1) {
-                    this.pipelineService.CreatePipeline(queryRunner, scheduleData?.pipeline_name, scheduleData?.scheduled_at)
-                    return {code: 200, message: "Pipeline has been successfully scheduled"}
+                    queryRunner.startTransaction();
+                    try {
+                        const result = await this.pipelineService.CreatePipeline(queryRunner, scheduleData?.pipeline_name, scheduleData?.scheduled_at)
+                        if (result?.code === 200) {
+                            console.log(resultPipeName[0].pid);
+                            let checkPipelinePid = checkRecordExists('pipeline_pid', 'schedule');
+                            checkPipelinePid = checkPipelinePid.replace('$1', resultPipeName[0].pid);
+                            const recordsCount = await queryRunner.query(checkPipelinePid);
+                            if (recordsCount?.length > 0) {
+                                let updateScheduleQry = updateSchedule(scheduleData.scheduled_at, recordsCount[0].pid)
+                                let updateResult = await queryRunner.query(updateScheduleQry);
+                                if (updateResult.length > 1) {
+                                    return { code: 200, "message": "Successfully updated the schedule" }
+                                }
+                                else {
+                                    return { code: 400, "error": "Failed to update the schedule" };
+                                }
+                            }
+                            else {
+                                const queryStr = insertIntoSchedule(['pipeline_pid', 'scheduled_at'], [resultPipeName[0].pid, scheduleData?.scheduled_at]);
+                                let resultSchedule = await queryRunner.query(queryStr);
+                                if (resultSchedule[0]?.pid) {
+                                    await queryRunner.commitTransaction();
+                                    return { code: 200, message: `${scheduleData.pipeline_name} has been successfully scheduled` }
+                                }
+                                else {
+                                    await queryRunner.rollbackTransaction();
+                                    return { code: 400, error: "Could not insert into schedule table" };
+                                }
+                            }
+                        }
+                        else {
+                            await queryRunner.rollbackTransaction();
+                            return { code: 400, error: `Could not create schedule for ${scheduleData.pipeline_name}` }
+                        }
+
+                    } catch (error) {
+                        await queryRunner.rollbackTransaction();
+                        return { code: 400, error: "Something went wrong" }
+                    } finally {
+                        await queryRunner.release();
+                    }
+
+
                 }
                 else {
-                    return {code: 400, error: "Pipeline name not Found"}
+                    return { code: 400, error: "Pipeline name not Found" }
                 }
             }
         }

@@ -48,11 +48,21 @@ CREATE TABLE IF NOT EXISTS spec.pipeline (
   created_at      TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   pipeline_name   VARCHAR UNIQUE,
-  pipeline_type VARCHAR,
+  pipeline_type   VARCHAR,
   event_pid       INT REFERENCES spec.event (pid),
   dataset_pid     INT REFERENCES spec.dataset (pid),
   dimension_pid   INT REFERENCES spec.dimension (pid),
   transformer_pid INT REFERENCES spec.transformer (pid)
+);
+
+CREATE TABLE IF NOT EXISTS spec.schedule (
+  pid             INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted      BOOLEAN   DEFAULT FALSE,
+  event_by        INT NOT NULL DEFAULT 1,
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  pipeline_pid    INT NOT NULL REFERENCES spec.pipeline (pid),
+  scheduled_at    VARCHAR NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ingestion.file_tracker (
@@ -69,4 +79,3 @@ CREATE TABLE IF NOT EXISTS ingestion.file_tracker (
   filesize           NUMERIC NOT NULL,
   processed_count    INT
 );
-

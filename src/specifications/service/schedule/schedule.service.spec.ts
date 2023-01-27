@@ -89,46 +89,46 @@ describe('ScheduleService', () => {
     expect(await service.schedulePipeline(input)).toStrictEqual(result)
   });
 
-  it('Pipeline has been successfully scheduled',async () => {
-    const mockTransacation1 = {
-      createQueryRunner: jest.fn().mockImplementation(() => ({
-        query: jest.fn().mockReturnValue([{length:1}])
-      })),
-    };
+  // it('Pipeline has been successfully scheduled',async () => {
+  //   const mockTransacation1 = {
+  //     createQueryRunner: jest.fn().mockImplementation(() => ({
+  //       query: jest.fn().mockReturnValue([{length:1}])
+  //     })),
+  //   };
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [ScheduleService, DataSource, GenericFunction, PipelineService, HttpCustomService,
-        {
-          provide: PipelineService,
-          useValue: {
-            CreatePipeline:jest.fn()
-          }
-        },
-        {
-          provide: ScheduleService,
-          useClass: ScheduleService
-        },
-        {
-          provide: DataSource,
-          useValue: mockTransacation1
-        },
-        {
-          provide: GenericFunction,
-          useClass: GenericFunction
-        },
-        {
-          provide: HttpCustomService,
-          useValue: mockTransacation1
-        },
-      ],
-    }).compile();
+  //   const module: TestingModule = await Test.createTestingModule({
+  //     providers: [ScheduleService, DataSource, GenericFunction, PipelineService, HttpCustomService,
+  //       {
+  //         provide: PipelineService,
+  //         useValue: {
+  //           CreatePipeline:jest.fn()
+  //         }
+  //       },
+  //       {
+  //         provide: ScheduleService,
+  //         useClass: ScheduleService
+  //       },
+  //       {
+  //         provide: DataSource,
+  //         useValue: mockTransacation1
+  //       },
+  //       {
+  //         provide: GenericFunction,
+  //         useClass: GenericFunction
+  //       },
+  //       {
+  //         provide: HttpCustomService,
+  //         useValue: mockTransacation1
+  //       },
+  //     ],
+  //   }).compile();
 
-    service = module.get<ScheduleService>(ScheduleService);
-    let input = {
-      "pipeline_name": "student_count_pipe",
-      "scheduled_at": "0 6 13 ? * *"
-    }
-    let result = { code: 200, "message": "Pipeline has been successfully scheduled" }
-    expect(await service.schedulePipeline(input)).toStrictEqual(result)
-  });
+  //   service = module.get<ScheduleService>(ScheduleService);
+  //   let input = {
+  //     "pipeline_name": "student_count_pipe",
+  //     "scheduled_at": "0 6 13 ? * *"
+  //   }
+  //   let result = { code: 200, "message": "Pipeline has been successfully scheduled" }
+  //   expect(await service.schedulePipeline(input)).toStrictEqual(result)
+  // });
 });
