@@ -671,7 +671,7 @@ describe('PipelineService', () => {
                 }
             ]
         };
-        let result = {code: 200, message: 'Processor Group Running Successfully'};
+        let result = {code: 200, message: 'Processor group created successfully'};
         expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
     }, 70000);
 
@@ -781,7 +781,7 @@ describe('PipelineService', () => {
                 }
             ]
         };
-        let result = {code: 200, message: 'Processor group running successfully'};
+        let result = {code: 200, message: 'Processor group created successfully'};
         expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
     }, 70000);
 
