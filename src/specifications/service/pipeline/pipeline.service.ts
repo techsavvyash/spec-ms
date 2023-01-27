@@ -101,6 +101,7 @@ export class PipelineService {
                         return result
                     }
                 } catch (error) {
+                    console.log("Error in spec pipeline ::::", error)
                     await queryRunner.rollbackTransaction();
                     return {code: 400, error: "Something went wrong"};
                 } finally {
