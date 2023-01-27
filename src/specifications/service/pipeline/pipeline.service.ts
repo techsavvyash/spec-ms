@@ -166,7 +166,7 @@ export class PipelineService {
                     await this.updateProcessorProperty(pg_source['component']['id'], 'failedLogMessage', transformer_file, schedulePeriod);
                     return {
                         code: 200,
-                        message: "Processor group running successfully"
+                        message: "Processor group created successfully"
                     }
                 }
                 else {
@@ -181,7 +181,7 @@ export class PipelineService {
                     await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data);
                     return {
                         code: 200,
-                        message: "Processor Group Running Successfully"
+                        message: "Processor group created successfully"
                     }
                 }
             }
