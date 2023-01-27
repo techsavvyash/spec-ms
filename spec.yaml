@@ -806,13 +806,13 @@ paths:
 
       responses:
         200:
-          description: "CSV Uploaded Successfully"
+          description: "File is being processed"
           schema:
             type: "object"
             properties:
               message:
                 type: "string"
-                example: "CSV Uploaded Successfully"
+                example: "File is being processed"
         400:
           description: "Something went wrong"
           schema:
