@@ -62,7 +62,7 @@ export class PipelineService {
                 await queryRunner.connect();
                 await queryRunner.startTransaction();
                 try {
-                    let insertPipeLineQuery = await insertIntoSpecPipeline(pipelineData?.pipeline_name, dataset_name, dimension_name, event_name, transformer_name);
+                    let insertPipeLineQuery = await insertIntoSpecPipeline(pipelineData?.pipeline_name,PipeStr, dataset_name, dimension_name, event_name, transformer_name);
                     const insertPipelineResult = await queryRunner.query(insertPipeLineQuery);
                     if (insertPipelineResult[0].pid) {
                         if (PipeStr === 'ingest_to_db') {
@@ -73,6 +73,10 @@ export class PipelineService {
                             if (insertPipelineResult[0].dataset_pid == null) {
                                 await queryRunner.rollbackTransaction();
                                 return {code: 400, error: "Cannot find dataset name"}
+                            }
+                            if(insertPipelineResult[0].event_pid == null){
+                                await queryRunner.rollbackTransaction();
+                                return {code:400, error:"Cannot find event name"}
                             }
                         }
                         else if (PipeStr === 'dimension_to_db') {
@@ -166,7 +170,7 @@ export class PipelineService {
                     await this.updateProcessorProperty(pg_source['component']['id'], 'failedLogMessage', transformer_file, schedulePeriod);
                     return {
                         code: 200,
-                        message: "Processor group running successfully"
+                        message: "Processor group created successfully"
                     }
                 }
                 else {
@@ -181,7 +185,7 @@ export class PipelineService {
                     await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data);
                     return {
                         code: 200,
-                        message: "Processor Group Running Successfully"
+                        message: "Processor group created successfully"
                     }
                 }
             }
