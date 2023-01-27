@@ -359,7 +359,7 @@ export const PipelineSchemaIngesttoDB = {
                 },
 
             },
-            "required": ["transformer_name","dataset_name","dimension_name"]
+            "required": ["transformer_name","dataset_name","dimension_name","event_name"]
         }
     }
     },

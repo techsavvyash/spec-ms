@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS spec.pipeline (
   created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   pipeline_name   VARCHAR UNIQUE,
+  pipeline_type VARCHAR,
   event_pid       INT REFERENCES spec.event (pid),
   dataset_pid     INT REFERENCES spec.dataset (pid),
   dimension_pid   INT REFERENCES spec.dimension (pid),

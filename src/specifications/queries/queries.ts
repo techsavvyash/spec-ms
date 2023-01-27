@@ -94,8 +94,8 @@ export function getPipelineSpec(pipelineName) {
 }
 
 
-export function insertIntoSpecPipeline(pipeline_name?: string ,dataset_name?: string,dimension_name?: string,event_name?: string, transformer_name?: string ) {
-    const queryStr = `INSERT INTO spec.pipeline (event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name)
+export function insertIntoSpecPipeline(pipeline_name?: string ,pipeline_type?: string,dataset_name?: string,dimension_name?: string,event_name?: string, transformer_name?: string ) {
+    const queryStr = `INSERT INTO spec.pipeline (event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name, pipeline_type)
     VALUES ((SELECT pid
              FROM spec.event
              WHERE event_name = '${event_name}'),
@@ -108,7 +108,8 @@ export function insertIntoSpecPipeline(pipeline_name?: string ,dataset_name?: st
             (SELECT pid
              FROM spec.transformer
              WHERE transformer_file = '${transformer_name}'),
-            '${pipeline_name}'
+            '${pipeline_name}',
+            '${pipeline_type}'
     ) RETURNING *`
     return queryStr
 }
