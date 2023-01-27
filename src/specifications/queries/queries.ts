@@ -113,3 +113,24 @@ export function insertIntoSpecPipeline(pipeline_name?: string ,pipeline_type?: s
     ) RETURNING *`
     return queryStr
 }
+
+export function insertIntoSchedule(columnNames: string[], columnValues: any[])
+{
+    let queryStr = `INSERT INTO spec.schedule(${columnNames[0]},${columnNames[1]}) VALUES (${columnValues[0]},'${columnValues[1]}') RETURNING pid`;
+    return queryStr;
+}
+
+export function updateSchedule(schedule_type: string,pid: number)
+{
+    let queryStr = `UPDATE spec.schedule SET scheduled_at = '${schedule_type}' where pid = ${pid}`;
+    return queryStr;
+}
+
+export function checkRecordExists(coulmnName:string, tableName:string)
+{
+    const querStr = `SELECT ${coulmnName}, pid FROM spec.${tableName} WHERE ${coulmnName} = $1`;
+    return querStr;
+}
+
+
+
