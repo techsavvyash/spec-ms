@@ -1,21 +1,41 @@
-export class specDTO {
+import { ApiProperty } from "@nestjs/swagger";
+
+export class specDimensionDTO {
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
     dimension_name: string;
-    dimension: JSON;
+    @ApiProperty()
+    input: JSON
+}
+
+export class specDataset{
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
+    dataset_name: string;
+    @ApiProperty()
+    input: JSON
 }
 
 export class specEventDTO {
-    event_name: string;
-    dimensions: JSON;
-    items: JSON
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
+    event_name: JSON;
+    @ApiProperty()
+    input: JSON
 }
 
 export class specTrasformer {
-    transformer_name: string;
-    event_name: string;
-    dataset_name: string;
-    template: string;
-    function: string;
-    transformer_type: string;
+    @ApiProperty()
+    ingestion_name: string;
+    @ApiProperty()
+    key_file: string;
+    @ApiProperty()
+    program: string;
+    @ApiProperty()
+    operation: string;
 }
 
 export class eventResponse {
@@ -33,19 +53,24 @@ export class datasetResponse {
     error?: string;
 }
 
-export class pipelineDto{
+export class pipelineDto {
+    @ApiProperty()
     pipeline_name: string;
+    @ApiProperty()
     pipeline_type: string;
+    @ApiProperty()
     pipeline: object[];
 }
 
-export class Result{
+export class Result {
     code: number;
     message?: string;
     error?: string;
 }
 
-export class scheduleDto{
+export class scheduleDto {
+    @ApiProperty()
     pipeline_name?: string;
+    @ApiProperty()
     scheduled_at?: string;
 }
