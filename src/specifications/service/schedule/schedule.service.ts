@@ -35,7 +35,6 @@ export class ScheduleService {
                     try {
                         const result = await this.pipelineService.CreatePipeline(queryRunner, scheduleData?.pipeline_name, scheduleData?.scheduled_at)
                         if (result?.code === 200) {
-                            console.log(resultPipeName[0].pid);
                             let checkPipelinePid = checkRecordExists('pipeline_pid', 'schedule');
                             checkPipelinePid = checkPipelinePid.replace('$1', resultPipeName[0].pid);
                             const recordsCount = await queryRunner.query(checkPipelinePid);
