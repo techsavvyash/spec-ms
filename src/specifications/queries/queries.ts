@@ -26,8 +26,7 @@ export function insertPipeline(columnNames: string[], tableName: string, columnV
     return queryStr;
 }
 
-export function checkDatasetDuplicacy(conditionData)
-{
+export function checkDatasetDuplicacy(conditionData) {
     let queryStr = `SELECT dataset_name,dataset_data FROM spec.dataset WHERE 
     (dataset_data->'input'->'properties'->'dataset'->'properties'->'items'->'items'->'properties') ::jsonb = ('${conditionData}') ::jsonb`
     return queryStr
@@ -50,12 +49,11 @@ export function createTable(tableName: string, columnNames: string[], dbColPrope
             }
             else {
                 createSubQuery = '';
-                createSubQuery += columnNames[i] + ' ' + dbColProperties[i] 
-                if(uniqueColumns?.length>0)
-                {
-                    createSubQuery += ', UNIQUE('+ [...uniqueColumns] +'));' 
+                createSubQuery += columnNames[i] + ' ' + dbColProperties[i]
+                if (uniqueColumns?.length > 0) {
+                    createSubQuery += ', UNIQUE(' + [...uniqueColumns] + '));'
                 }
-                else{
+                else {
                     createSubQuery += ');';
                 }
                 createQueryStr += createSubQuery;
@@ -94,7 +92,7 @@ export function getPipelineSpec(pipelineName) {
 }
 
 
-export function insertIntoSpecPipeline(pipeline_name?: string ,pipeline_type?: string,dataset_name?: string,dimension_name?: string,event_name?: string, transformer_name?: string ) {
+export function insertIntoSpecPipeline(pipeline_name?: string, pipeline_type?: string, dataset_name?: string, dimension_name?: string, event_name?: string, transformer_name?: string) {
     const queryStr = `INSERT INTO spec.pipeline (event_pid, dataset_pid, dimension_pid, transformer_pid, pipeline_name, pipeline_type)
     VALUES ((SELECT pid
              FROM spec.event
@@ -110,7 +108,7 @@ export function insertIntoSpecPipeline(pipeline_name?: string ,pipeline_type?: s
              WHERE transformer_file = '${transformer_name}'),
             '${pipeline_name}',
             '${pipeline_type}'
-    ) RETURNING *`
+    ) RETURNING *`;
     return queryStr
 }
 
