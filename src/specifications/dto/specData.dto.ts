@@ -73,7 +73,7 @@ export class pipelineDto {
     @ApiProperty()
     pipeline_name: string;
     @ApiProperty()
-    pipeline_type: string;
+    pipeline_type: string; 
     @ApiProperty({ isArray: true, type: () => Pipelineobj })
     pipeline:object[]
 }
