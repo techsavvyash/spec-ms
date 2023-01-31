@@ -125,11 +125,9 @@ export const dimensionSchemaData = {
                         "shouldnotnull": true,
                         "type": "string",
                         "pattern": "dimension_name"
-                    }, {"shouldnotnull": true, "type": "string", "pattern": "dimension"},{
-                        "shouldnotnull": true, "type": "string", "pattern": "target_table" 
-                    }],
+                    }, {"shouldnotnull": true, "type": "string", "pattern": "dimension"}],
                     "shouldnotnull": true,
-                    "minItems": 3,
+                    "minItems": 2,
                     "additionalItems": false
                 }
             },
