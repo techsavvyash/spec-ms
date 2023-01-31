@@ -2,19 +2,21 @@ import {EventService} from './../service/event/event.service';
 import {DimensionService} from './../service/dimension/dimension.service';
 import {Body, Controller, Post, Res} from '@nestjs/common';
 import {Response} from 'express';
-import {pipelineDto, Result, specTrasformer, scheduleDto} from '../dto/specData.dto';
+import {pipelineDto, Result, specDataset,specTrasformer, specDimensionDTO,scheduleDto, specEventDTO, s3DTO} from '../dto/specData.dto';
 import {TransformerService} from '../service/transformer/transformer.service';
 import {DatasetService} from '../service/dataset/dataset.service';
 import {PipelineService} from '../service/pipeline/pipeline.service';
 import { ScheduleService } from '../service/schedule/schedule.service';
-
+import { ApiTags } from '@nestjs/swagger';
+import { S3Service } from '../service/s3/s3.service';
+@ApiTags('spec-ms')
 @Controller('spec')
 export class SpecificationController {
-    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService, private scheduleService: ScheduleService) {
+    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService, private scheduleService: ScheduleService,private s3service:S3Service) {
     }
 
     @Post('/dimension')
-    async getDimensions(@Body() dimensionDTO: any, @Res()response: Response) {
+    async getDimensions(@Body() dimensionDTO: specDimensionDTO, @Res()response: Response) {
         try {
             let result = await this.dimensionService.createDimension(dimensionDTO);
             if (result.code == 400) {
@@ -33,7 +35,7 @@ export class SpecificationController {
     }
 
     @Post('/event')
-    async getEvents(@Body() eventDTO: any, @Res()response: Response) {
+    async getEvents(@Body() eventDTO: specEventDTO, @Res()response: Response) {
         try {
             let result = await this.EventService.createEvent(eventDTO);
             if (result.code == 400) {
@@ -52,7 +54,7 @@ export class SpecificationController {
     }
 
     @Post('/dataset')
-    async getDataset(@Body() datasetDTO: any, @Res()response: Response) {
+    async getDataset(@Body() datasetDTO: specDataset, @Res()response: Response) {
         try {
             let result = await this.datasetService.createDataset(datasetDTO);
             if (result.code == 400) {
@@ -114,6 +116,23 @@ export class SpecificationController {
             }
         } catch (error) {
             console.error("schedule.Pipeline impl :", error)
+        }
+    }
+
+    @Post('/s3')
+    async uploadToS3(@Body() scheduleTime:s3DTO,@Res()response: Response)
+    {
+        try {
+            let result: any = await this.s3service.uploadFile(scheduleTime);
+            if (result.code == 400) {
+                response.status(400).send({"message": result.error});
+            } else {
+                response.status(200).send({"message": result.message});
+            }
+        }
+        catch (e) {
+            console.error('create-s3upload-impl: ', e.message);
+            throw new Error(e);
         }
     }
 

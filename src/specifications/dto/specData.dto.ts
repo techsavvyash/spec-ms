@@ -1,21 +1,57 @@
-export class specDTO {
+import { ApiProperty } from "@nestjs/swagger";
+
+export class obj  {
+    @ApiProperty()
+    type: object
+}
+
+export class Pipelineobj  {
+    @ApiProperty()
+    event_name: string
+    @ApiProperty()
+    dataset_name: string
+    @ApiProperty()
+    dimension_name: string
+    @ApiProperty()
+    transformer_name: string
+}
+
+export class specDimensionDTO {
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
     dimension_name: string;
-    dimension: JSON;
+    @ApiProperty()
+    input: obj
+}
+
+export class specDataset{
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
+    dataset_name: string;
+    @ApiProperty()
+    input: obj
 }
 
 export class specEventDTO {
-    event_name: string;
-    dimensions: JSON;
-    items: JSON
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
+    event_name: JSON;
+    @ApiProperty()
+    input: obj
 }
 
 export class specTrasformer {
-    transformer_name: string;
-    event_name: string;
-    dataset_name: string;
-    template: string;
-    function: string;
-    transformer_type: string;
+    @ApiProperty()
+    ingestion_name: string;
+    @ApiProperty()
+    key_file: string;
+    @ApiProperty()
+    program: string;
+    @ApiProperty()
+    operation: string;
 }
 
 export class eventResponse {
@@ -33,19 +69,30 @@ export class datasetResponse {
     error?: string;
 }
 
-export class pipelineDto{
+export class pipelineDto {
+    @ApiProperty()
     pipeline_name: string;
-    pipeline_type: string;
-    pipeline: object[];
+    @ApiProperty()
+    pipeline_type: string; 
+    @ApiProperty({ isArray: true, type: () => Pipelineobj })
+    pipeline:object[]
 }
 
-export class Result{
+export class Result {
     code: number;
     message?: string;
     error?: string;
 }
 
-export class scheduleDto{
+export class scheduleDto {
+    @ApiProperty()
     pipeline_name?: string;
+    @ApiProperty()
     scheduled_at?: string;
+}
+
+
+export class s3DTO { 
+    @ApiProperty()
+    scheduled_at?:string
 }

@@ -89,10 +89,13 @@ describe('ScheduleService', () => {
     expect(await service.schedulePipeline(input)).toStrictEqual(result)
   });
 
-  it('Pipeline has been successfully scheduled',async () => {
+  it('Could not create schedule for student_count_pipe',async () => {
     const mockTransacation1 = {
       createQueryRunner: jest.fn().mockImplementation(() => ({
-        query: jest.fn().mockReturnValue([{length:1}])
+        query: jest.fn().mockReturnValue([{length:1}]),
+        startTransaction:jest.fn(),
+        release:jest.fn(),
+        rollbackTransaction:jest.fn()
       })),
     };
 
@@ -128,7 +131,213 @@ describe('ScheduleService', () => {
       "pipeline_name": "student_count_pipe",
       "scheduled_at": "0 6 13 ? * *"
     }
-    let result = { code: 200, "message": "Pipeline has been successfully scheduled" }
+    let result = { code: 400, "error": "Could not create schedule for student_count_pipe" }
     expect(await service.schedulePipeline(input)).toStrictEqual(result)
   });
+
+  it('Could not insert into schedule table', async () => {
+    const mockTransacation3 = {
+      createQueryRunner: jest.fn().mockImplementation(() => ({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        release: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        query: jest.fn().mockReturnValueOnce([{ pid: 1 }]).mockReturnValueOnce([]).mockReturnValueOnce([])
+      })),
+    };
+
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ScheduleService, DataSource, GenericFunction, PipelineService, HttpCustomService,
+        {
+          provide: PipelineService,
+          useValue: {
+            CreatePipeline: jest.fn().mockResolvedValueOnce({ code: 200, message: "created" })
+          }
+        },
+        {
+          provide: ScheduleService,
+          useClass: ScheduleService
+        },
+        {
+          provide: DataSource,
+          useValue: mockTransacation3
+        },
+        {
+          provide: GenericFunction,
+          useClass: GenericFunction
+        },
+        {
+          provide: HttpCustomService,
+          useValue: mockTransacation3
+        },
+      ],
+    }).compile();
+
+    service = module.get<ScheduleService>(ScheduleService);
+    let input = {
+      "pipeline_name": "student_count_pipe",
+      "scheduled_at": "0 6 13 ? * *"
+    }
+    let result = { code: 400, "error": "Could not insert into schedule table" }
+    expect(await service.schedulePipeline(input)).toStrictEqual(result)
+  });
+
+  it('pipe line has been successfully scheduled', async () => {
+    const mockTransacation3 = {
+      createQueryRunner: jest.fn().mockImplementation(() => ({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        release: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        query: jest.fn().mockReturnValueOnce([{ pid: 1 }]).mockReturnValueOnce([]).mockReturnValueOnce([{pid:1}])
+      })),
+    };
+
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ScheduleService, DataSource, GenericFunction, PipelineService, HttpCustomService,
+        {
+          provide: PipelineService,
+          useValue: {
+            CreatePipeline: jest.fn().mockResolvedValueOnce({ code: 200, message: "created" })
+          }
+        },
+        {
+          provide: ScheduleService,
+          useClass: ScheduleService
+        },
+        {
+          provide: DataSource,
+          useValue: mockTransacation3
+        },
+        {
+          provide: GenericFunction,
+          useClass: GenericFunction
+        },
+        {
+          provide: HttpCustomService,
+          useValue: mockTransacation3
+        },
+      ],
+    }).compile();
+
+    service = module.get<ScheduleService>(ScheduleService);
+    let input = {
+      "pipeline_name": "student_count_pipe",
+      "scheduled_at": "0 6 13 ? * *"
+    }
+    let result = { code: 200, message: `student_count_pipe has been successfully scheduled` }
+    expect(await service.schedulePipeline(input)).toStrictEqual(result)
+  });
+
+  it('Successfully updated the schedule', async () => {
+    const mockTransacation1 = {
+      createQueryRunner: jest.fn().mockImplementation(() => ({
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          release: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          query: jest.fn().mockReturnValueOnce([{pid: 1}]).mockReturnValueOnce([{pid:1}]).mockReturnValueOnce([{pid:1}])
+      })),
+      query: jest.fn().mockReturnValueOnce([{length: 1}])
+  };
+
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ScheduleService, DataSource, GenericFunction, PipelineService, HttpCustomService,
+        {
+          provide: PipelineService,
+          useValue: {
+            CreatePipeline: jest.fn().mockResolvedValueOnce({ code: 200, message: "created"})
+          }
+        },
+        {
+          provide: ScheduleService,
+          useClass: ScheduleService
+        },
+        {
+          provide: DataSource,
+          useValue: mockTransacation1
+        },
+        {
+          provide: GenericFunction,
+          useClass: GenericFunction
+        },
+        {
+          provide: HttpCustomService,
+          useValue: mockTransacation1
+        },
+      ],
+    }).compile();
+
+    service = module.get<ScheduleService>(ScheduleService);
+    let input = {
+      "pipeline_name": "student_count_pipe",
+      "scheduled_at": "0 6 13 ? * *"
+    }
+    let result = { code: 200, "message": "Successfully updated the schedule" }
+    expect(await service.schedulePipeline(input)).toStrictEqual(result)
+  });
+
+  it('exception', async () => {
+    const mockTransacation1 = {
+      createQueryRunner: jest.fn().mockImplementation(() => ({
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          release: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          query: jest.fn().mockReturnValueOnce([{pid: 1}]).mockReturnValueOnce([{pid:1}]).mockReturnValueOnce([{length:2}])
+      })),
+      query: jest.fn().mockReturnValueOnce([{length: 1}])
+  };
+
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ScheduleService, DataSource, GenericFunction, PipelineService, HttpCustomService,
+        {
+          provide: PipelineService,
+          useValue: {
+            CreatePipeline: jest.fn().mockImplementation(() => {
+              throw Error("exception test")
+          })
+          }
+        },
+        {
+          provide: ScheduleService,
+          useClass: ScheduleService
+        },
+        {
+          provide: DataSource,
+          useValue: mockTransacation1
+        },
+        {
+          provide: GenericFunction,
+          useClass: GenericFunction
+        },
+        {
+          provide: HttpCustomService,
+          useValue: mockTransacation1
+        },
+      ],
+    }).compile();
+
+    service = module.get<ScheduleService>(ScheduleService);
+    let input = {
+      "pipeline_name": "student_count_pipe",
+      "scheduled_at": "0 6 13 ? * *"
+    }
+    let resultOutput = "Error: exception test";
+
+        try {
+            await service.schedulePipeline(input);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+  });
+
 });
