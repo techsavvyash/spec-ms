@@ -690,12 +690,16 @@ export const datasetSchemaData = {
                                                                 "properties"
                                                             ]
                                                         }
-                                                    }
+                                                    },
+                                                    "required":["function","target_table","numerator_col",
+                                                    "denominator_col","update_cols","columns"]
                                                 },
                                                 "required": {
                                                     "type": "array",
                                                     "shouldnotnull": true,
+                                                    "maxItems": 6,
                                                     "items": [
+                                                        
                                                         {
                                                             "type": "string",
                                                             "pattern": "function",
@@ -756,11 +760,29 @@ export const datasetSchemaData = {
                         "dataset_name",
                         "dataset"
                     ]
+                },
+                "required": {
+                    "type": "array",
+                    "shouldnotnull": true,
+                    "maxItems": 2,
+                    "items": [
+                        {
+                            "type": "string",
+                            "pattern": "dataset_name",
+                            "shouldnotnull": true
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "dataset",
+                            "shouldnotnull": true
+                        }
+                    ]
                 }
             },
             "required": [
                 "type",
-                "properties"
+                "properties",
+                "required"
             ]
         }
     },
