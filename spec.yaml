@@ -515,6 +515,40 @@ paths:
           description: "Something went wrong"
           schema:
             $ref: "#/definitions/generic_error"
+            
+  /spec/s3:
+    post:
+      tags:
+        - "spec"
+      summary: "upload the files into s3"
+      description: "upload the files into s3"
+      operationId: "s3upload"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              scheduled_at:
+                type: "string"
+                example: "0 0/2 * 1/1 * ? *"
+      responses:
+        200:
+          description: "uploadToS3 Processor group running successfully"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "uploadToS3 Processor group running successfully"     
+        400:
+          description: "Something went wrong"
+          schema:
+            $ref: "#/definitions/generic_error"
+            
   /spec/schedule:
     post:
       tags:
@@ -554,6 +588,7 @@ paths:
           description: "Something went wrong"
           schema:
             $ref: "#/definitions/generic_error"
+
 
   /ingestion/event:
     post:
@@ -827,15 +862,18 @@ paths:
       produces:
         - "application/json"
       parameters:
-        - in: "body"
-          name: "body"
+        - in: "query"
+          name: "filename"
+          type: string
           required: true
-          schema:
-            type: "object"
-            properties:
-              filename:
-                type: "string"
-                example: "school_details"
+        - in: "query"
+          name: "ingestion_type"
+          type: string
+          required: true
+        - in: "query"
+          name: "ingestion_name"
+          type: string
+          required: true
       responses:
         200:
           description: "Get the file status"
@@ -849,7 +887,13 @@ paths:
                   properties: 
                     file_status: 
                       type: "string"
-                      example: school
+                      example: uploaded
+                    pid: 
+                      type: "string"
+                      example: 1
+                    created_at: 
+                      type: "string"
+                      example: "2023-01-27 18:18:08.007215"
         400:
           description: "Something went wrong"
           schema:
