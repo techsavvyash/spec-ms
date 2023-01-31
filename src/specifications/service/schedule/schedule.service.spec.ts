@@ -241,7 +241,7 @@ describe('ScheduleService', () => {
           release: jest.fn(),
           rollbackTransaction: jest.fn(),
           commitTransaction: jest.fn(),
-          query: jest.fn().mockReturnValueOnce([{pid: 1}]).mockReturnValueOnce([{pid:1}]).mockReturnValueOnce([{pid:1},{pid:"data"}])
+          query: jest.fn().mockReturnValueOnce([{pid: 1}]).mockReturnValueOnce([{pid:1}]).mockReturnValueOnce([{pid:1}])
       })),
       query: jest.fn().mockReturnValueOnce([{length: 1}])
   };

@@ -11,11 +11,12 @@ import { DatasetService } from './service/dataset/dataset.service';
 import { HttpModule } from '@nestjs/axios';
 import { PipelineService } from './service/pipeline/pipeline.service';
 import { ScheduleService } from './service/schedule/schedule.service';
+import { S3Service } from './service/s3/s3.service';
 
 @Module({
   imports: [HttpModule],
   controllers: [SpecificationController],
-  providers:[DimensionService,EventService,GenericFunction,TransformerService, DatasetService, PipelineService, HttpCustomService, ScheduleService],
+  providers:[DimensionService,EventService,GenericFunction,TransformerService, DatasetService, PipelineService, HttpCustomService, ScheduleService,S3Service],
 
 })
 export class SpecificationsModule {}
