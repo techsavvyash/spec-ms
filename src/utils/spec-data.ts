@@ -85,6 +85,36 @@ export const dimensionSchemaData = {
                                 }
                             },
                             "required": ["type", "items"],
+                        },
+                        "target_table":{
+                            "type": "object",
+                            "shouldnotnull": true,
+                            "properties": {
+                                "type":{
+                                    "type": "string",
+                                    "pattern": "object",
+                                    "shouldnotnull": true
+                                },
+                                "properties":{
+                                    "type": "object",
+                                    "shouldnotnull": true,
+                                    "properties":{
+                                        "ingestion.dimension_state":{
+                                            "type": "object",
+                                            "shouldnotnull": true,
+                                            "properties":{
+                                                "type":{
+                                                    "type": "string",
+                                                    "pattern":"string"
+                                                },
+                                                "shouldnotnull": true
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                            },
+                            "required": ["type", "properties"]
                         }
                     },
                     "required": ["dimension_name", "dimension"]
@@ -95,9 +125,11 @@ export const dimensionSchemaData = {
                         "shouldnotnull": true,
                         "type": "string",
                         "pattern": "dimension_name"
-                    }, {"shouldnotnull": true, "type": "string", "pattern": "dimension"}],
+                    }, {"shouldnotnull": true, "type": "string", "pattern": "dimension"},{
+                        "shouldnotnull": true, "type": "string", "pattern": "target_table" 
+                    }],
                     "shouldnotnull": true,
-                    "minItems": 2,
+                    "minItems": 3,
                     "additionalItems": false
                 }
             },
