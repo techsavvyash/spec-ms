@@ -86,30 +86,30 @@ export const dimensionSchemaData = {
                             },
                             "required": ["type", "items"],
                         },
-                        "target_table":{
+                        "target_table": {
                             "type": "object",
                             "shouldnotnull": true,
                             "properties": {
-                                "type":{
+                                "type": {
                                     "type": "string",
                                     "pattern": "object",
                                     "shouldnotnull": true
                                 },
-                                "properties":{
+                                "properties": {
                                     "type": "object",
                                     "shouldnotnull": true,
-                                    "properties":{
-                                        "ingestion.dimension_state":{
+                                    "properties": {
+                                        "ingestion.dimension_state": {
                                             "type": "object",
                                             "shouldnotnull": true,
-                                            "properties":{
-                                                "type":{
+                                            "properties": {
+                                                "type": {
                                                     "type": "string",
-                                                    "pattern":"string"
+                                                    "pattern": "string"
                                                 },
                                                 "shouldnotnull": true
                                             }
-                                            
+
                                         }
                                     }
                                 }
@@ -635,11 +635,24 @@ export const datasetSchemaData = {
                                                                             "required": [
                                                                                 "column"
                                                                             ]
+                                                                        },
+                                                                        "required": {
+                                                                            "type": "array",
+                                                                            "shouldnotnull": true,
+                                                                            "maxItems":1,
+                                                                            "items": [
+                                                                                {
+                                                                                    "type": "string",
+                                                                                    "pattern": "column",
+                                                                                    "shouldnotnull": true
+                                                                                }
+                                                                            ]
                                                                         }
                                                                     },
                                                                     "required": [
                                                                         "type",
-                                                                        "properties"
+                                                                        "properties",
+                                                                        "required"
                                                                     ]
                                                                 }
                                                             },
@@ -691,15 +704,15 @@ export const datasetSchemaData = {
                                                             ]
                                                         }
                                                     },
-                                                    "required":["function","target_table","numerator_col",
-                                                    "denominator_col","update_cols","columns"]
+                                                    "required": ["function", "target_table", "numerator_col",
+                                                        "denominator_col", "update_cols", "columns"]
                                                 },
                                                 "required": {
                                                     "type": "array",
                                                     "shouldnotnull": true,
                                                     "maxItems": 6,
                                                     "items": [
-                                                        
+
                                                         {
                                                             "type": "string",
                                                             "pattern": "function",
@@ -739,11 +752,15 @@ export const datasetSchemaData = {
                                                 "required"
                                             ]
                                         }
-                                    }
+                                    },
+                                    "required":[
+                                        "items"
+                                    ]
                                 },
                                 "required": {
                                     "type": "array",
                                     "shouldnotnull": true,
+                                    "maxItems": 1,
                                     "items": {
                                         "type": "string",
                                         "pattern": "items",
@@ -752,7 +769,9 @@ export const datasetSchemaData = {
                                 }
                             },
                             "required": [
-                                "properties"
+                                "type",
+                                "properties",
+                                "required"
                             ]
                         }
                     },
