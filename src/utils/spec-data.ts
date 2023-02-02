@@ -428,6 +428,9 @@ export const datasetSchemaData = {
                             "properties": {
                                 "type": {
                                     "type": "string",
+                                    "enum": [
+                                        "string"
+                                    ],
                                     "shouldnotnull": true
                                 }
                             }
@@ -467,11 +470,35 @@ export const datasetSchemaData = {
                                         "column",
                                         "merge_on_col"
                                     ]
+                                },
+                                "required": {
+                                    "type": "array",
+                                    "shouldnotnull": true,
+                                    "minItems": 3,
+                                    "maxItems": 3,
+                                    "items": [
+                                        {
+                                            "type": "string",
+                                            "pattern": "table",
+                                            "shouldnotnull": true
+                                        },
+                                        {
+                                            "type": "string",
+                                            "pattern": "column",
+                                            "shouldnotnull": true
+                                        },
+                                        {
+                                            "type": "string",
+                                            "pattern": "merge_on_col",
+                                            "shouldnotnull": true
+                                        }
+                                    ]
                                 }
                             },
                             "required": [
                                 "type",
-                                "properties"
+                                "properties",
+                                "required"
                             ]
                         },
                         "dataset": {
@@ -524,6 +551,9 @@ export const datasetSchemaData = {
                                                                             "shouldnotnull": true
                                                                         }
                                                                     },
+                                                                    "required": [
+                                                                        "type"
+                                                                    ],
                                                                     "shouldnotnull": true
                                                                 }
                                                             }
@@ -639,7 +669,7 @@ export const datasetSchemaData = {
                                                                         "required": {
                                                                             "type": "array",
                                                                             "shouldnotnull": true,
-                                                                            "maxItems":1,
+                                                                            "maxItems": 1,
                                                                             "items": [
                                                                                 {
                                                                                     "type": "string",
@@ -753,7 +783,7 @@ export const datasetSchemaData = {
                                             ]
                                         }
                                     },
-                                    "required":[
+                                    "required": [
                                         "items"
                                     ]
                                 },
