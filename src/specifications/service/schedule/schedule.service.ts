@@ -41,7 +41,7 @@ export class ScheduleService {
                             if (recordsCount?.length > 0) {
                                 let updateScheduleQry = updateSchedule(scheduleData.scheduled_at, recordsCount[0].pid)
                                 let updateResult = await queryRunner.query(updateScheduleQry);
-                                if (updateResult.length > 1) {
+                                if (updateResult.length > 0) {
                                     return { code: 200, "message": "Successfully updated the schedule" }
                                 }
                                 else {

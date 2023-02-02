@@ -1,12 +1,28 @@
 import { ApiProperty } from "@nestjs/swagger";
 
+export class obj  {
+    @ApiProperty()
+    type: object
+}
+
+export class Pipelineobj  {
+    @ApiProperty()
+    event_name: string
+    @ApiProperty()
+    dataset_name: string
+    @ApiProperty()
+    dimension_name: string
+    @ApiProperty()
+    transformer_name: string
+}
+
 export class specDimensionDTO {
     @ApiProperty()
     ingestion_type: string;
     @ApiProperty()
     dimension_name: string;
     @ApiProperty()
-    input: JSON
+    input: obj
 }
 
 export class specDataset{
@@ -15,7 +31,7 @@ export class specDataset{
     @ApiProperty()
     dataset_name: string;
     @ApiProperty()
-    input: JSON
+    input: obj
 }
 
 export class specEventDTO {
@@ -24,7 +40,7 @@ export class specEventDTO {
     @ApiProperty()
     event_name: JSON;
     @ApiProperty()
-    input: JSON
+    input: obj
 }
 
 export class specTrasformer {
@@ -57,9 +73,9 @@ export class pipelineDto {
     @ApiProperty()
     pipeline_name: string;
     @ApiProperty()
-    pipeline_type: string;
-    @ApiProperty()
-    pipeline: object[];
+    pipeline_type: string; 
+    @ApiProperty({ isArray: true, type: () => Pipelineobj })
+    pipeline:object[]
 }
 
 export class Result {
@@ -73,4 +89,10 @@ export class scheduleDto {
     pipeline_name?: string;
     @ApiProperty()
     scheduled_at?: string;
+}
+
+
+export class s3DTO { 
+    @ApiProperty()
+    scheduled_at?:string
 }

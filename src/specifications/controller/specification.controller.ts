@@ -2,16 +2,17 @@ import {EventService} from './../service/event/event.service';
 import {DimensionService} from './../service/dimension/dimension.service';
 import {Body, Controller, Post, Res} from '@nestjs/common';
 import {Response} from 'express';
-import {pipelineDto, Result, specDataset,specTrasformer, specDimensionDTO,scheduleDto, specEventDTO} from '../dto/specData.dto';
+import {pipelineDto, Result, specDataset,specTrasformer, specDimensionDTO,scheduleDto, specEventDTO, s3DTO} from '../dto/specData.dto';
 import {TransformerService} from '../service/transformer/transformer.service';
 import {DatasetService} from '../service/dataset/dataset.service';
 import {PipelineService} from '../service/pipeline/pipeline.service';
 import { ScheduleService } from '../service/schedule/schedule.service';
 import { ApiTags } from '@nestjs/swagger';
+import { S3Service } from '../service/s3/s3.service';
 @ApiTags('spec-ms')
 @Controller('spec')
 export class SpecificationController {
-    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService, private scheduleService: ScheduleService) {
+    constructor(private dimensionService: DimensionService, private EventService: EventService, private transformerservice: TransformerService, private datasetService: DatasetService, private pipelineService: PipelineService, private scheduleService: ScheduleService,private s3service:S3Service) {
     }
 
     @Post('/dimension')
@@ -115,6 +116,23 @@ export class SpecificationController {
             }
         } catch (error) {
             console.error("schedule.Pipeline impl :", error)
+        }
+    }
+
+    @Post('/s3')
+    async uploadToS3(@Body() scheduleTime:s3DTO,@Res()response: Response)
+    {
+        try {
+            let result: any = await this.s3service.uploadFile(scheduleTime);
+            if (result.code == 400) {
+                response.status(400).send({"message": result.error});
+            } else {
+                response.status(200).send({"message": result.message});
+            }
+        }
+        catch (e) {
+            console.error('create-s3upload-impl: ', e.message);
+            throw new Error(e);
         }
     }
 
