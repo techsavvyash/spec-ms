@@ -769,45 +769,21 @@ export const datasetSchemaData = {
                                                             ]
                                                         }
                                                     },
-                                                    "required": ["function", "target_table", "numerator_col",
-                                                        "denominator_col", "update_cols", "columns"]
+                                                    "required": [ "target_table"]
                                                 },
                                                 "required": {
                                                     "type": "array",
                                                     "shouldnotnull": true,
-                                                    "maxItems": 6,
+                                                    "maxItems": 1,
                                                     "items": [
 
-                                                        {
-                                                            "type": "string",
-                                                            "pattern": "function",
-                                                            "shouldnotnull": true
-                                                        },
+                                                        
                                                         {
                                                             "type": "string",
                                                             "pattern": "target_table",
                                                             "shouldnotnull": true
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "pattern": "numerator_col",
-                                                            "shouldnotnull": true
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "pattern": "denominator_col",
-                                                            "shouldnotnull": true
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "pattern": "update_cols",
-                                                            "shouldnotnull": true
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "pattern": "columns",
-                                                            "shouldnotnull": true
                                                         }
+                                                        
                                                     ]
                                                 }
                                             },
