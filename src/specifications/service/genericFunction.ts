@@ -45,7 +45,7 @@ export class GenericFunction {
                 dbColumns[index] = 'VARCHAR'
             }
             else if (element?.type == "integer") {
-                dbColumns[index] = 'BIGINT';
+                dbColumns[index] = 'INTEGER';
             }
             else if (element?.type == "json") {
                 dbColumns[index] = 'jsonb';
