@@ -237,6 +237,7 @@ export const transformerSchemaData = {
             },
             "key_file": {
                 "type": "string",
+                "pattern":"^.*\.(csv)$",
                 "shouldnotnull": true
             },
             "program": {
