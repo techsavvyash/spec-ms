@@ -125,12 +125,9 @@ let inputData = {
                             }
                         },
                         "required": [
-                            "function",
-                            "target_table",
-                            "numerator_col",
-                            "denominator_col",
-                            "update_cols",
-                            "columns"
+                            
+                            "target_table"
+                           
                         ]
                     }
                 },
@@ -288,11 +285,8 @@ describe('DatasetService', () => {
                                         }
                                     },
                                     "required": [
-                                        "function",
-                                        "targetTable",
-                                        "update_cols",
-                                        "columns",
-                                        "filters"
+                                        "targetTable"
+                                       
                                     ]
                                 }
                             },
@@ -448,12 +442,8 @@ describe('DatasetService', () => {
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "numerator_col",
-                                    "denominator_col",
-                                    "update_cols",
-                                    "columns"
+                                    "target_table"
+                                    
                                 ]
                             }
                         },
@@ -599,12 +589,8 @@ describe('DatasetService', () => {
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "numerator_col",
-                                    "denominator_col",
-                                    "update_cols",
-                                    "columns"
+                                    "target_table"
+                                    
                                 ]
                             }
                         },
@@ -749,12 +735,8 @@ describe('DatasetService', () => {
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "numerator_col",
-                                    "denominator_col",
-                                    "update_cols",
-                                    "columns"
+                                    "target_table"
+                                   
                                 ]
                             }
                         },
