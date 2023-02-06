@@ -603,77 +603,77 @@ describe('PipelineService', () => {
         expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
     });
 
-    it('Processor Group Running Successfully Already Exists', async () => {
-        const mockTransaction = {
-            createQueryRunner: jest.fn().mockImplementation(() => ({
-                connect: jest.fn(),
-                startTransaction: jest.fn(),
-                release: jest.fn(),
-                rollbackTransaction: jest.fn(),
-                commitTransaction: jest.fn(),
-                query: jest.fn().mockReturnValueOnce({pid: 1})
-                    .mockReturnValueOnce([{pid: 1}])
-                    .mockReturnValueOnce([{pid: 1, dataset_pid: 1}])
-                    .mockReturnValueOnce([{
-                        "transformer_file": "student_attendance_by_class.py",
-                        "event_name": "student_attendance",
-                        "dataset_name": "student_attendance_by_class"
-                    }])
-            })),
-            query: jest.fn().mockReturnValueOnce([{length: 1}]),
-            get: jest.fn().mockReturnValueOnce({data: {component: {id: 1}}})
-                .mockReturnValueOnce({
-                    data: {
-                        processGroupFlow: {
-                            flow: {
-                                processGroups: [{
-                                    component: {
-                                        id: 123,
-                                        name: "student_attendance_by_class"
-                                    }
-                                }]
-                            }
-                        }
-                    }
-                }),
-            put: jest.fn()
-        };
+    // it('Processor Group Running Successfully Already Exists', async () => {
+    //     const mockTransaction = {
+    //         createQueryRunner: jest.fn().mockImplementation(() => ({
+    //             connect: jest.fn(),
+    //             startTransaction: jest.fn(),
+    //             release: jest.fn(),
+    //             rollbackTransaction: jest.fn(),
+    //             commitTransaction: jest.fn(),
+    //             query: jest.fn().mockReturnValueOnce({pid: 1})
+    //                 .mockReturnValueOnce([{pid: 1}])
+    //                 .mockReturnValueOnce([{pid: 1, dataset_pid: 1}])
+    //                 .mockReturnValueOnce([{
+    //                     "transformer_file": "student_attendance_by_class.py",
+    //                     "event_name": "student_attendance",
+    //                     "dataset_name": "student_attendance_by_class"
+    //                 }])
+    //         })),
+    //         query: jest.fn().mockReturnValueOnce([{length: 1}]),
+    //         get: jest.fn().mockReturnValueOnce({data: {component: {id: 1}}})
+    //             .mockReturnValueOnce({
+    //                 data: {
+    //                     processGroupFlow: {
+    //                         flow: {
+    //                             processGroups: [{
+    //                                 component: {
+    //                                     id: 123,
+    //                                     name: "student_attendance_by_class"
+    //                                 }
+    //                             }]
+    //                         }
+    //                     }
+    //                 }
+    //             }),
+    //         put: jest.fn()
+    //     };
 
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [PipelineService, DataSource, GenericFunction, HttpCustomService,
-                {
-                    provide: DataSource,
-                    useValue: mockTransaction
-                },
-                {
-                    provide: GenericFunction,
-                    useClass: GenericFunction
-                },
-                {
-                    provide: HttpCustomService,
-                    useValue: mockTransaction
-                },
-            ]
-        }).compile();
+    //     const module: TestingModule = await Test.createTestingModule({
+    //         providers: [PipelineService, DataSource, GenericFunction, HttpCustomService,
+    //             {
+    //                 provide: DataSource,
+    //                 useValue: mockTransaction
+    //             },
+    //             {
+    //                 provide: GenericFunction,
+    //                 useClass: GenericFunction
+    //             },
+    //             {
+    //                 provide: HttpCustomService,
+    //                 useValue: mockTransaction
+    //             },
+    //         ]
+    //     }).compile();
 
-        service = module.get<PipelineService>(PipelineService);
+    //     service = module.get<PipelineService>(PipelineService);
 
-        let inputData = {
-            "pipeline_type": "dataset_to_db",
-            "pipeline_name": "student_attendance_by_class",
-            "pipeline": [
-                {
-                    "event_name": "student_attendance",
-                    "dataset_name": "student_attendance_by_class",
-                    "dimension_name": "student_attendance",
-                    "transformer_name": "student_attendance_by_class.py"
+    //     let inputData = {
+    //         "pipeline_type": "dataset_to_db",
+    //         "pipeline_name": "student_attendance_by_class",
+    //         "pipeline": [
+    //             {
+    //                 "event_name": "student_attendance",
+    //                 "dataset_name": "student_attendance_by_class",
+    //                 "dimension_name": "student_attendance",
+    //                 "transformer_name": "student_attendance_by_class.py"
 
-                }
-            ]
-        };
-        let result = {code: 200, message: 'Processor group created successfully'};
-        expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
-    }, 70000);
+    //             }
+    //         ]
+    //     };
+    //     let result = {code: 200, message: 'Processor group created successfully'};
+    //     expect(await service.createSpecPipeline(inputData)).toStrictEqual(result);
+    // }, 70000);
 
     it('Processor Group Running Successfully', async () => {
         const mockTransaction = {

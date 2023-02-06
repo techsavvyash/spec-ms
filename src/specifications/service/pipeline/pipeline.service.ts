@@ -132,7 +132,6 @@ export class PipelineService {
                     if (pg.component.name == processor_group_name) {
                         pg_source = pg;
                         counter = counter + 1;
-
                         data = {
                             "id": pg_source['component']['id'],
                             "state": "STOPPED",  // RUNNING or STOP
@@ -175,19 +174,30 @@ export class PipelineService {
                     }
                 }
                 else {
-
+                    let result  = await this.updateScheduleProcessProperty(processor_group_name,'generateFlowFile',schedulePeriod);
                     await this.processSleep(5000);
-                    data = {
-                        "id": pg_source['component']['id'],
-                        "state": "RUNNING",  // RUNNING or STOP
-                        "disconnectedNodeAcknowledged": false
-                    };
-                    console.log('pipeline.service.: RUNNING');
-                    await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data);
+                        data = {
+                            "id": pg_source['component']['id'],
+                            "state": "RUNNING",  // RUNNING or STOP
+                            "disconnectedNodeAcknowledged": false
+                        };
+                        console.log('pipeline.service.: RUNNING');
+                        await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data); 
+                    if(result.code == 400)
+                    {
+                        
+                        return {
+                            code:400,
+                            error:"Could not schedule the processor"
+                        }
+                    }
+                   else{
                     return {
                         code: 200,
                         message: "Processor group created successfully"
                     }
+                   }
+                   
                 }
             }
             else {
@@ -351,6 +361,70 @@ export class PipelineService {
         }
     }
 
+    async updateScheduleProcessProperty(processor_group_name,processor_name,schedulePeriod)
+    {
+        let pcName;
+        let pg_details;
+        let res = await this.http.get(`${process.env.URL}/nifi-api/process-groups/root`);
+        let nifi_root_pg_id = res.data['component']['id'];
+        let pg_list = await this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`);
+        if(pg_list['status'] == 200)
+        {
+            for(let pg of pg_list['data']['processGroupFlow']['flow']['processGroups'])
+            {
+                if(pg['component']['name'] === processor_group_name)
+                {    
+                     pcName = pg;
+                }
+            }
+        }
+        else{
+            return {code:400, error:"Failed to get the processor group list"}
+        }
+        let result  = await this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${pcName['component']['id']}`);
+        pg_details = result;
+        for(let details of pg_details['data']['processGroupFlow']['flow']['processors'])
+        {
+            if(details['component']['name'] == processor_name)
+            {
+                let reqBody = {
+                    "component": {
+                        "id": details['component']['id'],
+                        "name": details['component']['name'],
+                        "config": {
+                            "concurrentlySchedulableTaskCount": "1",
+                            "schedulingPeriod": schedulePeriod,
+                            "executionNode": "ALL",
+                            "penaltyDuration": "30 sec",
+                            "yieldDuration": "1 sec",
+                            "bulletinLevel": "WARN",
+                            "schedulingStrategy": "CRON_DRIVEN",
+                            "comments": "",
+                            "runDurationMillis": 0,
+                            "autoTerminatedRelationships": []
+                        },
+                        "state": "STOPPED"
+                    },
+                    "revision": {
+                        "clientId": "",
+                        "version": details['revision']['version']
+                    },
+                    "disconnectedNodeAcknowledged": false
+                }
+                let url = `${process.env.URL}/nifi-api/processors/${details?.component?.id}`;
+                let resultCode = await this.http.put(url,reqBody);
+                if(resultCode['status'] == 200)
+                {
+                    return {code:200,message:"Success"}
+                }
+                else{
+                    return {code:400, error:"Failed to update the schedule property"}
+                }
+
+            }
+        }
+    }
+
     async updateProcessorProperty(pg_source_id, processor_name, transformer_file, schedulePeriod) {
         const pg_ports = await this.getProcessorGroupPorts(pg_source_id);
         if (pg_ports) {
@@ -359,7 +433,6 @@ export class PipelineService {
                     let update_processor_property_body;
                     if (processor_name == 'generateFlowFile') {
                         if(schedulePeriod !== undefined) {
-                            console.log('in Schedule')
                             update_processor_property_body = {
                                 "component": {
                                     "id": processor['component']['id'],
@@ -478,7 +551,6 @@ export class PipelineService {
                     let url = `${process.env.URL}/nifi-api/processors/${processor?.component?.id}`;
 
                     try {
-                        console.log(update_processor_property_body)
                         let result = await this.http.put(url, update_processor_property_body);
                         if (result) {
                             return `{message:Successfully updated the properties in the ${processor_name}}`;

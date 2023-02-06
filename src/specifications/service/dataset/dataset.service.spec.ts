@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { DatasetService } from './dataset.service';
-import { DataSource } from 'typeorm';
-import { GenericFunction } from '../genericFunction';
+import {Test, TestingModule} from '@nestjs/testing';
+import {DatasetService} from './dataset.service';
+import {DataSource} from 'typeorm';
+import {GenericFunction} from '../genericFunction';
 
 let inputData = {
     "ingestion_type": "dataset",
@@ -15,12 +15,18 @@ let inputData = {
             "dimensions": {
                 "type": "object",
                 "properties": {
-                    "table": "ingestion.dimension_master",
+                    "table": {
+                        "type": "string",
+                        "pattern": "ingestion.dimension_master"
+                    },
                     "column": [
                         "district_id",
                         "state_id"
                     ],
-                    "merge_on_col": "district_id"
+                    "merge_on_col": {
+                        "type": "string",
+                        "pattern": "district_id"
+                    }
                 },
                 "required": [
                     "table",
@@ -80,9 +86,18 @@ let inputData = {
                             "function": [
                                 "sum"
                             ],
-                            "target_table": "ingestion.SAC_students_average_attendance_by_state",
-                            "numerator_col": "sum_students_marked_present",
-                            "denominator_col": "sum_students_attendance_marked",
+                            "target_table": {
+                                "type": "string",
+                                "pattern": "ingestion.SAC_students_average_attendance_by_state"
+                            },
+                            "numerator_col": {
+                                "type": "string",
+                                "pattern": "sum_students_marked_present"
+                            },
+                            "denominator_col": {
+                                "type": "string",
+                                "pattern": "sum_students_attendance_marked"
+                            },
                             "update_cols": [
                                 "sum_students_marked_present",
                                 "sum_students_attendance_marked",
@@ -94,7 +109,10 @@ let inputData = {
                                 "items": {
                                     "type": "object",
                                     "properties": {
-                                        "table": "ingestion.SAC_students_average_attendance_by_district",
+                                        "table": {
+                                            "type": "string",
+                                            "pattern": "ingestion.SAC_students_average_attendance_by_district"
+                                        },
                                         "column": [
                                             "sum_students_marked_present",
                                             "sum_students_attendance_marked"
@@ -107,12 +125,9 @@ let inputData = {
                             }
                         },
                         "required": [
-                            "function",
-                            "target_table",
-                            "numerator_col",
-                            "denominator_col",
-                            "update_cols",
-                            "columns"
+                            
+                            "target_table"
+                           
                         ]
                     }
                 },
@@ -126,8 +141,7 @@ let inputData = {
             "dataset"
         ]
     }
-
-}
+};
 
 
 describe('DatasetService', () => {
@@ -139,9 +153,9 @@ describe('DatasetService', () => {
             release: jest.fn(),
             rollbackTransaction: jest.fn(),
             commitTransaction: jest.fn(),
-            query: jest.fn().mockReturnValueOnce([{ pid: 1 }]).mockReturnValueOnce([{ pid: 1 }])
+            query: jest.fn().mockReturnValueOnce([{pid: 1}]).mockReturnValueOnce([{pid: 1}])
         })),
-        query: jest.fn().mockReturnValueOnce([{ length: 1 }]).mockReturnValueOnce([]).mockReturnValueOnce([{ length: 1 }]).mockReturnValueOnce([])
+        query: jest.fn().mockReturnValueOnce([{length: 1}]).mockReturnValueOnce([]).mockReturnValueOnce([{length: 1}]).mockReturnValueOnce([])
             .mockReturnValueOnce([])
     };
     beforeEach(async () => {
@@ -271,11 +285,8 @@ describe('DatasetService', () => {
                                         }
                                     },
                                     "required": [
-                                        "function",
-                                        "targetTable",
-                                        "update_cols",
-                                        "columns",
-                                        "filters"
+                                        "targetTable"
+                                       
                                     ]
                                 }
                             },
@@ -321,12 +332,18 @@ describe('DatasetService', () => {
                     "dimensions": {
                         "type": "object",
                         "properties": {
-                            "table": "ingestion.dimension_master",
+                            "table": {
+                                "type": "string",
+                                "pattern": "ingestion.dimension_master"
+                            },
                             "column": [
                                 "district_id",
                                 "state_id"
                             ],
-                            "merge_on_col": "district_id"
+                            "merge_on_col": {
+                                "type": "string",
+                                "pattern": "district_id"
+                            }
                         },
                         "required": [
                             "table",
@@ -386,9 +403,18 @@ describe('DatasetService', () => {
                                     "function": [
                                         "sum"
                                     ],
-                                    "target_table": "ingestion.SAC_students_average_attendance_by_state",
-                                    "numerator_col": "sum_students_marked_present",
-                                    "denominator_col": "sum_students_attendance_marked",
+                                    "target_table": {
+                                        "type": "string",
+                                        "pattern": "ingestion.SAC_students_average_attendance_by_state"
+                                    },
+                                    "numerator_col": {
+                                        "type": "string",
+                                        "pattern": "sum_students_marked_present"
+                                    },
+                                    "denominator_col": {
+                                        "type": "string",
+                                        "pattern": "sum_students_attendance_marked"
+                                    },
                                     "update_cols": [
                                         "sum_students_marked_present",
                                         "sum_students_attendance_marked",
@@ -400,7 +426,10 @@ describe('DatasetService', () => {
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                                                "table": "ingestion.SAC_students_average_attendance_by_district",
+                                                "table": {
+                                                    "type": "string",
+                                                    "pattern": "ingestion.SAC_students_average_attendance_by_district"
+                                                },
                                                 "column": [
                                                     "sum_students_marked_present",
                                                     "sum_students_attendance_marked"
@@ -413,12 +442,8 @@ describe('DatasetService', () => {
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "numerator_col",
-                                    "denominator_col",
-                                    "update_cols",
-                                    "columns"
+                                    "target_table"
+                                    
                                 ]
                             }
                         },
@@ -454,12 +479,18 @@ describe('DatasetService', () => {
                     "dimensions": {
                         "type": "object",
                         "properties": {
-                            "table": "ingestion.dimension_master",
+                            "table": {
+                                "type": "string",
+                                "pattern": "ingestion.dimension_master"
+                            },
                             "column": [
                                 "district_id",
                                 "state_id"
                             ],
-                            "merge_on_col": "district_id"
+                            "merge_on_col": {
+                                "type": "string",
+                                "pattern": "district_id"
+                            }
                         },
                         "required": [
                             "table",
@@ -519,9 +550,18 @@ describe('DatasetService', () => {
                                     "function": [
                                         "sum"
                                     ],
-                                    "target_table": "ingestion.SAC_students_average_attendance_by_state",
-                                    "numerator_col": "sum_students_marked_present",
-                                    "denominator_col": "sum_students_attendance_marked",
+                                    "target_table": {
+                                        "type": "string",
+                                        "pattern": "ingestion.SAC_students_average_attendance_by_state"
+                                    },
+                                    "numerator_col": {
+                                        "type": "string",
+                                        "pattern": "sum_students_marked_present"
+                                    },
+                                    "denominator_col": {
+                                        "type": "string",
+                                        "pattern": "sum_students_attendance_marked"
+                                    },
                                     "update_cols": [
                                         "sum_students_marked_present",
                                         "sum_students_attendance_marked",
@@ -533,7 +573,10 @@ describe('DatasetService', () => {
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                                                "table": "ingestion.SAC_students_average_attendance_by_district",
+                                                "table": {
+                                                    "type": "string",
+                                                    "pattern": "ingestion.SAC_students_average_attendance_by_district"
+                                                },
                                                 "column": [
                                                     "sum_students_marked_present",
                                                     "sum_students_attendance_marked"
@@ -546,12 +589,8 @@ describe('DatasetService', () => {
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "numerator_col",
-                                    "denominator_col",
-                                    "update_cols",
-                                    "columns"
+                                    "target_table"
+                                    
                                 ]
                             }
                         },
@@ -565,8 +604,7 @@ describe('DatasetService', () => {
                     "dataset"
                 ]
             }
-
-        }
+        };
 
         let result = {
             "code": 400, "error": "Dataset name already exists"
@@ -587,12 +625,18 @@ describe('DatasetService', () => {
                     "dimensions": {
                         "type": "object",
                         "properties": {
-                            "table": "ingestion.dimension_master",
+                            "table": {
+                                "type": "string",
+                                "pattern": "ingestion.dimension_master"
+                            },
                             "column": [
                                 "district_id",
                                 "state_id"
                             ],
-                            "merge_on_col": "district_id"
+                            "merge_on_col": {
+                                "type": "string",
+                                "pattern": "district_id"
+                            }
                         },
                         "required": [
                             "table",
@@ -652,9 +696,18 @@ describe('DatasetService', () => {
                                     "function": [
                                         "sum"
                                     ],
-                                    "target_table": "ingestion.SAC_students_average_attendance_by_state",
-                                    "numerator_col": "sum_students_marked_present",
-                                    "denominator_col": "sum_students_attendance_marked",
+                                    "target_table": {
+                                        "type": "string",
+                                        "pattern": "ingestion.SAC_students_average_attendance_by_state"
+                                    },
+                                    "numerator_col": {
+                                        "type": "string",
+                                        "pattern": "sum_students_marked_present"
+                                    },
+                                    "denominator_col": {
+                                        "type": "string",
+                                        "pattern": "sum_students_attendance_marked"
+                                    },
                                     "update_cols": [
                                         "sum_students_marked_present",
                                         "sum_students_attendance_marked",
@@ -666,7 +719,10 @@ describe('DatasetService', () => {
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                                                "table": "ingestion.SAC_students_average_attendance_by_district",
+                                                "table": {
+                                                    "type": "string",
+                                                    "pattern": "ingestion.SAC_students_average_attendance_by_district"
+                                                },
                                                 "column": [
                                                     "sum_students_marked_present",
                                                     "sum_students_attendance_marked"
@@ -679,12 +735,8 @@ describe('DatasetService', () => {
                                     }
                                 },
                                 "required": [
-                                    "function",
-                                    "target_table",
-                                    "numerator_col",
-                                    "denominator_col",
-                                    "update_cols",
-                                    "columns"
+                                    "target_table"
+                                   
                                 ]
                             }
                         },
@@ -750,7 +802,7 @@ describe('DatasetService', () => {
         }).compile();
 
         let localService: DatasetService = module.get<DatasetService>(DatasetService);
-        let result = { "code": 400, "error": "Dataset spec was not added" };
+        let result = {"code": 400, "error": "Dataset spec was not added"};
         expect(await localService.createDataset(inputData)).toStrictEqual(result)
     });
 
@@ -763,7 +815,7 @@ describe('DatasetService', () => {
                 release: jest.fn(),
                 rollbackTransaction: jest.fn(),
                 commitTransaction: jest.fn(),
-                query: jest.fn().mockReturnValueOnce([{ pid: 1 }]).mockReturnValueOnce([{}])
+                query: jest.fn().mockReturnValueOnce([{pid: 1}]).mockReturnValueOnce([{}])
             })),
             query: jest.fn().mockReturnValueOnce([]).mockReturnValueOnce([])
         };
@@ -787,7 +839,7 @@ describe('DatasetService', () => {
         }).compile();
 
         let localService: DatasetService = module.get<DatasetService>(DatasetService);
-        let result = { "code": 400, "error": "Unable to insert into spec pipeline table" };
+        let result = {"code": 400, "error": "Unable to insert into spec pipeline table"};
         expect(await localService.createDataset(inputData)).toStrictEqual(result)
     });
 });
