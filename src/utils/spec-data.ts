@@ -73,7 +73,7 @@ export const dimensionSchemaData = {
                                         },
                                         "required": {
                                             "type": "array",
-                                            "shouldnotnull": false
+                                            "shouldnotnull": true,
                                         }
                                     },
                                     "required": ["type", "properties", "required"],
@@ -200,7 +200,7 @@ export const eventSchemaData = {
                                         },
                                         "required": {
                                             "type": "array",
-                                            "shouldnotnull": false
+                                            "shouldnotnull": true
                                         }
                                     },
                                     "required": ["type", "properties", "required"],
