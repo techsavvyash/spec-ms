@@ -73,7 +73,7 @@ export const dimensionSchemaData = {
                                         },
                                         "required": {
                                             "type": "array",
-                                            "shouldnotnull": false
+                                            "shouldnotnull": true,
                                         }
                                     },
                                     "required": ["type", "properties", "required"],
@@ -200,7 +200,7 @@ export const eventSchemaData = {
                                         },
                                         "required": {
                                             "type": "array",
-                                            "shouldnotnull": false
+                                            "shouldnotnull": true
                                         }
                                     },
                                     "required": ["type", "properties", "required"],
@@ -895,3 +895,22 @@ export const scheduleSchema = {
         "scheduled_at",
     ],
 };
+
+export const schemaPipeline = {
+    "type": "object",
+    "properties": {
+        "pipeline_name": {
+            "type": "string",
+            "shouldnotnull": true
+        },
+        "pipeline_type": {
+            "type": "string",
+            "enum": ["ingest_to_db", "dimension_to_db", "dataset_to_db"],
+            "shouldnotnull": true
+        }
+    },
+    "required": [
+        "pipeline_name",
+        "pipeline_type",
+    ],
+}
